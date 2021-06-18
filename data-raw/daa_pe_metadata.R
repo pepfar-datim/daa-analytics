@@ -1,0 +1,8 @@
+## code to prepare `daa_pe_metadata` dataset goes here
+
+# Uncomment this section if you are only running this script
+# s3 <- paws::s3()
+# aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
+
+daa_pe_metadata <- getDAAPEMetadata(s3, aws_s3_bucket)
+usethis::use_data(daa_pe_metadata, overwrite = TRUE)

@@ -1,0 +1,8 @@
+## code to prepare `data_availability` dataset goes here
+
+# Uncomment this section of code if you are running this script by itself
+# datimutils::loginToDATIM("~/.secrets/geoalign.json")
+# geo_session <- d2_default_session
+
+data_availability <- get_geoalign_table(geo_session = geo_session)
+usethis::use_data(data_availability, overwrite = TRUE)

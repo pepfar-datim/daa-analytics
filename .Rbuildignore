@@ -1,0 +1,5 @@
+^renv$
+^renv\.lock$
+^myfirstpackage\.Rproj$
+^\.Rproj\.user$
+^data-raw$

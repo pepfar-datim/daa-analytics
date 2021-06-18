@@ -1,3 +1,6 @@
+# Rprofile files
+.Rprofile
+
 # History files
 .Rhistory
 .Rapp.history
@@ -34,3 +37,11 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+
+# Sensitive data files (Review whether these need to be excluded)
+data/coc_metadata.rda
+data/daa_pe_metadata.rda
+data/de_metadata.rda
+data/ou_hierarchy.rda
+data/ou_metadata.rda
+data/pvls_emr.rda
