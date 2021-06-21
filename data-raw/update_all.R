@@ -1,13 +1,16 @@
+## Updates all datasets in the `data` folder
+
+library(magrittr)
 
 source("data-raw/daa_countries.R")
 source("data-raw/daa_indicators.R")
 
-datimutils::loginToDATIM("C:/Users/cnemarich001/.secrets/datim.json")
+datimutils::loginToDATIM("~/.secrets/datim.json")
 d2_session <- d2_default_session
 source("data-raw/attribute_data.R")
 source("data-raw/daa_indicator_data.R")
 
-datimutils::loginToDATIM("C:/Users/cnemarich001/.secrets/geoalign.json")
+datimutils::loginToDATIM("~/.secrets/geoalign.json")
 geo_session <- d2_default_session
 source("data-raw/data_availability.R")
 

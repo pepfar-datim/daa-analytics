@@ -1,6 +1,7 @@
 ## code to prepare `daa_indicator_data` dataset goes here
 
 # Uncomment this code if you are running this script by itself
+# library(magrittr)
 # datimutils::loginToDATIM("~/.secrets/datim.json")
 # d2_session <- d2_default_session
 
