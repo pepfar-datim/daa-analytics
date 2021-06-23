@@ -24,16 +24,16 @@ get_geoalign_table <- function(geo_session = geo_session) {
     return(NULL)
   }
 
-  # TODO Fix the usage of Datimutils package in this section
-  df2 <- df %>%
+  # Loops through all available years to pull data availability from GeoAlign
+  d <- df %>%
     lapply(.,
            function(x) {
              paste0(end_point, "/", x) %>%
-               datimutils::getMetadata(., d2_session = geo_session) %>%
-               as.data.frame(.) %>%
+               list(end_point = ., geo_session = geo_session) %>%
+               purrr::exec(datimutils::getMetadata, !!!.) %>%
                dplyr::mutate(period = x)
            }) %>%
-    dplyr::bind_rows(.) %>% # TODO Remove the use of `plyr` package
+    dplyr::bind_rows(.) %>%
     tidyr::pivot_longer(-c(period, CountryName, CountryCode, generated),
                         names_sep = "_(?=[^_]*$)",
                         names_to = c("indicator", ".value")) %>%
