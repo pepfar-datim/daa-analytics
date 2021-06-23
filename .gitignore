@@ -38,10 +38,10 @@ vignettes/*.pdf
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 
+# Testing files
+testing/
+
 # Sensitive data files (Review whether these need to be excluded)
-data/coc_metadata.rda
-data/daa_pe_metadata.rda
-data/de_metadata.rda
-data/ou_hierarchy.rda
-data/ou_metadata.rda
-data/pvls_emr.rda
+data/*
+!data/daa_countries.rda
+!data/daa_indicators.rda
