@@ -4,5 +4,5 @@
 # s3 <- paws::s3()
 # aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
 
-daa_pe_metadata <- getDAAPEMetadata(s3, aws_s3_bucket)
-usethis::use_data(daa_pe_metadata, overwrite = TRUE)
+pe_metadata <- get_pe_metadata(s3, aws_s3_bucket)
+usethis::use_data(pe_metadata, overwrite = TRUE)

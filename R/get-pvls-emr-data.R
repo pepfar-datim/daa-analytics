@@ -39,7 +39,7 @@ get_pvls_emr_table <- function(s3, aws_s3_bucket) {
 #'
 #' @return Datatable relating Data Element IDs to DATIM codes.
 #'
-getDEMetadata <- function(s3, aws_s3_bucket) {
+get_de_metadata <- function(s3, aws_s3_bucket) {
 
   de_metadata <-
     daa.analytics::fetch_s3_files(
@@ -68,7 +68,7 @@ getDEMetadata <- function(s3, aws_s3_bucket) {
 #'
 #' @return Datatable relating Category Option Combo IDs to DATIM codes.
 #'
-getCOCMetadata <- function(s3, aws_s3_bucket) {
+get_coc_metadata <- function(s3, aws_s3_bucket) {
 
   coc_metadata <-
     daa.analytics::fetch_s3_files(
@@ -96,7 +96,7 @@ getCOCMetadata <- function(s3, aws_s3_bucket) {
 #'
 #' @return Datatable relating Organisation Unit IDs to DATIM codes.
 #'
-getOUMetadata <- function(s3, aws_s3_bucket) {
+get_ou_metadata <- function(s3, aws_s3_bucket) {
 
   ou_metadata <-
     daa.analytics::fetch_s3_files(
@@ -125,9 +125,9 @@ getOUMetadata <- function(s3, aws_s3_bucket) {
 #'
 #' @return Datatable relating Period IDs to DATIM codes.
 #'
-getDAAPEMetadata <- function(s3, aws_s3_bucket) {
+get_pe_metadata <- function(s3, aws_s3_bucket) {
 
-  daa_pe_metadata <-
+  pe_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       Bucket = aws_s3_bucket,
@@ -136,7 +136,7 @@ getDAAPEMetadata <- function(s3, aws_s3_bucket) {
     ) %>%
     dplyr::select(periodid, iso)
 
-  return(daa_pe_metadata)
+  return(pe_metadata)
 
 }
 
@@ -151,7 +151,7 @@ getDAAPEMetadata <- function(s3, aws_s3_bucket) {
 #' @return Dataframe containing wide format organisation unit hierarchy from
 #' Level 3 to Level 7.
 #'
-createHierarchy <- function() {
+create_hierarchy <- function() {
 
   # TODO add error catching ability when this data is unavailable.
   load(file = "data/ou_metadata.rda")
@@ -223,11 +223,11 @@ adorn_pvls_emr <- function(pvls_emr) {
   load("data/coc_metadata.rda")
   load("data/ou_metadata.rda")
   load("data/ou_hierarchy.rda")
-  load("data/daa_pe_metadata.rda")
+  load("data/pe_metadata.rda")
 
   pvls_emr %<>%
     # Joins to period data and cleans and filters periods
-    dplyr::left_join(., daa_pe_metadata, by = "periodid") %>%
+    dplyr::left_join(., pe_metadata, by = "periodid") %>%
 
     # Filters for only Calendar Q3 / Fiscal Q4 results
     dplyr::filter(substring(iso, 5, 6) == "Q3") %>%
