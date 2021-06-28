@@ -35,7 +35,11 @@ get_daa_data <- function(ou_uid, d2_session) {
   if (is.null(df)) {
     return(NULL)
   }
+  # Returns dataframe
+  return(df)
+}
 
+adorn_daa_data <- function(df){
   # Cleans data and prepares it for export
   df %<>%
     # Pivots MOH and PEPFAR data out into separate columns
