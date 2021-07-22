@@ -4,17 +4,31 @@
 \alias{fetch_s3_files}
 \title{Fetch data from S3 bucket.}
 \usage{
-fetch_s3_files(s3, Bucket, Key_1, Key_2)
+fetch_s3_files(
+  s3,
+  aws_s3_bucket,
+  key,
+  folder = "data-raw",
+  file_name,
+  last_update = NULL
+)
 }
 \arguments{
 \item{s3}{The s3 object created by the paws package containing
 user credentials.}
 
-\item{Key_1}{The folder extension where the DAA folders are stored.}
+\item{aws_s3_bucket}{The URL for the particular bucket being accessed.}
 
-\item{Key_2}{The specific folder where the DAA data being accessed is stored.}
+\item{key}{The specific folder where the DAA data being accessed
+is stored on S3.}
 
-\item{bucket}{The URL for the particular bucket being accessed.}
+\item{folder}{The folder where the .csv.gz temporary file should
+be locally stored.}
+
+\item{file_name}{The file name for the .csv.gz temporary file to
+be locally stored.}
+
+\item{last_update}{The date and time the dataset was last updated.}
 }
 \value{
 A dataframe of the data located in the specified S3 sub-bucket.

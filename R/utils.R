@@ -7,28 +7,43 @@
 #'
 #' @param s3 The s3 object created by the paws package containing
 #' user credentials.
-#' @param bucket The URL for the particular bucket being accessed.
-#' @param Key_1 The folder extension where the DAA folders are stored.
-#' @param Key_2 The specific folder where the DAA data being accessed is stored.
+#' @param aws_s3_bucket The URL for the particular bucket being accessed.
+#' @param key The specific folder where the DAA data being accessed
+#' is stored on S3.
+#' @param folder The folder where the .csv.gz temporary file should
+#' be locally stored.
+#' @param file_name The file name for the .csv.gz temporary file to
+#' be locally stored.
+#' @param last_update The date and time the dataset was last updated.
 #'
 #' @return A dataframe of the data located in the specified S3 sub-bucket.
 #'
-fetch_s3_files <- function(s3, Bucket, Key_1, Key_2) {
+fetch_s3_files <- function(s3, aws_s3_bucket, key,
+                           folder = "data-raw", file_name, last_update = NULL) {
+  # TODO remove the need for `folder` and `file_name` arguments
+  tryCatch({
+    s3_object <-
+      s3$get_object(Bucket = aws_s3_bucket,
+                    # IfModifiedSince = last_update,
+                    Key = paste0(key, "/data.csv.gz"))
+    s3_object_body <- s3_object$Body
 
-  s3_object <-
-    s3$get_object(Bucket = Bucket,
-                  Key = paste0(Key_1, Key_2, "/data.csv.gz"))
-  s3_object_body <- s3_object$Body
-
-  # TODO remove the need to save a temporary file to access data
-  file_name2 <- paste0("data-raw/", Key_2, ".csv.gz")
-  if (file.exists(file_name2)) {
-    unlink(file_name2)
-  }
-
-  writeBin(s3_object_body, con = file_name2)
-  data <- data.table::fread(file_name2)
-  if(!file.exists(file_name2)) {stop("Could not retreive support file.")}
+    # TODO remove the need to save a temporary file to access data
+    file_name2 <- paste0(folder, "/", file_name, ".csv.gz")
+    if (file.exists(file_name2)) {
+      unlink(file_name2)
+    }
+    writeBin(s3_object_body, con = file_name2)
+    data <- data.table::fread(file_name2)
+    if(!file.exists(file_name2)) {stop("Could not retreive support file.")}
+  },
+  error = function(e){
+    # If file was not updated, retrieves the latest data from the data folder
+    file_name2 <- paste0(folder, "/", file_name, ".csv.gz")
+    data <- data.table::fread(file_name2)
+    flog.info(paste0("S3 file for ", file_name,
+                     " was not updated. Used data from ", file_name, ".csv.gz"))
+  })
 
   return(data)
 }

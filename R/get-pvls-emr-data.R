@@ -17,9 +17,9 @@ get_pvls_emr_table <- function(s3, aws_s3_bucket) {
   pvls_emr <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
-      Bucket = aws_s3_bucket,
-      Key_1 = "datim/www.datim.org/",
-      Key_2 = "moh_daa_data_value_emr_pvls"
+      aws_s3_bucket = aws_s3_bucket,
+      key = "datim/www.datim.org/moh_daa_data_value_emr_pvls",
+      file_name = "pvls_emr_raw"
     )
 
   return(pvls_emr)
@@ -44,9 +44,9 @@ get_de_metadata <- function(s3, aws_s3_bucket) {
   de_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
-      Bucket = aws_s3_bucket,
-      Key_1 = "datim/www.datim.org/",
-      Key_2 = "data_element"
+      aws_s3_bucket = aws_s3_bucket,
+      key = "datim/www.datim.org/data_element",
+      file_name = "de_metadata"
     ) %>%
     dplyr::select(dataelementid, "dataelementname" = shortname)
 
@@ -73,9 +73,9 @@ get_coc_metadata <- function(s3, aws_s3_bucket) {
   coc_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
-      Bucket = aws_s3_bucket,
-      Key_1 = "datim/www.datim.org/",
-      Key_2 = "category_option_combo"
+      aws_s3_bucket = aws_s3_bucket,
+      key = "datim/www.datim.org/category_option_combo",
+      file_name = "coc_metadata"
     ) %>%
     dplyr::select(categoryoptioncomboid, categoryoptioncomboname = name)
 
@@ -101,9 +101,9 @@ get_ou_metadata <- function(s3, aws_s3_bucket) {
   ou_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
-      Bucket = aws_s3_bucket,
-      Key_1 = "datim/www.datim.org/",
-      Key_2 = "organisation_unit"
+      aws_s3_bucket = aws_s3_bucket,
+      key = "datim/www.datim.org/organisation_unit",
+      file_name = "ou_metadata"
     ) %>%
     dplyr::select(organisationunitid, path, name = shortname, uid)
 
@@ -130,9 +130,9 @@ get_pe_metadata <- function(s3, aws_s3_bucket) {
   pe_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
-      Bucket = aws_s3_bucket,
-      Key_1 = "datim/www.datim.org/",
-      Key_2 = "moh_daa_period_structure"
+      aws_s3_bucket = aws_s3_bucket,
+      key = "datim/www.datim.org/moh_daa_period_structure",
+      file_name = "pe_metadata"
     ) %>%
     dplyr::select(periodid, iso)
 
