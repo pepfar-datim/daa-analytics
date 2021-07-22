@@ -4,5 +4,5 @@
 # s3 <- paws::s3()
 # aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
 
-coc_metadata <- get_coc_metadata(s3, aws_s3_bucket)
+coc_metadata <- daa.analytics::get_coc_metadata(s3, aws_s3_bucket)
 usethis::use_data(coc_metadata, overwrite = TRUE)

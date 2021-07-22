@@ -46,7 +46,7 @@ get_attribute_table <- function(ou_uid, d2_session = d2_session) {
                     convert = TRUE) %>%
 
     # Selects only the correct columns to be used
-    dplyr::select(name, id, `MOH ID` = value, longitude, latitude)
+    dplyr::select(name, facilityuid = id, `MOH ID` = value, longitude, latitude)
 
   return(df)
 }

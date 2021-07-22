@@ -43,5 +43,6 @@ testing/
 
 # Sensitive data files (Review whether these need to be excluded)
 data/*
+data-raw/*.csv.gz
 !data/daa_countries.rda
 !data/daa_indicators.rda

@@ -4,7 +4,7 @@
 \alias{combine_data}
 \title{Combine DAA datasets together.}
 \usage{
-combine_data(indicators, pvls_emr, attribute_data)
+combine_data(indicators, ou_hierarchy, pvls_emr, attribute_data)
 }
 \arguments{
 \item{indicators}{Dataframe containing DAA indicator data.}

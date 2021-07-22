@@ -13,11 +13,13 @@
 #' @return A dataframe containing the DAA indicator data, PVLS and EMR indicator
 #' data, and the site attribute data for a single country.
 #'
-combine_data <- function(indicators, pvls_emr, attribute_data) {
+# TODO figure out how to properly filter out duplicative organisation unit IDs
+# during the joins here.
+combine_data <- function(indicators, ou_hierarchy, pvls_emr, attribute_data) {
   df <- indicators %>%
-    dplyr::left_join(pvls_emr, by = c("Organisation unit" = "facilityuid",
-                                      "Period" = "period")) %>%
-    dplyr::left_join(attribute_data, by = c("Organisation unit" = "id")) %>%
-    dplyr::select(-name)
+    dplyr::left_join(ou_hierarchy, by = c("facilityuid")) %>%
+    dplyr::left_join(pvls_emr, by = c("organisationunitid", "Period")) %>%
+    dplyr::left_join(attribute_data, by = c("facilityuid")) %>%
+    dplyr::select(-name, -organisationunitid)
   return(df)
 }

@@ -16,7 +16,7 @@ get_daa_data <- function(ou_uid, d2_session) {
 
   indicator_list <- paste(daa.analytics::daa_indicators$uid, collapse = ";")
 
-  period_list <- paste(paste0(2017:(daa.analytics::currentFY() - 1), "Oct"),
+  period_list <- paste(paste0(2017:(daa.analytics::currentFY()), "Oct"),
                        collapse = ";")
 
   df <- datimutils::getAnalytics(
@@ -30,7 +30,6 @@ get_daa_data <- function(ou_uid, d2_session) {
     ou = paste0("OU_GROUP-POHZmzofoVx;", ou_uid),
     d2_session = d2_session
   )
-
   # Returns null if API returns nothing
   if (is.null(df)) {
     return(NULL)
@@ -43,11 +42,11 @@ adorn_daa_data <- function(df){
   # Cleans data and prepares it for export
   df %<>%
     # Pivots MOH and PEPFAR data out into separate columns
-    tidyr::pivot_wider(., names_from = `Funding Mechanism`,
+    tidyr::pivot_wider(names_from = `Funding Mechanism`,
                        values_from = `Value`) %>%
 
-    # Cleans Period data from the form `2018Oct` to `2018`
-    dplyr::mutate(Period = as.numeric(stringr::str_sub(`Period`, 0, 4))) %>%
+    # Cleans Period data from the form `2018Oct` to `2019`
+    dplyr::mutate(Period = as.numeric(stringr::str_sub(`Period`, 0, 4)) + 1) %>%
 
     # Renames MOH and PEPFAR columns and converts them to numeric data types
     dplyr::mutate("MOH" = as.numeric(`mXjFJEexCHJ`)) %>%
@@ -78,18 +77,6 @@ adorn_daa_data <- function(df){
                     ifelse(!is.na(MOH),
                            ifelse(!is.na(PEPFAR), "Both", "MOH"),
                            ifelse(!is.na(PEPFAR), "PEPFAR", "Neither"))) %>%
-    # dplyr::mutate("Difference" =
-    #                 ifelse(`Reported by` == "Both", MOH - PEPFAR, NA)) %>%
-
-    # TODO Determine if this column can be removed
-    # dplyr::mutate("Reported higher" = dplyr::case_when(
-    #   is.na(MOH) ~ "Only PEPFAR reported",
-    #   is.na(PEPFAR) ~ "Only MOH reported",
-    #   Difference > 0 ~ "MOH reported higher",
-    #   Difference < 0 ~ "PEPFAR reported higher",
-    #   Difference == 0 ~ "Same result reported",
-    #   TRUE ~ "Neither reported"
-    # ))
 
     # Groups rows by indicator and calculates indicator-specific summaries
     dplyr::group_by(Data, Period) %>%
@@ -116,7 +103,7 @@ adorn_daa_data <- function(df){
     dplyr::ungroup() %>%
 
   # Reorganizes table for export
-    dplyr::select(`Organisation unit`, Indicator = `Data`, Period,
+    dplyr::select(facilityuid = `Organisation unit`, Indicator = `Data`, Period,
                   MOH, PEPFAR, `Reported by`, `Count of matched sites`,
                   `PEPFAR sum at matched sites`, `Weighting`,
                   `Weighted discordance`, `Weighted concordance`)

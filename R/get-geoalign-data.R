@@ -25,7 +25,7 @@ get_geoalign_table <- function(geo_session = geo_session) {
   }
 
   # Loops through all available years to pull data availability from GeoAlign
-  d <- df %>%
+  df %<>%
     lapply(.,
            function(x) {
              paste0(end_point, "/", x) %>%
