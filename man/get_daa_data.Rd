@@ -12,8 +12,7 @@ get_daa_data(ou_uid, d2_session)
 \item{d2_session}{DHIS2 Session id for the DATIM session.}
 }
 \value{
-Dataframe of DAA indicator data for both PEPFAR and the MOH as well
-as both discordance and concordance metrics.
+Dataframe of unadorned PEPFAR and the MOH DAA indicator data.
 }
 \description{
 Fetches DAA indicator data for both PEPFAR and the MOH partner for a single

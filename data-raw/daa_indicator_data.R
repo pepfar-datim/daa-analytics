@@ -7,8 +7,9 @@
 
 daa_indicator_data <- daa.analytics::daa_countries$countryUID %>%
   lapply(., function(x){
-    daa.analytics::get_daa_data(x, d2_session = d2_session)
+    print(daa.analytics::get_ou_name(x))
+    daa.analytics::get_daa_data(x, d2_session = d2_session) %>%
+      daa.analytics::adorn_daa_data(.)
   }) %>%
-  dplyr::bind_rows(.) %>%
-  daa.analytics::adorn_daa_data(.)
+  dplyr::bind_rows(.)
 usethis::use_data(daa_indicator_data, overwrite = TRUE)
