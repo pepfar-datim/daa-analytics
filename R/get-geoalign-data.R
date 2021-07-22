@@ -46,8 +46,48 @@ get_geoalign_table <- function(geo_session = geo_session) {
                     ifelse(period == max(period),
                            hasResultsData,
                            NA_character_)) %>%
-    dplyr::select(CountryName, period, indicator,
-                  hasDisagMapping, hasResultsData)
+    dplyr::select(namelevel3 = CountryName, Period = period,
+                  Indicator = indicator, hasDisagMapping, hasResultsData)
+
+  return(df)
+}
+
+#' @export
+#' @importFrom magrittr %>% %<>%
+#' @title Fetch Import Timestamps from GeoAlign
+#'
+#' @description
+#' Extracts all data for all countries and activity years from GeoAlign
+#' regarding whether a country has completed each step of the DAA process
+#' with timestamps for completion.
+#'
+#' @param geo_session DHIS2 Session id for the GeoAlign session.
+#'
+#' @return A dataframe of
+#'
+get_upload_timestamps <- function(geo_session){
+
+  end_point <- "dataStore/MOH_imports_status"
+
+  # Fetches data from the server
+  df <- datimutils::getMetadata(end_point = "dataStore/MOH_imports_status",
+                                d2_session = geo_session)
+
+  if (is.null(df)) {
+    return(NULL)
+  }
+
+  # Loops through all available years to pull data availability from GeoAlign
+  df %<>%
+    lapply(.,
+           function(x) {
+             paste0(end_point, "/", x) %>%
+               list(end_point = ., geo_session = geo_session) %>%
+               purrr::exec(datimutils::getMetadata, !!!.) %>%
+               dplyr::mutate(period = x)
+           }) %>%
+    dplyr::bind_rows(.) %>%
+    dplyr::mutate(across(ends_with("Date"), lubridate::ymd_hms))
 
   return(df)
 }
