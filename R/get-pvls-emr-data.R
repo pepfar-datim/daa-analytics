@@ -160,43 +160,26 @@ create_hierarchy <- function() {
 
   # Cleans and creates OU Hierarchy from levels 3 to 7 with names
   ou_hierarchy <- ou_metadata %>%
-    tidyr::separate(.,
-                    col = path,
-                    into = paste0("namelevel", 0:9, "uid"),
-                    sep = "/") %>%
-    dplyr::left_join(.,
-                     ou_uid_names %>%
-                       dplyr::select(uid, namelevel3 = name),
-                     by = c("namelevel3uid" = "uid")) %>%
-    dplyr::left_join(.,
-                     ou_uid_names %>%
-                       dplyr::select(uid, namelevel4 = name),
-                     by = c("namelevel4uid" = "uid")) %>%
-    dplyr::left_join(.,
-                     ou_uid_names %>%
-                       dplyr::select(uid, namelevel5 = name),
-                     by = c("namelevel5uid" = "uid")) %>%
-    dplyr::left_join(.,
-                     ou_uid_names %>%
-                       dplyr::select(uid, namelevel6 = name),
-                     by = c("namelevel6uid" = "uid")) %>%
-    dplyr::left_join(.,
-                     ou_uid_names %>%
-                       dplyr::select(uid, namelevel7 = name),
-                     by = c("namelevel7uid" = "uid")) %>%
-    dplyr::select(organisationunitid,
-                  namelevel6uid, namelevel7uid,
-                  paste0("namelevel", 3:7)) %>%
+    dplyr::select(organisationunitid, path) %>%
+    tidyr::separate(col = path,
+                    into = c(rep(NA, 3), paste0("namelevel", 3:7, "uid"),
+                             rep(NA, 2)), # Drops first three and last two cols
+                    sep = "/",
+                    fill = "right") %>%
     dplyr::filter(!is.na(namelevel6uid)) %>%
     dplyr::mutate(facilityuid = ifelse(is.na(namelevel7uid),
                                        namelevel6uid, namelevel7uid)) %>%
-    dplyr::mutate("Site hierarchy" = paste0(paste(namelevel3, namelevel4,
-                                                  namelevel5, namelevel6,
-                                                  sep = " / "),
-                                            ifelse(is.na(namelevel7), "",
-                                                   paste0("/", namelevel7)))) %>%
-    dplyr::select(organisationunitid, facilityuid, namelevel3, namelevel4,
-                  namelevel5, namelevel6, namelevel7, `Site hierarchy`)
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel3 = name),
+                     by = c("namelevel3uid" = "uid"), keep = FALSE) %>%
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel4 = name),
+                     by = c("namelevel4uid" = "uid"), keep = FALSE) %>%
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel5 = name),
+                     by = c("namelevel5uid" = "uid"), keep = FALSE) %>%
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel6 = name),
+                     by = c("namelevel6uid" = "uid"), keep = FALSE) %>%
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel7 = name),
+                     by = c("namelevel7uid" = "uid"), keep = FALSE) %>%
+    dplyr::select(organisationunitid, facilityuid, paste0("namelevel", 3:7))
 
   return(ou_hierarchy)
 }
@@ -231,7 +214,7 @@ adorn_pvls_emr <- function(pvls_emr) {
 
     # Filters for only Calendar Q3 / Fiscal Q4 results
     dplyr::filter(substring(iso, 5, 6) == "Q3") %>%
-    dplyr::mutate(period = as.numeric(substring(iso, 1, 4))) %>%
+    dplyr::mutate(Period = as.numeric(substring(iso, 1, 4))) %>%
 
     # Joins to Data Element, Category Option Combo, and Attribute Metadata
     dplyr::left_join(., de_metadata, by = "dataelementid") %>%
@@ -295,24 +278,17 @@ adorn_pvls_emr <- function(pvls_emr) {
       TX_PVLS_D = sum(as.numeric(unlist(TX_PVLS_D)))
     ) %>%
 
-    # Joins to Organizational hierarchy data
-    dplyr::left_join(., ou_hierarchy,
-                     by = c("sourceid" = "organisationunitid")) %>%
-
     # Organizes columns for export
     dplyr::select(
-      facilityuid,
-      starts_with("namelevel"),
-      `Site hierarchy`,
-      period,
+      organisationunitid = sourceid,
+      Period,
       `EMR - HIV Testing Services`,
       `EMR - Care and Treatment`,
       `EMR - ANC and/or Maternity`,
       `EMR - EID`,
       `EMR - HIV/TB`,
       TX_PVLS_N,
-      TX_PVLS_D,
-      -sourceid
+      TX_PVLS_D
     )
 
   return(pvls_emr)
