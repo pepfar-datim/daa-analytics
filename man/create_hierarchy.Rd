@@ -4,7 +4,7 @@
 \alias{create_hierarchy}
 \title{Generates Organisation Unit Hierarchy}
 \usage{
-create_hierarchy()
+create_hierarchy(ou_metadata)
 }
 \value{
 Dataframe containing wide format organisation unit hierarchy from

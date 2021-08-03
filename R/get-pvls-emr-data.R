@@ -12,14 +12,15 @@
 #'
 #' @return Dataframe containing raw PVLS and EMR data.
 #'
-get_pvls_emr_table <- function(s3, aws_s3_bucket) {
+get_pvls_emr_table <- function(s3, aws_s3_bucket, last_update = NULL) {
 
   pvls_emr <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/moh_daa_data_value_emr_pvls",
-      file_name = "pvls_emr_raw"
+      file_name = "pvls_emr_raw",
+      last_update = last_update
     )
 
   return(pvls_emr)
@@ -39,14 +40,15 @@ get_pvls_emr_table <- function(s3, aws_s3_bucket) {
 #'
 #' @return Datatable relating Data Element IDs to DATIM codes.
 #'
-get_de_metadata <- function(s3, aws_s3_bucket) {
+get_de_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
 
   de_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/data_element",
-      file_name = "de_metadata"
+      file_name = "de_metadata",
+      last_update = last_update
     ) %>%
     dplyr::select(dataelementid, "dataelementname" = shortname)
 
@@ -68,14 +70,15 @@ get_de_metadata <- function(s3, aws_s3_bucket) {
 #'
 #' @return Datatable relating Category Option Combo IDs to DATIM codes.
 #'
-get_coc_metadata <- function(s3, aws_s3_bucket) {
+get_coc_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
 
   coc_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/category_option_combo",
-      file_name = "coc_metadata"
+      file_name = "coc_metadata",
+      last_update = last_update
     ) %>%
     dplyr::select(categoryoptioncomboid, categoryoptioncomboname = name)
 
@@ -96,14 +99,15 @@ get_coc_metadata <- function(s3, aws_s3_bucket) {
 #'
 #' @return Datatable relating Organisation Unit IDs to DATIM codes.
 #'
-get_ou_metadata <- function(s3, aws_s3_bucket) {
+get_ou_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
 
   ou_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/organisation_unit",
-      file_name = "ou_metadata"
+      file_name = "ou_metadata",
+      last_update = last_update
     ) %>%
     dplyr::select(organisationunitid, path, name = shortname, uid)
 
@@ -125,14 +129,15 @@ get_ou_metadata <- function(s3, aws_s3_bucket) {
 #'
 #' @return Datatable relating Period IDs to DATIM codes.
 #'
-get_pe_metadata <- function(s3, aws_s3_bucket) {
+get_pe_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
 
   pe_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/moh_daa_period_structure",
-      file_name = "pe_metadata"
+      file_name = "pe_metadata",
+      last_update = last_update
     ) %>%
     dplyr::select(periodid, iso)
 
@@ -151,10 +156,7 @@ get_pe_metadata <- function(s3, aws_s3_bucket) {
 #' @return Dataframe containing wide format organisation unit hierarchy from
 #' Level 3 to Level 7.
 #'
-create_hierarchy <- function() {
-
-  # TODO add error catching ability when this data is unavailable.
-  load(file = "data/ou_metadata.rda")
+create_hierarchy <- function(ou_metadata) {
 
   ou_uid_names <- ou_metadata %>% dplyr::select(uid, name)
 
@@ -199,14 +201,7 @@ create_hierarchy <- function() {
 #'
 #' @return Dataframe containing adorned PVLS and EMR indicator data.
 #'
-adorn_pvls_emr <- function(pvls_emr) {
-
-  # TODO add error catching ability when this data is unavailable.
-  load("data/de_metadata.rda")
-  load("data/coc_metadata.rda")
-  load("data/ou_metadata.rda")
-  load("data/ou_hierarchy.rda")
-  load("data/pe_metadata.rda")
+adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
 
   pvls_emr %<>%
     # Joins to period data and cleans and filters periods

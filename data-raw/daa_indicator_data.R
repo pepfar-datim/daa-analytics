@@ -6,6 +6,7 @@
 # d2_session <- d2_default_session
 
 daa_indicator_data <- daa.analytics::daa_countries$countryUID %>%
+  {.[!. %in% "YM6xn5QxNpY"]} %>%
   lapply(., function(x){
     print(daa.analytics::get_ou_name(x))
     daa.analytics::get_daa_data(x, d2_session = d2_session) %>%

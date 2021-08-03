@@ -10,7 +10,8 @@ get_upload_timestamps(geo_session)
 \item{geo_session}{DHIS2 Session id for the GeoAlign session.}
 }
 \value{
-A dataframe of
+A dataframe of country names with columns for each DAA mapping and
+import step with timestamp data for the completion of each step.
 }
 \description{
 Extracts all data for all countries and activity years from GeoAlign

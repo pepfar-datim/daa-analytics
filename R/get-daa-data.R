@@ -38,7 +38,7 @@ get_daa_data <- function(ou_uid, d2_session) {
       print(
         paste0("Error: Timeout was reached after 60 seconds with 0 bytes",
                "received. Trying again with query broken into smaller chunks.")
-        )
+      )
       # Pulls data for each indicator as an individual query to shrink size
       indicator_uids %>%
         # Makes queries for each group of indicators
@@ -50,10 +50,10 @@ get_daa_data <- function(ou_uid, d2_session) {
             pe = period_list,
             ou = paste0("OU_GROUP-POHZmzofoVx;", ou_uid),
             d2_session = d2_session
-          ) %>%
-            # Binds all of the component dataframes together
-            dplyr::bind_rows(.)
-        })
+          )
+        }) %>%
+        # Binds all of the component dataframes together
+        dplyr::bind_rows(.)
     }
   )
   # Returns null if API returns nothing
@@ -79,6 +79,10 @@ get_daa_data <- function(ou_uid, d2_session) {
 #' as both discordance and concordance metrics.
 #'
 adorn_daa_data <- function(df){
+  # Returns null if delivered an empty dataset
+  if (is.null(df)) {
+    return(NULL)
+  }
   # Cleans data and prepares it for export
   df %<>%
     # Pivots MOH and PEPFAR data out into separate columns
@@ -142,7 +146,7 @@ adorn_daa_data <- function(df){
                                                         Weighting)) %>%
     dplyr::ungroup() %>%
 
-  # Reorganizes table for export
+    # Reorganizes table for export
     dplyr::select(facilityuid = `Organisation unit`, Indicator = `Data`, Period,
                   MOH, PEPFAR, `Reported by`, `Count of matched sites`,
                   `PEPFAR sum at matched sites`, `Weighting`,

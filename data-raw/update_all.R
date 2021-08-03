@@ -5,12 +5,12 @@ library(magrittr)
 source("data-raw/daa_countries.R")
 source("data-raw/daa_indicators.R")
 
-datimutils::loginToDATIM("~/.secrets/datim.json")
+datimutils::loginToDATIM("C:/Users/cnemarich001/.secrets/datim.json")
 d2_session <- d2_default_session
 source("data-raw/attribute_data.R")
 source("data-raw/daa_indicator_data.R")
 
-datimutils::loginToDATIM("~/.secrets/geoalign.json")
+datimutils::loginToDATIM("C:/Users/cnemarich001/.secrets/geoalign.json")
 geo_session <- d2_default_session
 source("data-raw/data_availability.R")
 
@@ -20,10 +20,7 @@ source("data-raw/coc_metadata.R")
 source("data-raw/pe_metadata.R")
 source("data-raw/de_metadata.R")
 source("data-raw/ou_metadata.R")
-devtools::load_all()
 source("data-raw/ou_hierarchy.R")
-devtools::load_all()
 source("data-raw/pvls_emr.R")
 
-devtools::load_all()
 source("data-raw/combined_data.R")

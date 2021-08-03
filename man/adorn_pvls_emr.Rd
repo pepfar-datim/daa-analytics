@@ -4,7 +4,7 @@
 \alias{adorn_pvls_emr}
 \title{Adorn PVLS and EMR indicator data with metadata.}
 \usage{
-adorn_pvls_emr(pvls_emr)
+adorn_pvls_emr(pvls_emr, coc_metadata, de_metadata, pe_metadata)
 }
 \arguments{
 \item{pvls_emr}{Unadorned dataframe of PVLS and EMR indicator data.}

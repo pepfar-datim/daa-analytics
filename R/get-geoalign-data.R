@@ -1,5 +1,37 @@
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @title Fetch List of Participating Countries from GeoAlign
+#'
+#' @description
+#' Extracts list of all countries that participate in the DAA, including
+#' name, UID, three-letter acronym, and facility level.
+#'
+#' @param geo_session DHIS2 Session id for the GeoAlign session.
+#'
+#' @return A dataframe of DAA country names, UIDs, three-letter acronyms,
+#' and facility level.
+#'
+get_daa_countries <- function(geo_session){
+  end_point <- "dataStore/ou_levels/orgUnitLevels"
+
+  # Fetches data from the server
+  df <- datimutils::getMetadata(end_point = "dataStore/ou_levels/orgUnitLevels",
+                                d2_session = geo_session)
+
+  if (is.null(df)) {
+    return(NULL)
+  }
+
+  df %<>%
+    dplyr::bind_rows(.id = "Country") %>%
+    dplyr::rename("countryName" = "Country", "countryUID" = "uid",
+                  "countryCode" = "code", "facilityLevel" = "facility")
+
+  return(df)
+}
+
+#' @export
+#' @importFrom magrittr %>% %<>%
 #' @title Fetch Indicator Mapping and Data Availability from GeoAlign
 #'
 #' @description
@@ -63,7 +95,8 @@ get_geoalign_table <- function(geo_session = geo_session) {
 #'
 #' @param geo_session DHIS2 Session id for the GeoAlign session.
 #'
-#' @return A dataframe of
+#' @return A dataframe of country names with columns for each DAA mapping and
+#' import step with timestamp data for the completion of each step.
 #'
 get_upload_timestamps <- function(geo_session){
 
