@@ -1,3 +1,5 @@
+# TODO Write out all the column names and descriptions here.
+
 #' Site attribute data.
 #'
 #' A dataset containing the site attribute data for DAA countries.

@@ -11,9 +11,8 @@
 #'
 get_ou_name <- function(ou_uid) {
 
-  load("data/daa_countries.rda")
-
-  ou_name <- daa_countries$countryName[daa_countries$countryUID == ou_uid] %>%
+  ou_name <- daa.analytics::daa_countries %>%
+    .$countryName[daa_countries$countryUID == ou_uid] %>%
     toString(.)
 
   # Returns OU name

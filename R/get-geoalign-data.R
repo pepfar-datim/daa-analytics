@@ -25,7 +25,8 @@ get_daa_countries <- function(geo_session){
   df %<>%
     dplyr::bind_rows(.id = "Country") %>%
     dplyr::rename("countryName" = "Country", "countryUID" = "uid",
-                  "countryCode" = "code", "facilityLevel" = "facility")
+                  "countryCode" = "code", "facilityLevel" = "facility") %>%
+    dplyr::filter("countryName" != "demo_country")
 
   return(df)
 }
