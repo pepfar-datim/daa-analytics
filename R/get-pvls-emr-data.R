@@ -1,3 +1,4 @@
+# TODO redocument parameters on all of these functions
 #' @export
 #' @importFrom magrittr %>% %<>%
 #' @title Fetch Raw PVLS and EMR Indicator Data.
@@ -12,13 +13,17 @@
 #'
 #' @return Dataframe containing raw PVLS and EMR data.
 #'
-get_pvls_emr_table <- function(s3, aws_s3_bucket, last_update = NULL) {
+get_pvls_emr_table <- function(s3,
+                               aws_s3_bucket,
+                               last_update = NULL,
+                               folder = NULL) {
 
   pvls_emr <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/moh_daa_data_value_emr_pvls",
+      folder = folder,
       file_name = "pvls_emr_raw",
       last_update = last_update
     )
@@ -40,13 +45,17 @@ get_pvls_emr_table <- function(s3, aws_s3_bucket, last_update = NULL) {
 #'
 #' @return Datatable relating Data Element IDs to DATIM codes.
 #'
-get_de_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
+get_de_metadata <- function(s3,
+                            aws_s3_bucket,
+                            last_update = NULL,
+                            folder = NULL) {
 
   de_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/data_element",
+      folder = folder,
       file_name = "de_metadata",
       last_update = last_update
     ) %>%
@@ -70,13 +79,17 @@ get_de_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
 #'
 #' @return Datatable relating Category Option Combo IDs to DATIM codes.
 #'
-get_coc_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
+get_coc_metadata <- function(s3,
+                             aws_s3_bucket,
+                             last_update = NULL,
+                             folder = NULL) {
 
   coc_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/category_option_combo",
+      folder = folder,
       file_name = "coc_metadata",
       last_update = last_update
     ) %>%
@@ -99,13 +112,17 @@ get_coc_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
 #'
 #' @return Datatable relating Organisation Unit IDs to DATIM codes.
 #'
-get_ou_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
+get_ou_metadata <- function(s3,
+                            aws_s3_bucket,
+                            last_update = NULL,
+                            folder = NULL) {
 
   ou_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/organisation_unit",
+      folder = folder,
       file_name = "ou_metadata",
       last_update = last_update
     ) %>%
@@ -129,13 +146,17 @@ get_ou_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
 #'
 #' @return Datatable relating Period IDs to DATIM codes.
 #'
-get_pe_metadata <- function(s3, aws_s3_bucket, last_update = NULL) {
+get_pe_metadata <- function(s3,
+                            aws_s3_bucket,
+                            last_update = NULL,
+                            folder = NULL) {
 
   pe_metadata <-
     daa.analytics::fetch_s3_files(
       s3 = s3,
       aws_s3_bucket = aws_s3_bucket,
       key = "datim/www.datim.org/moh_daa_period_structure",
+      folder = folder,
       file_name = "pe_metadata",
       last_update = last_update
     ) %>%
@@ -217,7 +238,7 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
     # dplyr::left_join(.,
     #                  coc_metadata %>%
     #                    dplyr::select(categoryoptioncomboid,
-    #                                  attributename = coc_name),
+    #                                  attributename = categoryoptioncomboname),
     #                  by = c("attributeoptioncomboid" =
     #                           "categoryoptioncomboid")) %>%
 

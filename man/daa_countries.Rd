@@ -5,11 +5,14 @@
 \alias{daa_countries}
 \title{DAA country list.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 23 rows and 4 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
-...
+\item{countryName}{The name of the country.}
+\item{countryUID}{The alphanumeric UID associated with the country in
+DATIM.}
+\item{countryCode}{The three letter acronym for the country.}
+\item{facilityLevel}{The organisation unit hierarchy level at which
+facilities are located for the particular country.}
 }
 }
 \source{

@@ -5,10 +5,11 @@
 \alias{de_metadata}
 \title{Data Element metadata.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 2 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
+\item{dataelementid}{The numeric ID associated with the
+data element in DATIM.}
+\item{dataelementname}{The name of the Data Element in DATIM.}
 ...
 }
 }

@@ -5,10 +5,10 @@
 \alias{pe_metadata}
 \title{Period metadata.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 2 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
+\item{periodid}{The numeric ID used in DATIM for the time period.}
+\item{iso}{The ISO date/time value for the period.}
 ...
 }
 }

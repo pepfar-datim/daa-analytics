@@ -5,11 +5,73 @@
 \alias{combined_data}
 \title{Combined DAA Dataset.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 26 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
-...
+\item{facilityuid}{The alphanumeric UID used to identify the facility in
+DATIM.}
+\item{Indicator}{The reporting indicator for the DAA.}
+\item{Period}{The fiscal year reporting period.}
+\item{MOH}{The results provided for the given indicator by the MOH during
+the associated reporting period.}
+\item{PEPFAR}{The results provided for the given indicator by PEPFAR during
+the associated reporting period.}
+\item{Reported by}{A text value indicating whether results were reported
+by just the MOH, just PEPFAR, or both entities at the given site for the
+given indicator during the reporting period.}
+\item{Count of matched sites}{The number of facilities in a country for the
+particular indicator and reporting period for which results were reported
+by both the MOH and PEPFAR.}
+\item{PEFPAR sum at matched sites}{The total results reported by PEPFAR
+at all facilities in a country for the particular indicator and reporting
+period.}
+\item{Weighting}{The PEPFAR results at the particular facility divided by
+the total results reported by PEPFAR at all facilities for the given
+indicator and reporting period. This figure provides the weighting value
+for concordance and discordance metrics.}
+\item{Weighted discordance}{The weighted discordance between the PEPFAR
+and MOH reported results at the particular facility. Can be summed across
+facilities grouped by country, indicator, and period to calculate the
+weighted average discordance.}
+\item{Weighted concordance}{The weighted concordance between the PEPFAR
+and MOH reported results at the particular facility. Can be summed across
+facilities grouped by country, indicator, and period to calculate the
+weighted average concordance.}
+\item{namelevel3}{The name of the parent organisation unit at hierarchy
+level 3 to the given facility.}
+\item{namelevel4}{The name of the parent organisation unit at hierarchy
+level 4 to the given facility.}
+\item{namelevel5}{The name of the parent organisation unit at hierarchy
+level 5 to the given facility.}
+\item{namelevel6}{For countries with their facility level at hierarchy
+level 6, this will represent the name of the facility. For countries with
+their facility level at hierarchy level 7, this will represent the parent
+organisation unit at hierarchy level 6 to the given facility.}
+\item{namelevel7}{For countries with their facility level at hierarchy
+level 7, this will represent the name of the facility. For countries with
+their facility level at hierarchy level 6, this value will be 'NA'.}
+\item{EMR - HIV Testing Services}{Boolean value indicating whether a
+facility has an electronic medical records system associated with HIV
+Testing Services.}
+\item{EMR - Care and Treatment}{Boolean value indicating whether a
+facility has an electronic medical records system associated with HIV
+care and treatment services.}
+\item{EMR - ANC and/or Maternity}{Boolean value indicating whether a
+facility has an electronic medical records system associated with HIV
+antenatal care and/or maternity services.}
+\item{EMR - EID}{Boolean value indicating whether a
+facility has an electronic medical records system associated with early
+infant diagnosis services.}
+\item{EMR - HIV/TB}{Boolean value indicating whether a
+facility has an electronic medical records system associated with
+Tuberculosis treatment and testing services for HIV patients.}
+\item{TX_PVLS_N}{The numerator for TX_PVLS, representing the number of
+patients with suppressed viral load test results documented in a given
+period.}
+\item{TX_PVLS_D}{The denominator for TX_PVLS, representing the number of
+patients with a viral load test result documented in a given period.}
+\item{MOH ID}{The UID used by the MOH to identify the facility.}
+\item{longitude}{Longitude of the facility as recorded in DATIM.}
+\item{latitude}{Latitude of the facility as recorded in DATIM.}
 }
 }
 \source{

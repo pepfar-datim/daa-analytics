@@ -5,11 +5,13 @@
 \alias{attribute_data}
 \title{Site attribute data.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 5 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
-...
+\item{name}{The name of the facility.}
+\item{facilityuid}{The UID used by PEPFAR to identify the facility.}
+\item{MOH ID}{The UID used by the MOH to identify the facility.}
+\item{longitude}{Longitude of the facility as recorded in DATIM.}
+\item{latitude}{Latitude of the facility as recorded in DATIM.}
 }
 }
 \source{

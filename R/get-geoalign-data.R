@@ -26,7 +26,7 @@ get_daa_countries <- function(geo_session){
     dplyr::bind_rows(.id = "Country") %>%
     dplyr::rename("countryName" = "Country", "countryUID" = "uid",
                   "countryCode" = "code", "facilityLevel" = "facility") %>%
-    dplyr::filter("countryName" != "demo_country")
+    dplyr::filter(countryName != "demo_country")
 
   return(df)
 }
@@ -45,7 +45,7 @@ get_daa_countries <- function(geo_session){
 #' @return A dataframe of indicator mapping, disaggregation level, and data
 #' availability organized by activity year and country.
 #'
-get_geoalign_table <- function(geo_session = geo_session) {
+get_data_availability <- function(geo_session = geo_session) {
 
   end_point <- "dataStore/MOH_country_indicators"
 

@@ -5,11 +5,15 @@
 \alias{ou_metadata}
 \title{Organisation Unit metadata.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 4 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
-...
+\item{organisationunitid}{The numeric ID associated with the organisation
+unit in DATIM.}
+\item{path}{The UIDs for each organisation unit hierarchy level from
+Global to the specific organisation unit separated by forward slashes.}
+\item{name}{The name of the organisation unit.}
+\item{uid}{The alphanumeric UID associated with the organisation unit
+in DATIM.}
 }
 }
 \source{

@@ -4,7 +4,7 @@
 \alias{get_pe_metadata}
 \title{Fetches Period Metadata}
 \usage{
-get_pe_metadata(s3, aws_s3_bucket, last_update = NULL)
+get_pe_metadata(s3, aws_s3_bucket, last_update = NULL, folder = NULL)
 }
 \arguments{
 \item{s3}{The s3 object created by the paws package containing

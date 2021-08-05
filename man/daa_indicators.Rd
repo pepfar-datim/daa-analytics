@@ -5,11 +5,11 @@
 \alias{daa_indicators}
 \title{DAA indicator list.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 14 rows and 3 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
-...
+\item{uid}{The alphanumeric UID associated with the indicator in DATIM.}
+\item{indicator}{The short name of the indicator.}
+\item{notes}{Notes on years and disaggregates relevant to the DAA.}
 }
 }
 \source{

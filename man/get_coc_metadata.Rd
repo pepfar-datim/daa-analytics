@@ -4,7 +4,7 @@
 \alias{get_coc_metadata}
 \title{Fetch Category Option Combo Metadata}
 \usage{
-get_coc_metadata(s3, aws_s3_bucket, last_update = NULL)
+get_coc_metadata(s3, aws_s3_bucket, last_update = NULL, folder = NULL)
 }
 \arguments{
 \item{s3}{The s3 object created by the paws package containing

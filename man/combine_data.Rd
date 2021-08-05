@@ -4,10 +4,12 @@
 \alias{combine_data}
 \title{Combine DAA datasets together.}
 \usage{
-combine_data(indicators, ou_hierarchy, pvls_emr, attribute_data)
+combine_data(daa_indicator_data, ou_hierarchy, pvls_emr, attribute_data)
 }
 \arguments{
-\item{indicators}{Dataframe containing DAA indicator data.}
+\item{daa_indicator_data}{Dataframe containing DAA indicator data.}
+
+\item{ou_hierarchy}{Dataframe containing the Organisational hierarchy.}
 
 \item{pvls_emr}{Dataframe of PVLS and EMR data joined with metadata.}
 

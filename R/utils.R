@@ -48,6 +48,26 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
   return(data)
 }
 
+#' @export
+#' @importFrom magrittr %>% %<>%
+#' @title Get Organisation Unit Name from UID.
+#'
+#' @description
+#' Returns the country name based on the organisation unit UID.
+#'
+#' @param ou_uid UID for the Operating Unit whose data is being queried.
+#'
+#' @return A string containing the country name.
+#'
+get_ou_name <- function(ou_uid) {
+  ou_name <- daa.analytics::daa_countries %>%
+    dplyr::filter(countryUID == ou_uid) %>%
+    dplyr::select(countryName) %>%
+    toString(.)
+
+  # Returns OU name
+  return(ou_name)
+}
 
 #' @export
 #' @title Return current FY based on system date.

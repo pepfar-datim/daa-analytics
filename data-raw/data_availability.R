@@ -4,5 +4,6 @@
 # datimutils::loginToDATIM("~/.secrets/geoalign.json")
 # geo_session <- d2_default_session
 
-data_availability <- daa.analytics::get_geoalign_table(geo_session = geo_session)
+data_availability <-
+  daa.analytics::get_data_availability(geo_session = geo_session)
 usethis::use_data(data_availability, overwrite = TRUE)

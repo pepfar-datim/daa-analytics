@@ -5,10 +5,12 @@
 \alias{coc_metadata}
 \title{Category Option Combo metadata.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 2 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
+\item{categoryoptioncomboid}{The numeric code used to identify
+the Category Option Combination in DATIM.}
+\item{categoryoptioncomboname}{The name of the Category Option
+Combination in DATIM.}
 ...
 }
 }

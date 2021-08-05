@@ -5,5 +5,5 @@
 # datimutils::loginToDATIM("~/.secrets/geoalign.json")
 # geo_session <- d2_default_session
 
-daa_countries <- get_daa_countries(geo_session = geo_session)
+daa_countries <- daa.analytics::get_daa_countries(geo_session = geo_session)
 usethis::use_data(daa_countries, overwrite = TRUE)

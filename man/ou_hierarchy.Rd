@@ -5,11 +5,25 @@
 \alias{ou_hierarchy}
 \title{Organisation Unit Hierarchy.}
 \format{
-A data frame with XXXXX rows and XX variables:
+A data frame with 7 variables:
 \describe{
-\item{item_name}{description}
-\item{item_name}{description}
-...
+\item{organisationunitid}{The numeric ID used to identify the organisation
+unit in DATIM.}
+\item{facilityuid}{The alphanumeric UID used to identify the facility in
+DATIM.}
+\item{namelevel3}{The name of the parent organisation unit at hierarchy
+level 3 to the given facility.}
+\item{namelevel4}{The name of the parent organisation unit at hierarchy
+level 4 to the given facility.}
+\item{namelevel5}{The name of the parent organisation unit at hierarchy
+level 5 to the given facility.}
+\item{namelevel6}{For countries with their facility level at hierarchy
+level 6, this will represent the name of the facility. For countries with
+their facility level at hierarchy level 7, this will represent the parent
+organisation unit at hierarchy level 6 to the given facility.}
+\item{namelevel7}{For countries with their facility level at hierarchy
+level 7, this will represent the name of the facility. For countries with
+their facility level at hierarchy level 6, this value will be 'NA'.}
 }
 }
 \source{

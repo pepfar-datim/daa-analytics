@@ -4,7 +4,7 @@
 \alias{get_pvls_emr_table}
 \title{Fetch Raw PVLS and EMR Indicator Data.}
 \usage{
-get_pvls_emr_table(s3, aws_s3_bucket, last_update = NULL)
+get_pvls_emr_table(s3, aws_s3_bucket, last_update = NULL, folder = NULL)
 }
 \arguments{
 \item{s3}{The s3 object created by the paws package containing
