@@ -70,15 +70,20 @@ get_data_availability <- function(geo_session = geo_session) {
     tidyr::pivot_longer(-c(period, CountryName, CountryCode, generated),
                         names_sep = "_(?=[^_]*$)",
                         names_to = c("indicator", ".value")) %>%
-    dplyr::mutate(period = as.numeric(period),
+    dplyr::rowwise() %>%
+    dplyr::mutate(indicator =
+                    ifelse(indicator == "TB_PREV" && as.numeric(period) < 2020,
+                           "TB_PREV_LEGACY", indicator),
+                  period = as.numeric(period),
                   hasDisagMapping = ifelse(hasDisagMapping %in%
                                              c("No", "NA", NA),
-                                           "No",
+                                           "None",
                                            hasDisagMapping)) %>%
     dplyr::mutate(hasResultsData =
                     ifelse(period == max(period),
                            hasResultsData,
                            NA_character_)) %>%
+    dplyr::ungroup() %>%
     dplyr::select(namelevel3 = CountryName, Period = period,
                   Indicator = indicator, hasDisagMapping, hasResultsData)
 
