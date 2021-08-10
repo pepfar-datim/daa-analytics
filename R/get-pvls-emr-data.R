@@ -219,6 +219,9 @@ create_hierarchy <- function(ou_metadata) {
 #' Organisation unit names and UIDs, Organisation unit hierarchy, and periods.
 #'
 #' @param pvls_emr Unadorned dataframe of PVLS and EMR indicator data.
+#' @param coc_metadata Dataframe containing category option combination metadata.
+#' @param de_metadata Dataframe containing data element metadata.
+#' @param pe_metadata Dataframe containing period metadata.
 #'
 #' @return Dataframe containing adorned PVLS and EMR indicator data.
 #'
@@ -250,23 +253,19 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
     dplyr::mutate(indicator = dplyr::case_when(
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
-        "Service Delivery Area - Care and Treatment" ~
-        "EMR - Care and Treatment",
+        "Service Delivery Area - Care and Treatment" ~ "EMR_TX",
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
-        "Service Delivery Area - HIV Testing Services" ~
-        "EMR - HIV Testing Services",
+        "Service Delivery Area - HIV Testing Services" ~ "EMR_HTS",
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
-        "Service Delivery Area - ANC and/or Maternity" ~
-        "EMR - ANC and/or Maternity",
+        "Service Delivery Area - ANC and/or Maternity" ~ "EMR_ANC",
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
         "Service Delivery Area - Early Infant Diagnosis (not Ped ART)" ~
-        "EMR - EID",
+        "EMR_EID",
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        categoryoptioncomboname == "Service Delivery Area - HIV/TB" ~
-        "EMR - HIV/TB",
+        categoryoptioncomboname == "Service Delivery Area - HIV/TB" ~ "EMR_TB",
       substring(dataelementname, 1, 10) == "TX_PVLS (N" ~ "TX_PVLS_N",
       substring(dataelementname, 1, 10) == "TX_PVLS (D" ~ "TX_PVLS_D",
       TRUE ~ NA_character_
@@ -277,34 +276,23 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
     tidyr::pivot_wider(.,
                        names_from = indicator,
                        values_from = value,
-                       values_fn = list) %>%
+                       values_fn = list(value = list)) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      `EMR - Care and Treatment` =
-        any(as.logical(unlist(`EMR - Care and Treatment`))),
-      `EMR - HIV Testing Services` =
-        any(as.logical(unlist(`EMR - HIV Testing Services`))),
-      `EMR - ANC and/or Maternity` =
-        any(as.logical(unlist(`EMR - ANC and/or Maternity`))),
-      `EMR - EID` =
-        any(as.logical(unlist(`EMR - EID`))),
-      `EMR - HIV/TB` =
-        any(as.logical(unlist(`EMR - HIV/TB`))),
+      EMR_TX = any(as.logical(unlist(`EMR - Care and Treatment`))),
+      EMR_HTS = any(as.logical(unlist(`EMR - HIV Testing Services`))),
+      EMR_ANC = any(as.logical(unlist(`EMR - ANC and/or Maternity`))),
+      EMR_EID = any(as.logical(unlist(`EMR - EID`))),
+      EMR_TB = any(as.logical(unlist(`EMR - HIV/TB`))),
       TX_PVLS_N = sum(as.numeric(unlist(TX_PVLS_N))),
       TX_PVLS_D = sum(as.numeric(unlist(TX_PVLS_D)))
     ) %>%
 
     # Organizes columns for export
     dplyr::select(
-      organisationunitid = sourceid,
-      Period,
-      `EMR - HIV Testing Services`,
-      `EMR - Care and Treatment`,
-      `EMR - ANC and/or Maternity`,
-      `EMR - EID`,
-      `EMR - HIV/TB`,
-      TX_PVLS_N,
-      TX_PVLS_D
+      organisationunitid = sourceid, Period,
+      EMR_HTS, EMR_TX, EMR_ANC, EMR_EID, EMR_TB,
+      TX_PVLS_N,TX_PVLS_D
     )
 
   return(pvls_emr)
