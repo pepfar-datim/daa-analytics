@@ -61,11 +61,17 @@ get_data_availability <- function(geo_session = geo_session) {
   df %<>%
     lapply(.,
            function(x) {
-             paste0(end_point, "/", x) %>%
-               list(end_point = ., geo_session = geo_session) %>%
-               purrr::exec(datimutils::getMetadata, !!!.) %>%
-               dplyr::mutate(period = x)
+             tryCatch({
+               df <- paste0(end_point, "/", x) %>%
+                 list(end_point = ., geo_session = geo_session) %>%
+                 purrr::exec(datimutils::getMetadata, !!!.) %>%
+                 dplyr::mutate(period = x)
+               return(df)
+             }, error = function(e) {
+               return(NA)
+             })
            }) %>%
+    .[which(!is.na(.))] %>%
     dplyr::bind_rows(.) %>%
     tidyr::pivot_longer(-c(period, CountryName, CountryCode, generated),
                         names_sep = "_(?=[^_]*$)",

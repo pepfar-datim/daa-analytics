@@ -11,6 +11,13 @@ get_coc_metadata(s3, aws_s3_bucket, last_update = NULL, folder = NULL)
 user credentials.}
 
 \item{aws_s3_bucket}{The URL for the particular bucket being accessed.}
+
+\item{last_update}{The datetime when the most recent file was created. Used
+to validate whether new data needs to be retrieved from S3. If NULL, always
+retrieves dataset from S3 regardless of last update time.}
+
+\item{folder}{The folder extension where the output file should be saved. If
+NULL, saves to the \code{data} folder in the working directory.}
 }
 \value{
 Datatable relating Category Option Combo IDs to DATIM codes.

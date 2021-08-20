@@ -6,6 +6,9 @@
 \usage{
 create_hierarchy(ou_metadata)
 }
+\arguments{
+\item{ou_metadata}{Dataframe containing organisation unit metadata.}
+}
 \value{
 Dataframe containing wide format organisation unit hierarchy from
 Level 3 to Level 7.

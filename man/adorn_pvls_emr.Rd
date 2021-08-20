@@ -8,6 +8,12 @@ adorn_pvls_emr(pvls_emr, coc_metadata, de_metadata, pe_metadata)
 }
 \arguments{
 \item{pvls_emr}{Unadorned dataframe of PVLS and EMR indicator data.}
+
+\item{coc_metadata}{Dataframe containing category option combination metadata.}
+
+\item{de_metadata}{Dataframe containing data element metadata.}
+
+\item{pe_metadata}{Dataframe containing period metadata.}
 }
 \value{
 Dataframe containing adorned PVLS and EMR indicator data.

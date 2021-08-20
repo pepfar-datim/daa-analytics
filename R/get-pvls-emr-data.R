@@ -10,6 +10,11 @@
 #' @param s3 The s3 object created by the paws package containing
 #' user credentials.
 #' @param aws_s3_bucket The URL for the particular bucket being accessed.
+#' @param last_update The datetime when the most recent file was created. Used
+#' to validate whether new data needs to be retrieved from S3. If NULL, always
+#' retrieves dataset from S3 regardless of last update time.
+#' @param folder The folder extension where the output file should be saved. If
+#' NULL, saves to the `data` folder in the working directory.
 #'
 #' @return Dataframe containing raw PVLS and EMR data.
 #'
@@ -42,6 +47,11 @@ get_pvls_emr_table <- function(s3,
 #' @param s3 The s3 object created by the paws package containing
 #' user credentials.
 #' @param aws_s3_bucket The URL for the particular bucket being accessed.
+#' @param last_update The datetime when the most recent file was created. Used
+#' to validate whether new data needs to be retrieved from S3. If NULL, always
+#' retrieves dataset from S3 regardless of last update time.
+#' @param folder The folder extension where the output file should be saved. If
+#' NULL, saves to the `data` folder in the working directory.
 #'
 #' @return Datatable relating Data Element IDs to DATIM codes.
 #'
@@ -76,6 +86,11 @@ get_de_metadata <- function(s3,
 #' @param s3 The s3 object created by the paws package containing
 #' user credentials.
 #' @param aws_s3_bucket The URL for the particular bucket being accessed.
+#' @param last_update The datetime when the most recent file was created. Used
+#' to validate whether new data needs to be retrieved from S3. If NULL, always
+#' retrieves dataset from S3 regardless of last update time.
+#' @param folder The folder extension where the output file should be saved. If
+#' NULL, saves to the `data` folder in the working directory.
 #'
 #' @return Datatable relating Category Option Combo IDs to DATIM codes.
 #'
@@ -109,6 +124,11 @@ get_coc_metadata <- function(s3,
 #' @param s3 The s3 object created by the paws package containing
 #' user credentials.
 #' @param aws_s3_bucket The URL for the particular bucket being accessed.
+#' @param last_update The datetime when the most recent file was created. Used
+#' to validate whether new data needs to be retrieved from S3. If NULL, always
+#' retrieves dataset from S3 regardless of last update time.
+#' @param folder The folder extension where the output file should be saved. If
+#' NULL, saves to the `data` folder in the working directory.
 #'
 #' @return Datatable relating Organisation Unit IDs to DATIM codes.
 #'
@@ -143,6 +163,11 @@ get_ou_metadata <- function(s3,
 #' @param s3 The s3 object created by the paws package containing
 #' user credentials.
 #' @param aws_s3_bucket The URL for the particular bucket being accessed.
+#' @param last_update The datetime when the most recent file was created. Used
+#' to validate whether new data needs to be retrieved from S3. If NULL, always
+#' retrieves dataset from S3 regardless of last update time.
+#' @param folder The folder extension where the output file should be saved. If
+#' NULL, saves to the `data` folder in the working directory.
 #'
 #' @return Datatable relating Period IDs to DATIM codes.
 #'
@@ -173,6 +198,8 @@ get_pe_metadata <- function(s3,
 #' @description
 #' Uses the Organisation unit metadata file to generate a wide datatable of the
 #' organisation unit hierarchy from Level 3 to Level 7.
+#'
+#' @param ou_metadata Dataframe containing organisation unit metadata.
 #'
 #' @return Dataframe containing wide format organisation unit hierarchy from
 #' Level 3 to Level 7.
@@ -279,11 +306,11 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
                        values_fn = list(value = list)) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      EMR_TX = any(as.logical(unlist(`EMR - Care and Treatment`))),
-      EMR_HTS = any(as.logical(unlist(`EMR - HIV Testing Services`))),
-      EMR_ANC = any(as.logical(unlist(`EMR - ANC and/or Maternity`))),
-      EMR_EID = any(as.logical(unlist(`EMR - EID`))),
-      EMR_TB = any(as.logical(unlist(`EMR - HIV/TB`))),
+      EMR_TX = any(as.logical(unlist(EMR_TX))),
+      EMR_HTS = any(as.logical(unlist(EMR_HTS))),
+      EMR_ANC = any(as.logical(unlist(EMR_ANC))),
+      EMR_EID = any(as.logical(unlist(EMR_EID))),
+      EMR_TB = any(as.logical(unlist(EMR_TB))),
       TX_PVLS_N = sum(as.numeric(unlist(TX_PVLS_N))),
       TX_PVLS_D = sum(as.numeric(unlist(TX_PVLS_D)))
     ) %>%

@@ -1,4 +1,4 @@
-## code to prepare `daa_pe_metadata` dataset goes here
+## code to prepare `pe_metadata` dataset goes here
 
 # Uncomment this section if you are only running this script
 # s3 <- paws::s3()

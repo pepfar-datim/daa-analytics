@@ -1,5 +1,6 @@
 ^renv$
 ^renv\.lock$
 ^myfirstpackage\.Rproj$
+^daa-analytics\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
