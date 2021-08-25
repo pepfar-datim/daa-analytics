@@ -9,7 +9,7 @@
 #' \describe{
 #'   \item{name}{The name of the facility.}
 #'   \item{facilityuid}{The UID used by PEPFAR to identify the facility.}
-#'   \item{MOH ID}{The UID used by the MOH to identify the facility.}
+#'   \item{moh_id}{The UID used by the MOH to identify the facility.}
 #'   \item{longitude}{Longitude of the facility as recorded in DATIM.}
 #'   \item{latitude}{Latitude of the facility as recorded in DATIM.}
 #' }
@@ -81,11 +81,11 @@
 #'
 #' @format A data frame with 23 rows and 4 variables:
 #' \describe{
-#'   \item{countryName}{The name of the country.}
-#'   \item{countryUID}{The alphanumeric UID associated with the country in
+#'   \item{country_name}{The name of the country.}
+#'   \item{country_uid}{The alphanumeric UID associated with the country in
 #'   DATIM.}
-#'   \item{countryCode}{The three letter acronym for the country.}
-#'   \item{facilityLevel}{The organisation unit hierarchy level at which
+#'   \item{country_code}{The three letter acronym for the country.}
+#'   \item{facility_level}{The organisation unit hierarchy level at which
 #'   facilities are located for the particular country.}
 #' }
 #' @source \url{http://www.datim.org/}
@@ -112,13 +112,13 @@
 #' @format A data frame with 5 variables:
 #' \describe{
 #'   \item{namelevel3}{The name of the country participating in the DAA.}
-#'   \item{Period}{The reporting period for the DAA.}
-#'   \item{Indicator}{The reporting indicator for the DAA.}
-#'   \item{hasDisagMapping}{The disaggregate mapping provided by the country
+#'   \item{period}{The reporting period for the DAA.}
+#'   \item{indicator}{The reporting indicator for the DAA.}
+#'   \item{has_disag_mapping}{The disaggregate mapping provided by the country
 #'   for the indicator in the given reporting period. Values can either be
 #'   'Fine', 'Coarse', or 'Total'. Countries that did not provide a mapping are
 #'   marked as 'No'.}
-#'   \item{hasResultsData}{Indicates whether a country reported data for the
+#'   \item{has_results_data}{Indicates whether a country reported data for the
 #'   associated indicator during the most recent reporting period. Values are
 #'   recorded as 'Yes' or 'No'. Periods prior to the most recent reporting
 #'   period are recorded as 'NA'.}
@@ -162,26 +162,26 @@
 #' \describe{
 #'   \item{organisationunitid}{The numeric ID used to identify the organisation
 #'   unit in DATIM.}
-#'   \item{Period}{The fiscal year reporting period.}
-#'   \item{EMR - HIV Testing Services}{Boolean value indicating whether a
+#'   \item{period}{The fiscal year reporting period.}
+#'   \item{emr_hts}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with HIV
 #'   Testing Services.}
-#'   \item{EMR - Care and Treatment}{Boolean value indicating whether a
+#'   \item{emr_tx}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with HIV
 #'   care and treatment services.}
-#'   \item{EMR - ANC and/or Maternity}{Boolean value indicating whether a
+#'   \item{emr_anc}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with HIV
 #'   antenatal care and/or maternity services.}
-#'   \item{EMR - EID}{Boolean value indicating whether a
+#'   \item{emr_eid}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with early
 #'   infant diagnosis services.}
-#'   \item{EMR - HIV/TB}{Boolean value indicating whether a
+#'   \item{emr_tb}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with
 #'   Tuberculosis treatment and testing services for HIV patients.}
-#'   \item{TX_PVLS_N}{The numerator for TX_PVLS, representing the number of
+#'   \item{tx_pvls_n}{The numerator for TX_PVLS, representing the number of
 #'   patients with suppressed viral load test results documented in a given
 #'   period.}
-#'   \item{TX_PVLS_D}{The denominator for TX_PVLS, representing the number of
+#'   \item{tx_pvls_d}{The denominator for TX_PVLS, representing the number of
 #'   patients with a viral load test result documented in a given period.}
 #' }
 #' @source \url{http://www.datim.org/}
@@ -196,30 +196,30 @@
 #' \describe{
 #'   \item{facilityuid}{The alphanumeric UID used to identify the facility in
 #'   DATIM.}
-#'   \item{Indicator}{The reporting indicator for the DAA.}
-#'   \item{Period}{The fiscal year reporting period.}
-#'   \item{MOH}{The results provided for the given indicator by the MOH during
+#'   \item{indicator}{The reporting indicator for the DAA.}
+#'   \item{period}{The fiscal year reporting period.}
+#'   \item{moh}{The results provided for the given indicator by the MOH during
 #'   the associated reporting period.}
-#'   \item{PEPFAR}{The results provided for the given indicator by PEPFAR during
+#'   \item{pepfar}{The results provided for the given indicator by PEPFAR during
 #'   the associated reporting period.}
-#'   \item{Reported by}{A text value indicating whether results were reported
+#'   \item{reported_by}{A text value indicating whether results were reported
 #'   by just the MOH, just PEPFAR, or both entities at the given site for the
 #'   given indicator during the reporting period.}
-#'   \item{Count of matched sites}{The number of facilities in a country for the
+#'   \item{count_of_matched_sites}{The number of facilities in a country for the
 #'   particular indicator and reporting period for which results were reported
 #'   by both the MOH and PEPFAR.}
-#'   \item{PEFPAR sum at matched sites}{The total results reported by PEPFAR
+#'   \item{pepfar_sum_at_matched_sites}{The total results reported by PEPFAR
 #'   at all facilities in a country for the particular indicator and reporting
 #'   period.}
-#'   \item{Weighting}{The PEPFAR results at the particular facility divided by
+#'   \item{weighting}{The PEPFAR results at the particular facility divided by
 #'   the total results reported by PEPFAR at all facilities for the given
 #'   indicator and reporting period. This figure provides the weighting value
 #'   for concordance and discordance metrics.}
-#'   \item{Weighted discordance}{The weighted discordance between the PEPFAR
+#'   \item{weighted_discordance}{The weighted discordance between the PEPFAR
 #'   and MOH reported results at the particular facility. Can be summed across
 #'   facilities grouped by country, indicator, and period to calculate the
 #'   weighted average discordance.}
-#'   \item{Weighted concordance}{The weighted concordance between the PEPFAR
+#'   \item{weighted_concordance}{The weighted concordance between the PEPFAR
 #'   and MOH reported results at the particular facility. Can be summed across
 #'   facilities grouped by country, indicator, and period to calculate the
 #'   weighted average concordance.}
@@ -236,30 +236,30 @@
 #' \describe{
 #'   \item{facilityuid}{The alphanumeric UID used to identify the facility in
 #'   DATIM.}
-#'   \item{Indicator}{The reporting indicator for the DAA.}
-#'   \item{Period}{The fiscal year reporting period.}
-#'   \item{MOH}{The results provided for the given indicator by the MOH during
+#'   \item{indicator}{The reporting indicator for the DAA.}
+#'   \item{period}{The fiscal year reporting period.}
+#'   \item{moh}{The results provided for the given indicator by the MOH during
 #'   the associated reporting period.}
-#'   \item{PEPFAR}{The results provided for the given indicator by PEPFAR during
+#'   \item{pepfar}{The results provided for the given indicator by PEPFAR during
 #'   the associated reporting period.}
-#'   \item{Reported by}{A text value indicating whether results were reported
+#'   \item{reported_by}{A text value indicating whether results were reported
 #'   by just the MOH, just PEPFAR, or both entities at the given site for the
 #'   given indicator during the reporting period.}
-#'   \item{Count of matched sites}{The number of facilities in a country for the
+#'   \item{count_of_matched_sites}{The number of facilities in a country for the
 #'   particular indicator and reporting period for which results were reported
 #'   by both the MOH and PEPFAR.}
-#'   \item{PEFPAR sum at matched sites}{The total results reported by PEPFAR
+#'   \item{pepfar_sum_at_matched_sites}{The total results reported by PEPFAR
 #'   at all facilities in a country for the particular indicator and reporting
 #'   period.}
-#'   \item{Weighting}{The PEPFAR results at the particular facility divided by
+#'   \item{weighting}{The PEPFAR results at the particular facility divided by
 #'   the total results reported by PEPFAR at all facilities for the given
 #'   indicator and reporting period. This figure provides the weighting value
 #'   for concordance and discordance metrics.}
-#'   \item{Weighted discordance}{The weighted discordance between the PEPFAR
+#'   \item{weighted_discordance}{The weighted discordance between the PEPFAR
 #'   and MOH reported results at the particular facility. Can be summed across
 #'   facilities grouped by country, indicator, and period to calculate the
 #'   weighted average discordance.}
-#'   \item{Weighted concordance}{The weighted concordance between the PEPFAR
+#'   \item{weighted_concordance}{The weighted concordance between the PEPFAR
 #'   and MOH reported results at the particular facility. Can be summed across
 #'   facilities grouped by country, indicator, and period to calculate the
 #'   weighted average concordance.}
@@ -276,27 +276,27 @@
 #'   \item{namelevel7}{For countries with their facility level at hierarchy
 #'   level 7, this will represent the name of the facility. For countries with
 #'   their facility level at hierarchy level 6, this value will be 'NA'.}
-#'   \item{EMR - HIV Testing Services}{Boolean value indicating whether a
+#'   \item{emr_hts}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with HIV
 #'   Testing Services.}
-#'   \item{EMR - Care and Treatment}{Boolean value indicating whether a
+#'   \item{emr_tx}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with HIV
 #'   care and treatment services.}
-#'   \item{EMR - ANC and/or Maternity}{Boolean value indicating whether a
+#'   \item{emr_anc}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with HIV
 #'   antenatal care and/or maternity services.}
-#'   \item{EMR - EID}{Boolean value indicating whether a
+#'   \item{emr_eid}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with early
 #'   infant diagnosis services.}
-#'   \item{EMR - HIV/TB}{Boolean value indicating whether a
+#'   \item{emr_tb}{Boolean value indicating whether a
 #'   facility has an electronic medical records system associated with
 #'   Tuberculosis treatment and testing services for HIV patients.}
-#'   \item{TX_PVLS_N}{The numerator for TX_PVLS, representing the number of
+#'   \item{tx_pvls_n}{The numerator for TX_PVLS, representing the number of
 #'   patients with suppressed viral load test results documented in a given
 #'   period.}
-#'   \item{TX_PVLS_D}{The denominator for TX_PVLS, representing the number of
+#'   \item{tx_pvls_d}{The denominator for TX_PVLS, representing the number of
 #'   patients with a viral load test result documented in a given period.}
-#'   \item{MOH ID}{The UID used by the MOH to identify the facility.}
+#'   \item{moh_id}{The UID used by the MOH to identify the facility.}
 #'   \item{longitude}{Longitude of the facility as recorded in DATIM.}
 #'   \item{latitude}{Latitude of the facility as recorded in DATIM.}
 #' }

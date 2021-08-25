@@ -8,13 +8,13 @@
 A data frame with 5 variables:
 \describe{
 \item{namelevel3}{The name of the country participating in the DAA.}
-\item{Period}{The reporting period for the DAA.}
-\item{Indicator}{The reporting indicator for the DAA.}
-\item{hasDisagMapping}{The disaggregate mapping provided by the country
+\item{period}{The reporting period for the DAA.}
+\item{indicator}{The reporting indicator for the DAA.}
+\item{has_disag_mapping}{The disaggregate mapping provided by the country
 for the indicator in the given reporting period. Values can either be
 'Fine', 'Coarse', or 'Total'. Countries that did not provide a mapping are
 marked as 'No'.}
-\item{hasResultsData}{Indicates whether a country reported data for the
+\item{has_results_data}{Indicates whether a country reported data for the
 associated indicator during the most recent reporting period. Values are
 recorded as 'Yes' or 'No'. Periods prior to the most recent reporting
 period are recorded as 'NA'.}

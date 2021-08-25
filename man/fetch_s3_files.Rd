@@ -8,7 +8,7 @@ fetch_s3_files(
   s3,
   aws_s3_bucket,
   key,
-  folder = "data-raw",
+  folder = "data",
   file_name,
   last_update = NULL
 )

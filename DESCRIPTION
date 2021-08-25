@@ -1,6 +1,6 @@
 Package: daa.analytics
 Title: Utilities for Compiling and Analyzing PEPFAR Data Alignment Activity Data
-Version: 0.0.8
+Version: 0.1.0
 Date: 2021-06-17
 Authors@R: 
     person(given = "Chris",
@@ -22,7 +22,8 @@ Imports:
     magrittr (>= 1.5),
     paws (>= 0.1.11),
     datimutils,
-    R.utils
+    R.utils,
+    rlang
 Suggests:
     devtools (>= 2.4.2),
     testthat (>= 3.0.2),

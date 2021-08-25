@@ -7,11 +7,11 @@
 \format{
 A data frame with 23 rows and 4 variables:
 \describe{
-\item{countryName}{The name of the country.}
-\item{countryUID}{The alphanumeric UID associated with the country in
+\item{country_name}{The name of the country.}
+\item{country_uid}{The alphanumeric UID associated with the country in
 DATIM.}
-\item{countryCode}{The three letter acronym for the country.}
-\item{facilityLevel}{The organisation unit hierarchy level at which
+\item{country_code}{The three letter acronym for the country.}
+\item{facility_level}{The organisation unit hierarchy level at which
 facilities are located for the particular country.}
 }
 }

@@ -13,8 +13,8 @@
 #'
 #' @return A single value for the weighted concordance of the site.
 #'
-weighted_concordance <- function(MOH, PEPFAR, Weighting){
-  if(!is.na(Weighting)){
+weighted_concordance <- function(MOH, PEPFAR, Weighting) {
+  if (!is.na(Weighting)) {
     n <- Weighting * (((MOH + PEPFAR) - abs(MOH - PEPFAR)) / (MOH + PEPFAR))
   } else{
     n <- NA
@@ -37,8 +37,8 @@ weighted_concordance <- function(MOH, PEPFAR, Weighting){
 #'
 #' @return A single value for the weighted discordance of the site.
 #'
-weighted_discordance <- function(MOH, PEPFAR, Weighting){
-  if(!is.na(Weighting)){
+weighted_discordance <- function(MOH, PEPFAR, Weighting) {
+  if (!is.na(Weighting)) {
     n <- Weighting * abs(MOH - PEPFAR) / mean(c(MOH, PEPFAR))
   } else{
     n <- NA

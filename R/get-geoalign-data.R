@@ -1,5 +1,6 @@
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Fetch List of Participating Countries from GeoAlign
 #'
 #' @description
@@ -11,7 +12,8 @@
 #' @return A dataframe of DAA country names, UIDs, three-letter acronyms,
 #' and facility level.
 #'
-get_daa_countries <- function(geo_session){
+get_daa_countries <- function(geo_session) {
+  # TODO figure out how to handle 2021 datasets
   end_point <- "dataStore/ou_levels/orgUnitLevels"
 
   # Fetches data from the server
@@ -24,21 +26,24 @@ get_daa_countries <- function(geo_session){
 
   df %<>%
     dplyr::bind_rows(.id = "Country") %>%
-    dplyr::rename("countryName" = "Country", "countryUID" = "uid",
-                  "countryCode" = "code", "facilityLevel" = "facility") %>%
-    dplyr::filter(countryName != "demo_country")
+    dplyr::rename(country_name = .data$Country,
+                  country_uid = .data$uid,
+                  country_code = .data$code,
+                  facility_level = .data$facility) %>%
+    dplyr::filter(.data$country_name != "demo_country")
 
   return(df)
 }
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Fetch Indicator Mapping and Data Availability from GeoAlign
 #'
 #' @description
-#' Extracts all data for all countries and activity years from GeoAlign regarding
-#' whether countries have provided indicator mappings, the disaggregation
-#' level, and whether data was imported for that indicator.
+#' Extracts all data for all countries and activity years from GeoAlign
+#' regarding whether countries have provided indicator mappings, the
+#' disaggregation level, and whether data was imported for that indicator.
 #'
 #' @param geo_session DHIS2 Session id for the GeoAlign session.
 #'
@@ -59,11 +64,11 @@ get_data_availability <- function(geo_session = geo_session) {
 
   # Loops through all available years to pull data availability from GeoAlign
   df %<>%
-    lapply(.,
-           function(x) {
+      lapply(function(x) {
              tryCatch({
-               df <- paste0(end_point, "/", x) %>%
-                 list(end_point = ., geo_session = geo_session) %>%
+               this_end_point <- paste0(end_point, "/", x)
+               df <- list(end_point = this_end_point,
+                          d2_session = geo_session) %>%
                  purrr::exec(datimutils::getMetadata, !!!.) %>%
                  dplyr::mutate(period = x)
                return(df)
@@ -71,33 +76,36 @@ get_data_availability <- function(geo_session = geo_session) {
                return(NA)
              })
            }) %>%
-    .[which(!is.na(.))] %>%
-    dplyr::bind_rows(.) %>%
-    tidyr::pivot_longer(-c(period, CountryName, CountryCode, generated),
+    remove_missing_dfs() %>%
+    dplyr::bind_rows() %>%
+    tidyr::pivot_longer(-c(.data$period, .data$CountryName,
+                           .data$CountryCode, .data$generated),
                         names_sep = "_(?=[^_]*$)",
                         names_to = c("indicator", ".value")) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(indicator =
-                    ifelse(indicator == "TB_PREV" && as.numeric(period) < 2020,
-                           "TB_PREV_LEGACY", indicator),
-                  period = as.numeric(period),
-                  hasDisagMapping = ifelse(hasDisagMapping %in%
-                                             c("No", "NA", NA),
-                                           "None",
-                                           hasDisagMapping)) %>%
-    dplyr::mutate(hasResultsData =
-                    ifelse(period == max(period),
-                           hasResultsData,
+                    ifelse(.data$indicator == "TB_PREV" &&
+                             as.numeric(.data$period) < 2020,
+                           "TB_PREV_LEGACY", .data$indicator),
+                  period = as.numeric(.data$period),
+                  has_disag_mapping = ifelse(.data$hasDisagMapping %in%
+                                               c("No", "NA", NA),
+                                             "None",
+                                             .data$hasDisagMapping)) %>%
+    dplyr::mutate(has_results_data =
+                    ifelse(.data$period == max(.data$period),
+                           .data$hasResultsData,
                            NA_character_)) %>%
     dplyr::ungroup() %>%
-    dplyr::select(namelevel3 = CountryName, Period = period,
-                  Indicator = indicator, hasDisagMapping, hasResultsData)
+    dplyr::select(namelevel3 = .data$CountryName, .data$period, .data$indicator,
+                  .data$has_disag_mapping, .data$has_results_data)
 
   return(df)
 }
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Fetch Import Timestamps from GeoAlign
 #'
 #' @description
@@ -110,7 +118,7 @@ get_data_availability <- function(geo_session = geo_session) {
 #' @return A dataframe of country names with columns for each DAA mapping and
 #' import step with timestamp data for the completion of each step.
 #'
-get_upload_timestamps <- function(geo_session){
+get_upload_timestamps <- function(geo_session) {
 
   end_point <- "dataStore/MOH_imports_status"
 
@@ -124,15 +132,32 @@ get_upload_timestamps <- function(geo_session){
 
   # Loops through all available years to pull data availability from GeoAlign
   df %<>%
-    lapply(.,
-           function(x) {
+    lapply(function(x) {
              paste0(end_point, "/", x) %>%
-               list(end_point = ., geo_session = geo_session) %>%
-               purrr::exec(datimutils::getMetadata, !!!.) %>%
+               list(end_point = .data, geo_session = geo_session) %>%
+               purrr::exec(datimutils::getMetadata, !!!.data) %>%
                dplyr::mutate(period = x)
            }) %>%
-    dplyr::bind_rows(.) %>%
-    dplyr::mutate(across(ends_with("Date"), lubridate::ymd_hms))
+    dplyr::bind_rows() %>%
+    dplyr::mutate(dplyr::across(dplyr::ends_with("Date"), lubridate::ymd_hms))
 
+  # TODO rename all columns to be in snake case before returning
   return(df)
+}
+
+# Helper functions ------------------------------------------
+#' @title Remove missing data
+#'
+#' @description
+#' Takes in a list of dataframes and removes any that are missing.
+#'
+#' @param my_list A list of dataframes.
+#'
+#' @return A list of dataframes with missing dataframes removed.
+#'
+#' @noRd
+#'
+remove_missing_dfs <- function(my_list) {
+  new_list <- my_list[which(!is.na(my_list))]
+  return(new_list)
 }

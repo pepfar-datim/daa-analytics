@@ -1,5 +1,6 @@
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Get DAA Indicator Data
 #'
 #' @description
@@ -15,13 +16,13 @@ get_daa_data <- function(ou_uid, d2_session) {
 
   indicator_uids <- daa.analytics::daa_indicators$uid
 
-  period_list <- paste(paste0(2017:(daa.analytics::currentFY()), "Oct"),
-                       collapse = ";")
+  period_list <-
+    paste(paste0(2017:(daa.analytics::current_fiscal_year()), "Oct"),
+          collapse = ";")
 
   # TODO Make this into a tryCatch to future proof against large OUs timing out
   # Breaks the query into multiple parts for Nigeria to prevent timeout
-  df <- tryCatch(
-    {
+  df <- tryCatch({
       datimutils::getAnalytics(
         paste0("dimension=SH885jaRe0o:mXjFJEexCHJ;t6dWOH7W5Ml&",
                "displayProperty=SHORTNAME&outputIdScheme=UID"),
@@ -32,7 +33,7 @@ get_daa_data <- function(ou_uid, d2_session) {
       )
     },
     # If error is thrown, then try again splitting query into multiple parts.
-    error = function(e){
+    error = function(e) {
       # TODO log this in a log file.
       # Prints an error message.
       print(
@@ -42,7 +43,7 @@ get_daa_data <- function(ou_uid, d2_session) {
       # Pulls data for each indicator as an individual query to shrink size
       indicator_uids %>%
         # Makes queries for each group of indicators
-        lapply(., function(x){
+        lapply(function(x) {
           datimutils::getAnalytics(
             paste0("dimension=SH885jaRe0o:mXjFJEexCHJ;t6dWOH7W5Ml&",
                    "displayProperty=SHORTNAME&outputIdScheme=UID"),
@@ -53,7 +54,7 @@ get_daa_data <- function(ou_uid, d2_session) {
           )
         }) %>%
         # Binds all of the component dataframes together
-        dplyr::bind_rows(.)
+        dplyr::bind_rows()
     }
   )
   # Returns null if API returns nothing
@@ -78,7 +79,7 @@ get_daa_data <- function(ou_uid, d2_session) {
 #' @return Dataframe of DAA indicator data for both PEPFAR and the MOH as well
 #' as both discordance and concordance metrics.
 #'
-adorn_daa_data <- function(df){
+adorn_daa_data <- function(df) {
   # Returns null if delivered an empty dataset
   if (is.null(df)) {
     return(NULL)
@@ -86,71 +87,79 @@ adorn_daa_data <- function(df){
   # Cleans data and prepares it for export
   df %<>%
     # Pivots MOH and PEPFAR data out into separate columns
-    tidyr::pivot_wider(names_from = `Funding Mechanism`,
-                       values_from = `Value`) %>%
+    tidyr::pivot_wider(names_from = .data$`Funding Mechanism`,
+                       values_from = .data$`Value`) %>%
 
     # Cleans Period data from the form `2018Oct` to `2019`
-    dplyr::mutate(Period = as.numeric(stringr::str_sub(`Period`, 0, 4)) + 1) %>%
+    dplyr::mutate(period =
+                    as.numeric(stringr::str_sub(.data$`Period`, 0, 4)) + 1) %>%
 
     # Renames MOH and PEPFAR columns and converts them to numeric data types
-    dplyr::mutate("MOH" = as.numeric(`mXjFJEexCHJ`)) %>%
-    dplyr::mutate("PEPFAR" = as.numeric(`t6dWOH7W5Ml`)) %>%
+    dplyr::mutate(moh = as.numeric(.data$`mXjFJEexCHJ`)) %>%
+    dplyr::mutate(pepfar = as.numeric(.data$`t6dWOH7W5Ml`)) %>%
 
     # Filtering out HTS_TST data from indicators V6hxDYUZFBq and BRalYZhcHpi
     # to only FY2020 to prevent duplication
-    dplyr::filter((Data %in% c("V6hxDYUZFBq", "BRalYZhcHpi"))
-                  & Period >= 2020 |
-                    !(Data %in% c("V6hxDYUZFBq", "BRalYZhcHpi"))) %>%
+    dplyr::filter((.data$Data %in% c("V6hxDYUZFBq", "BRalYZhcHpi"))
+                  & .data$period >= 2020 |
+                    !(.data$Data %in% c("V6hxDYUZFBq", "BRalYZhcHpi"))) %>%
 
     # TODO Filter this data out before the data call or figure
     # out how to present it to the user effectively
     # Filters out indicator LZbeWYZEkYL to prevent duplication of TB_PREV data
-    dplyr::filter(Data != "LZbeWYZEkYL") %>%
+    dplyr::filter(.data$Data != "LZbeWYZEkYL") %>%
 
     # Generates human-readable indicator names
-    dplyr::mutate(Data = get_indicator_name(`Data`)) %>%
+    dplyr::mutate(Data = get_indicator_name(.data$`Data`)) %>%
 
     # Summarizes MOH and PEPFAR data up from coarse and fine disaggregates
-    dplyr::group_by(`Data`, `Organisation unit`, `Period`) %>%
-    dplyr::summarise(MOH = sum(MOH, na.rm = any(!is.na(MOH))),
-                     PEPFAR = sum(PEPFAR, na.rm = any(!is.na(PEPFAR)))) %>%
+    dplyr::group_by(.data$`Data`, .data$`Organisation unit`, .data$`period`) %>%
+    dplyr::summarise(moh =
+                       sum(.data$moh, na.rm = any(!is.na(.data$moh))),
+                     pepfar =
+                       sum(.data$pepfar, na.rm = any(!is.na(.data$pepfar)))) %>%
     dplyr::ungroup() %>%
 
     # Creates summary data about reporting institutions and figures
-    dplyr::mutate("Reported by" =
-                    ifelse(!is.na(MOH),
-                           ifelse(!is.na(PEPFAR), "Both", "MOH"),
-                           ifelse(!is.na(PEPFAR), "PEPFAR", "Neither"))) %>%
+    dplyr::mutate(reported_by =
+                    ifelse(!is.na(.data$moh),
+                           ifelse(!is.na(.data$pepfar), "Both", "MOH"),
+                           ifelse(!is.na(.data$pepfar),
+                                  "PEPFAR", "Neither"))) %>%
 
     # Groups rows by indicator and calculates indicator-specific summaries
-    dplyr::group_by(Data, Period) %>%
-    dplyr::mutate("Count of matched sites" =
-                    sum(ifelse(`Reported by` == "Both", 1, 0))) %>%
-    dplyr::mutate("PEPFAR sum at matched sites" =
-                    sum(ifelse(`Reported by` == "Both", PEPFAR, 0))) %>%
+    dplyr::group_by(.data$Data, .data$period) %>%
+    dplyr::mutate(count_of_matched_sites =
+                    sum(ifelse(.data$reported_by == "Both", 1, 0))) %>%
+    dplyr::mutate(pepfar_sum_at_matched_sites =
+                    sum(ifelse(.data$reported_by == "Both",
+                               .data$pepfar, 0))) %>%
     dplyr::ungroup() %>%
 
     # Calculates weighting variables
-    dplyr::mutate("Weighting" =
-                    ifelse(`Reported by` == "Both",
-                           PEPFAR / `PEPFAR sum at matched sites`,
+    dplyr::mutate(weighting =
+                    ifelse(.data$reported_by == "Both",
+                           .data$pepfar / .data$pepfar_sum_at_matched_sites,
                            NA)) %>%
     dplyr::rowwise() %>%
-    dplyr::mutate("Weighted discordance" =
-                    daa.analytics::weighted_discordance(MOH,
-                                                        PEPFAR,
-                                                        Weighting)) %>%
-    dplyr::mutate("Weighted concordance" =
-                    daa.analytics::weighted_concordance(MOH,
-                                                        PEPFAR,
-                                                        Weighting)) %>%
+    dplyr::mutate(weighted_discordance =
+                    daa.analytics::weighted_discordance(.data$moh,
+                                                        .data$pepfar,
+                                                        .data$weighting)) %>%
+    dplyr::mutate(weighted_concordance =
+                    daa.analytics::weighted_concordance(.data$moh,
+                                                        .data$pepfar,
+                                                        .data$weighting)) %>%
     dplyr::ungroup() %>%
 
     # Reorganizes table for export
-    dplyr::select(facilityuid = `Organisation unit`, Indicator = `Data`, Period,
-                  MOH, PEPFAR, `Reported by`, `Count of matched sites`,
-                  `PEPFAR sum at matched sites`, `Weighting`,
-                  `Weighted discordance`, `Weighted concordance`)
+    dplyr::select(facilityuid = .data$`Organisation unit`,
+                  indicator = .data$`Data`,
+                  .data$period,
+                  .data$moh, .data$pepfar, .data$reported_by,
+                  .data$count_of_matched_sites,
+                  .data$pepfar_sum_at_matched_sites, .data$weighting,
+                  .data$weighted_discordance, .data$weighted_concordance)
   return(df)
 }
 
@@ -166,7 +175,7 @@ adorn_daa_data <- function(df){
 #'
 #' @noRd
 #'
-get_indicator_name <- function(uid){
+get_indicator_name <- function(uid) {
   get_name <- daa.analytics::daa_indicators$indicator
   names(get_name) <- daa.analytics::daa_indicators$uid
   indicator_name <- unname(get_name[uid])

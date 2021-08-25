@@ -9,7 +9,7 @@ A data frame with 5 variables:
 \describe{
 \item{name}{The name of the facility.}
 \item{facilityuid}{The UID used by PEPFAR to identify the facility.}
-\item{MOH ID}{The UID used by the MOH to identify the facility.}
+\item{moh_id}{The UID used by the MOH to identify the facility.}
 \item{longitude}{Longitude of the facility as recorded in DATIM.}
 \item{latitude}{Latitude of the facility as recorded in DATIM.}
 }

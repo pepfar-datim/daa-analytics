@@ -9,26 +9,26 @@ A data frame with 9 variables:
 \describe{
 \item{organisationunitid}{The numeric ID used to identify the organisation
 unit in DATIM.}
-\item{Period}{The fiscal year reporting period.}
-\item{EMR - HIV Testing Services}{Boolean value indicating whether a
+\item{period}{The fiscal year reporting period.}
+\item{emr_hts}{Boolean value indicating whether a
 facility has an electronic medical records system associated with HIV
 Testing Services.}
-\item{EMR - Care and Treatment}{Boolean value indicating whether a
+\item{emr_tx}{Boolean value indicating whether a
 facility has an electronic medical records system associated with HIV
 care and treatment services.}
-\item{EMR - ANC and/or Maternity}{Boolean value indicating whether a
+\item{emr_anc}{Boolean value indicating whether a
 facility has an electronic medical records system associated with HIV
 antenatal care and/or maternity services.}
-\item{EMR - EID}{Boolean value indicating whether a
+\item{emr_eid}{Boolean value indicating whether a
 facility has an electronic medical records system associated with early
 infant diagnosis services.}
-\item{EMR - HIV/TB}{Boolean value indicating whether a
+\item{emr_tb}{Boolean value indicating whether a
 facility has an electronic medical records system associated with
 Tuberculosis treatment and testing services for HIV patients.}
-\item{TX_PVLS_N}{The numerator for TX_PVLS, representing the number of
+\item{tx_pvls_n}{The numerator for TX_PVLS, representing the number of
 patients with suppressed viral load test results documented in a given
 period.}
-\item{TX_PVLS_D}{The denominator for TX_PVLS, representing the number of
+\item{tx_pvls_d}{The denominator for TX_PVLS, representing the number of
 patients with a viral load test result documented in a given period.}
 }
 }

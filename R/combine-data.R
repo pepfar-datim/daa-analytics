@@ -1,5 +1,6 @@
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Combine DAA datasets together.
 #'
 #' @description
@@ -22,20 +23,21 @@ combine_data <- function(daa_indicator_data,
   # duplication of facilities with multiple organisationunitid numbers
   pvls_emr %<>%
     dplyr::left_join(ou_hierarchy %>%
-                       dplyr::select(organisationunitid, facilityuid),
+                       dplyr::select(.data$organisationunitid,
+                                     .data$facilityuid),
                      by = c("organisationunitid"),
                      keep = FALSE)
 
   ou_hierarchy %<>%
-    dplyr::select(-organisationunitid) %>%
+    dplyr::select(-.data$organisationunitid) %>%
     unique()
 
   df <- daa_indicator_data %>%
     dplyr::left_join(ou_hierarchy, by = c("facilityuid")) %>%
-    dplyr::left_join(pvls_emr, by = c("facilityuid", "Period")) %>%
+    dplyr::left_join(pvls_emr, by = c("facilityuid", "period")) %>%
     dplyr::left_join(attribute_data %>%
-                       dplyr::filter(!is.na(`MOH ID`)),
+                       dplyr::filter(!is.na(.data$moh_id)),
                      by = c("facilityuid")) %>%
-    dplyr::select(-name, -organisationunitid)
+    dplyr::select(-.data$name, -.data$organisationunitid)
   return(df)
 }

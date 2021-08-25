@@ -5,8 +5,9 @@
 # datimutils::loginToDATIM("~/.secrets/datim.json")
 # d2_session <- d2_default_session
 
-attribute_data <- daa.analytics::daa_countries$countryUID %>%
-  lapply(., function(x){
+attribute_data <- daa.analytics::daa_countries$country_uid %>%
+  lapply(function(x){
+    print(paste0("Fetching attribute data for ", x))
     daa.analytics::get_attribute_table(x, d2_session = d2_session)
   }) %>%
   dplyr::bind_rows(.)

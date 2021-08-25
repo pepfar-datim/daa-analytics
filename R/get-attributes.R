@@ -1,5 +1,6 @@
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Fetch MOH ID and attributes from DATIM
 #'
 #' @description
@@ -28,25 +29,25 @@ get_attribute_table <- function(ou_uid, d2_session = d2_session) {
   }
 
   df %<>%
-    data.frame(., stringsAsFactors = FALSE) %>%
+    data.frame(stringsAsFactors = FALSE) %>%
     # Unnests and filters the data from the site attributes column
-    tidyr::unnest(., cols = "attributeValues") %>%
-    dplyr::filter(`attribute.name` == "MOH ID") %>%
+    tidyr::unnest(cols = "attributeValues") %>%
+    dplyr::filter(.data$`attribute.name` == "MOH ID") %>%
 
     # Cleans the geometry data
     dplyr::mutate(`geometry.coordinates` =
-                    ifelse(`geometry.type` == "Point",
-                           as.character(`geometry.coordinates`) %>%
+                    ifelse(.data$`geometry.type` == "Point",
+                           as.character(.data$`geometry.coordinates`) %>%
                              stringr::str_extract("(?<=\\()(.*?)(?=\\))"),
                            NA)) %>%
-    tidyr::separate(.,
-                    col = `geometry.coordinates`,
+    tidyr::separate(col = .data$`geometry.coordinates`,
                     into = c("longitude", "latitude"),
                     sep = ",",
                     convert = TRUE) %>%
 
     # Selects only the correct columns to be used
-    dplyr::select(name, facilityuid = id, `MOH ID` = value, longitude, latitude)
+    dplyr::select(.data$name, facilityuid = .data$id, moh_id = .data$value,
+                  .data$longitude, .data$latitude)
 
   return(df)
 }

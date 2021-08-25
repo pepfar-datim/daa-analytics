@@ -19,7 +19,9 @@
 #' @return A dataframe of the data located in the specified S3 sub-bucket.
 #'
 fetch_s3_files <- function(s3, aws_s3_bucket, key,
-                           folder = "data-raw", file_name, last_update = NULL) {
+                           folder = "data", file_name, last_update = NULL) {
+  file_path <- file.path(folder, paste0(file_name, ".csv.gz"))
+  s3_object_body <- NULL
   # TODO remove the need for `folder` and `file_name` arguments
   tryCatch({
     s3_object <-
@@ -28,21 +30,25 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
                     Key = paste0(key, "/data.csv.gz"))
     s3_object_body <- s3_object$Body
 
-    # TODO remove the need to save a temporary file to access data
-    file_name2 <- paste0(folder, "/", file_name, ".csv.gz")
-    if (file.exists(file_name2)) {
-      unlink(file_name2)
+    if (length(s3_object_body) > 0){
+      # TODO remove the need to save a temporary file to access data
+      if (file.exists(file_path)) {
+        unlink(file_path)
+      }
+      writeBin(s3_object_body, con = file_path)
+      data <- data.table::fread(file_path)
+      if (!file.exists(file_path)) {
+        stop("Could not retreive support file.")
+      }
+    } else {
+      # If file was not updated, retrieves the latest data from the data folder
+      file_name2 <- file.path(folder, paste0(file_name, ".csv.gz"))
     }
-    writeBin(s3_object_body, con = file_name2)
-    data <- data.table::fread(file_name2)
-    if(!file.exists(file_name2)) {stop("Could not retreive support file.")}
   },
   error = function(e){
-    # If file was not updated, retrieves the latest data from the data folder
-    file_name2 <- paste0(folder, "/", file_name, ".csv.gz")
-    data <- data.table::fread(file_name2)
-    flog.info(paste0("S3 file for ", file_name,
-                     " was not updated. Used data from ", file_name, ".csv.gz"))
+    # If there is an error, return NULL for the data.
+    data <- NULL
+    warning("S3 returned no data and there is no existing data file.")
   })
 
   return(data)
@@ -50,6 +56,7 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Get Organisation Unit Name from UID.
 #'
 #' @description
@@ -61,9 +68,9 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
 #'
 get_ou_name <- function(ou_uid) {
   ou_name <- daa.analytics::daa_countries %>%
-    dplyr::filter(countryUID == ou_uid) %>%
-    dplyr::select(countryName) %>%
-    toString(.)
+    dplyr::filter(.data$country_uid == ou_uid) %>%
+    dplyr::select(.data$country_name) %>%
+    toString()
 
   # Returns OU name
   return(ou_name)
@@ -74,7 +81,7 @@ get_ou_name <- function(ou_uid) {
 #'
 #' @return Current FY as numeric.
 #'
-currentFY <- function() {
+current_fiscal_year <- function() {
   current_year <- Sys.Date() %>%
     format("%Y") %>%
     as.numeric()
@@ -83,7 +90,7 @@ currentFY <- function() {
     format("%m") %>%
     as.numeric()
 
-  current_FY <- ifelse(current_month > 9, current_year + 1, current_year)
+  curr_fy <- ifelse(current_month > 9, current_year + 1, current_year)
 
-  return(current_FY)
+  return(curr_fy)
 }

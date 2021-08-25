@@ -14,7 +14,7 @@ A dataframe of indicator mapping, disaggregation level, and data
 availability organized by activity year and country.
 }
 \description{
-Extracts all data for all countries and activity years from GeoAlign regarding
-whether countries have provided indicator mappings, the disaggregation
-level, and whether data was imported for that indicator.
+Extracts all data for all countries and activity years from GeoAlign
+regarding whether countries have provided indicator mappings, the
+disaggregation level, and whether data was imported for that indicator.
 }

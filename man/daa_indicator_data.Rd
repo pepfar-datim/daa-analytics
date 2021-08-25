@@ -9,30 +9,30 @@ A data frame with 11 variables:
 \describe{
 \item{facilityuid}{The alphanumeric UID used to identify the facility in
 DATIM.}
-\item{Indicator}{The reporting indicator for the DAA.}
-\item{Period}{The fiscal year reporting period.}
-\item{MOH}{The results provided for the given indicator by the MOH during
+\item{indicator}{The reporting indicator for the DAA.}
+\item{period}{The fiscal year reporting period.}
+\item{moh}{The results provided for the given indicator by the MOH during
 the associated reporting period.}
-\item{PEPFAR}{The results provided for the given indicator by PEPFAR during
+\item{pepfar}{The results provided for the given indicator by PEPFAR during
 the associated reporting period.}
-\item{Reported by}{A text value indicating whether results were reported
+\item{reported_by}{A text value indicating whether results were reported
 by just the MOH, just PEPFAR, or both entities at the given site for the
 given indicator during the reporting period.}
-\item{Count of matched sites}{The number of facilities in a country for the
+\item{count_of_matched_sites}{The number of facilities in a country for the
 particular indicator and reporting period for which results were reported
 by both the MOH and PEPFAR.}
-\item{PEFPAR sum at matched sites}{The total results reported by PEPFAR
+\item{pepfar_sum_at_matched_sites}{The total results reported by PEPFAR
 at all facilities in a country for the particular indicator and reporting
 period.}
-\item{Weighting}{The PEPFAR results at the particular facility divided by
+\item{weighting}{The PEPFAR results at the particular facility divided by
 the total results reported by PEPFAR at all facilities for the given
 indicator and reporting period. This figure provides the weighting value
 for concordance and discordance metrics.}
-\item{Weighted discordance}{The weighted discordance between the PEPFAR
+\item{weighted_discordance}{The weighted discordance between the PEPFAR
 and MOH reported results at the particular facility. Can be summed across
 facilities grouped by country, indicator, and period to calculate the
 weighted average discordance.}
-\item{Weighted concordance}{The weighted concordance between the PEPFAR
+\item{weighted_concordance}{The weighted concordance between the PEPFAR
 and MOH reported results at the particular facility. Can be summed across
 facilities grouped by country, indicator, and period to calculate the
 weighted average concordance.}

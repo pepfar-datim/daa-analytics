@@ -14,14 +14,14 @@
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' NULL, saves to the `data` folder in the working directory.
+#' missing, saves to the `data` folder in the working directory.
 #'
 #' @return Dataframe containing raw PVLS and EMR data.
 #'
 get_pvls_emr_table <- function(s3,
                                aws_s3_bucket,
                                last_update = NULL,
-                               folder = NULL) {
+                               folder = "data") {
 
   pvls_emr <-
     daa.analytics::fetch_s3_files(
@@ -38,6 +38,7 @@ get_pvls_emr_table <- function(s3,
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Fetches Data Element Metadata
 #'
 #' @description
@@ -51,14 +52,14 @@ get_pvls_emr_table <- function(s3,
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' NULL, saves to the `data` folder in the working directory.
+#' missing, saves to the `data` folder in the working directory.
 #'
 #' @return Datatable relating Data Element IDs to DATIM codes.
 #'
 get_de_metadata <- function(s3,
                             aws_s3_bucket,
                             last_update = NULL,
-                            folder = NULL) {
+                            folder = "data") {
 
   de_metadata <-
     daa.analytics::fetch_s3_files(
@@ -69,7 +70,7 @@ get_de_metadata <- function(s3,
       file_name = "de_metadata",
       last_update = last_update
     ) %>%
-    dplyr::select(dataelementid, "dataelementname" = shortname)
+    dplyr::select(.data$dataelementid, "dataelementname" = .data$shortname)
 
   return(de_metadata)
 
@@ -77,6 +78,7 @@ get_de_metadata <- function(s3,
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Fetch Category Option Combo Metadata
 #'
 #' @description
@@ -90,14 +92,14 @@ get_de_metadata <- function(s3,
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' NULL, saves to the `data` folder in the working directory.
+#' missing, saves to the `data` folder in the working directory.
 #'
 #' @return Datatable relating Category Option Combo IDs to DATIM codes.
 #'
 get_coc_metadata <- function(s3,
                              aws_s3_bucket,
                              last_update = NULL,
-                             folder = NULL) {
+                             folder = "data") {
 
   coc_metadata <-
     daa.analytics::fetch_s3_files(
@@ -108,13 +110,15 @@ get_coc_metadata <- function(s3,
       file_name = "coc_metadata",
       last_update = last_update
     ) %>%
-    dplyr::select(categoryoptioncomboid, categoryoptioncomboname = name)
+    dplyr::select(.data$categoryoptioncomboid,
+                  categoryoptioncomboname = .data$name)
 
   return(coc_metadata)
 }
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Fetches Organsation Unit Metadata
 #'
 #' @description
@@ -128,14 +132,14 @@ get_coc_metadata <- function(s3,
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' NULL, saves to the `data` folder in the working directory.
+#' missing, saves to the `data` folder in the working directory.
 #'
 #' @return Datatable relating Organisation Unit IDs to DATIM codes.
 #'
 get_ou_metadata <- function(s3,
                             aws_s3_bucket,
                             last_update = NULL,
-                            folder = NULL) {
+                            folder = "data") {
 
   ou_metadata <-
     daa.analytics::fetch_s3_files(
@@ -146,7 +150,8 @@ get_ou_metadata <- function(s3,
       file_name = "ou_metadata",
       last_update = last_update
     ) %>%
-    dplyr::select(organisationunitid, path, name = shortname, uid)
+    dplyr::select(.data$organisationunitid, .data$path,
+                  name = .data$shortname, .data$uid)
 
   return(ou_metadata)
 
@@ -154,6 +159,7 @@ get_ou_metadata <- function(s3,
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Fetches Period Metadata
 #'
 #' @description
@@ -167,14 +173,14 @@ get_ou_metadata <- function(s3,
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' NULL, saves to the `data` folder in the working directory.
+#' missing, saves to the `data` folder in the working directory.
 #'
 #' @return Datatable relating Period IDs to DATIM codes.
 #'
 get_pe_metadata <- function(s3,
                             aws_s3_bucket,
                             last_update = NULL,
-                            folder = NULL) {
+                            folder = "data") {
 
   pe_metadata <-
     daa.analytics::fetch_s3_files(
@@ -185,7 +191,7 @@ get_pe_metadata <- function(s3,
       file_name = "pe_metadata",
       last_update = last_update
     ) %>%
-    dplyr::select(periodid, iso)
+    dplyr::select(.data$periodid, .data$iso)
 
   return(pe_metadata)
 
@@ -193,6 +199,7 @@ get_pe_metadata <- function(s3,
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Generates Organisation Unit Hierarchy
 #'
 #' @description
@@ -206,30 +213,33 @@ get_pe_metadata <- function(s3,
 #'
 create_hierarchy <- function(ou_metadata) {
 
-  ou_uid_names <- ou_metadata %>% dplyr::select(uid, name)
+  ou_uid_names <- ou_metadata %>% dplyr::select(.data$uid, .data$name)
 
   # Cleans and creates OU Hierarchy from levels 3 to 7 with names
   ou_hierarchy <- ou_metadata %>%
-    dplyr::select(organisationunitid, path) %>%
-    tidyr::separate(col = path,
+    dplyr::select(.data$organisationunitid, .data$path) %>%
+    tidyr::separate(col = .data$path,
                     into = c(rep(NA, 3), paste0("namelevel", 3:7, "uid"),
                              rep(NA, 2)), # Drops first three and last two cols
                     sep = "/",
                     fill = "right") %>%
-    dplyr::filter(!is.na(namelevel6uid)) %>%
-    dplyr::mutate(facilityuid = ifelse(is.na(namelevel7uid),
-                                       namelevel6uid, namelevel7uid)) %>%
-    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel3 = name),
+    dplyr::filter(!is.na(.data$namelevel6uid)) %>%
+    dplyr::mutate(facilityuid = ifelse(is.na(.data$namelevel7uid),
+                                       .data$namelevel6uid,
+                                       .data$namelevel7uid)) %>%
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel3 = .data$name),
                      by = c("namelevel3uid" = "uid"), keep = FALSE) %>%
-    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel4 = name),
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel4 = .data$name),
                      by = c("namelevel4uid" = "uid"), keep = FALSE) %>%
-    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel5 = name),
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel5 = .data$name),
                      by = c("namelevel5uid" = "uid"), keep = FALSE) %>%
-    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel6 = name),
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel6 = .data$name),
                      by = c("namelevel6uid" = "uid"), keep = FALSE) %>%
-    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel7 = name),
+    dplyr::left_join(ou_uid_names %>% dplyr::rename(namelevel7 = .data$name),
                      by = c("namelevel7uid" = "uid"), keep = FALSE) %>%
-    dplyr::select(organisationunitid, facilityuid, paste0("namelevel", 3:7))
+    dplyr::select(.data$organisationunitid,
+                  .data$facilityuid,
+                  paste0("namelevel", 3:7))
 
   return(ou_hierarchy)
 }
@@ -237,6 +247,7 @@ create_hierarchy <- function(ou_metadata) {
 
 #' @export
 #' @importFrom magrittr %>% %<>%
+#' @importFrom rlang .data
 #' @title Adorn PVLS and EMR indicator data with metadata.
 #'
 #' @description
@@ -246,7 +257,8 @@ create_hierarchy <- function(ou_metadata) {
 #' Organisation unit names and UIDs, Organisation unit hierarchy, and periods.
 #'
 #' @param pvls_emr Unadorned dataframe of PVLS and EMR indicator data.
-#' @param coc_metadata Dataframe containing category option combination metadata.
+#' @param coc_metadata Dataframe containing category option combination
+#' metadata.
 #' @param de_metadata Dataframe containing data element metadata.
 #' @param pe_metadata Dataframe containing period metadata.
 #'
@@ -256,70 +268,70 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
 
   pvls_emr %<>%
     # Joins to period data and cleans and filters periods
-    dplyr::left_join(., pe_metadata, by = "periodid") %>%
+    dplyr::left_join(pe_metadata, by = "periodid") %>%
 
     # Filters for only Calendar Q3 / Fiscal Q4 results
-    dplyr::filter(substring(iso, 5, 6) == "Q3") %>%
-    dplyr::mutate(Period = as.numeric(substring(iso, 1, 4))) %>%
+    dplyr::filter(substring(.data$iso, 5, 6) == "Q3") %>%
+    dplyr::mutate(period = as.numeric(substring(.data$iso, 1, 4))) %>%
 
     # Joins to Data Element, Category Option Combo, and Attribute Metadata
-    dplyr::left_join(., de_metadata, by = "dataelementid") %>%
-    dplyr::left_join(., coc_metadata, by = "categoryoptioncomboid") %>%
-    # dplyr::left_join(.,
-    #                  coc_metadata %>%
-    #                    dplyr::select(categoryoptioncomboid,
-    #                                  attributename = categoryoptioncomboname),
+    dplyr::left_join(de_metadata, by = "dataelementid") %>%
+    dplyr::left_join(coc_metadata, by = "categoryoptioncomboid") %>%
+    # dplyr::left_join(coc_metadata %>%
+    #                    dplyr::select(.data$categoryoptioncomboid,
+    #                                  attributename =
+    #                                    .data$categoryoptioncomboname),
     #                  by = c("attributeoptioncomboid" =
     #                           "categoryoptioncomboid")) %>%
 
     # Drops a number of columns before continuing on
-    dplyr::select(-dataelementid, -periodid,
-                  -categoryoptioncomboid, -attributeoptioncomboid, -iso) %>%
+    dplyr::select(-.data$iso, -.data$periodid, -.data$attributeoptioncomboid,
+                  -.data$dataelementid, -.data$categoryoptioncomboid) %>%
 
     # Cleans indicator names and pivots data
     dplyr::mutate(indicator = dplyr::case_when(
-      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        categoryoptioncomboname ==
-        "Service Delivery Area - Care and Treatment" ~ "EMR_TX",
-      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        categoryoptioncomboname ==
-        "Service Delivery Area - HIV Testing Services" ~ "EMR_HTS",
-      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        categoryoptioncomboname ==
-        "Service Delivery Area - ANC and/or Maternity" ~ "EMR_ANC",
-      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        categoryoptioncomboname ==
+      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        .data$categoryoptioncomboname ==
+        "Service Delivery Area - Care and Treatment" ~ "emr_tx",
+      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        .data$categoryoptioncomboname ==
+        "Service Delivery Area - HIV Testing Services" ~ "emr_hts",
+      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        .data$categoryoptioncomboname ==
+        "Service Delivery Area - ANC and/or Maternity" ~ "emr_anc",
+      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        .data$categoryoptioncomboname ==
         "Service Delivery Area - Early Infant Diagnosis (not Ped ART)" ~
-        "EMR_EID",
-      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        categoryoptioncomboname == "Service Delivery Area - HIV/TB" ~ "EMR_TB",
-      substring(dataelementname, 1, 10) == "TX_PVLS (N" ~ "TX_PVLS_N",
-      substring(dataelementname, 1, 10) == "TX_PVLS (D" ~ "TX_PVLS_D",
+        "emr_eid",
+      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        .data$categoryoptioncomboname ==
+        "Service Delivery Area - HIV/TB" ~ "emr_tb",
+      substring(.data$dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
+      substring(.data$dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
       TRUE ~ NA_character_
     )) %>%
 
     # TODO Clean and bring categoryOptionCombos into the rest of the app
-    dplyr::select(-dataelementname, -categoryoptioncomboname) %>%
-    tidyr::pivot_wider(.,
-                       names_from = indicator,
-                       values_from = value,
+    dplyr::select(-.data$dataelementname, -.data$categoryoptioncomboname) %>%
+    tidyr::pivot_wider(names_from = .data$indicator,
+                       values_from = .data$value,
                        values_fn = list(value = list)) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      EMR_TX = any(as.logical(unlist(EMR_TX))),
-      EMR_HTS = any(as.logical(unlist(EMR_HTS))),
-      EMR_ANC = any(as.logical(unlist(EMR_ANC))),
-      EMR_EID = any(as.logical(unlist(EMR_EID))),
-      EMR_TB = any(as.logical(unlist(EMR_TB))),
-      TX_PVLS_N = sum(as.numeric(unlist(TX_PVLS_N))),
-      TX_PVLS_D = sum(as.numeric(unlist(TX_PVLS_D)))
+      emr_tx = any(as.logical(unlist(.data$emr_tx))),
+      emr_hts = any(as.logical(unlist(.data$emr_hts))),
+      emr_anc = any(as.logical(unlist(.data$emr_anc))),
+      emr_eid = any(as.logical(unlist(.data$emr_eid))),
+      emr_tb = any(as.logical(unlist(.data$emr_tb))),
+      tx_pvls_n = sum(as.numeric(unlist(.data$tx_pvls_n))),
+      tx_pvls_d = sum(as.numeric(unlist(.data$tx_pvls_d)))
     ) %>%
 
     # Organizes columns for export
     dplyr::select(
-      organisationunitid = sourceid, Period,
-      EMR_HTS, EMR_TX, EMR_ANC, EMR_EID, EMR_TB,
-      TX_PVLS_N,TX_PVLS_D
+      organisationunitid = .data$sourceid, .data$period,
+      .data$emr_hts, .data$emr_tx, .data$emr_anc, .data$emr_eid, .data$emr_tb,
+      .data$tx_pvls_n, .data$tx_pvls_d
     )
 
   return(pvls_emr)
@@ -338,9 +350,9 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
 #                                 file_name)) %>%
 #     dplyr::select("LastModified") %>%
 #     .[[1]] %>%
-#     lubridate::parse_date_time(., "YmdHMS") %>%
-#     as.POSIXct(.) %>%
-#     format(., tz = "UTC", usetz = TRUE)
+#     lubridate::parse_date_time("YmdHMS") %>%
+#     as.POSIXct() %>%
+#     format(tz = "UTC", usetz = TRUE)
 #
 #   return(tm)
 # }

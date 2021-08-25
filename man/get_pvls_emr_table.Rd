@@ -4,7 +4,7 @@
 \alias{get_pvls_emr_table}
 \title{Fetch Raw PVLS and EMR Indicator Data.}
 \usage{
-get_pvls_emr_table(s3, aws_s3_bucket, last_update = NULL, folder = NULL)
+get_pvls_emr_table(s3, aws_s3_bucket, last_update = NULL, folder = "data")
 }
 \arguments{
 \item{s3}{The s3 object created by the paws package containing
@@ -17,7 +17,7 @@ to validate whether new data needs to be retrieved from S3. If NULL, always
 retrieves dataset from S3 regardless of last update time.}
 
 \item{folder}{The folder extension where the output file should be saved. If
-NULL, saves to the \code{data} folder in the working directory.}
+missing, saves to the \code{data} folder in the working directory.}
 }
 \value{
 Dataframe containing raw PVLS and EMR data.
