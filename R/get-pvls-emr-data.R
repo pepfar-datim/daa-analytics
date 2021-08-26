@@ -14,14 +14,14 @@
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' missing, saves to the `data` folder in the working directory.
+#' missing, saves to the `data-raw` folder in the working directory.
 #'
 #' @return Dataframe containing raw PVLS and EMR data.
 #'
 get_pvls_emr_table <- function(s3,
                                aws_s3_bucket,
                                last_update = NULL,
-                               folder = "data") {
+                               folder = "data-raw") {
 
   pvls_emr <-
     daa.analytics::fetch_s3_files(
@@ -52,14 +52,14 @@ get_pvls_emr_table <- function(s3,
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' missing, saves to the `data` folder in the working directory.
+#' missing, saves to the `data-raw` folder in the working directory.
 #'
 #' @return Datatable relating Data Element IDs to DATIM codes.
 #'
 get_de_metadata <- function(s3,
                             aws_s3_bucket,
                             last_update = NULL,
-                            folder = "data") {
+                            folder = "data-raw") {
 
   de_metadata <-
     daa.analytics::fetch_s3_files(
@@ -92,14 +92,14 @@ get_de_metadata <- function(s3,
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' missing, saves to the `data` folder in the working directory.
+#' missing, saves to the `data-raw` folder in the working directory.
 #'
 #' @return Datatable relating Category Option Combo IDs to DATIM codes.
 #'
 get_coc_metadata <- function(s3,
                              aws_s3_bucket,
                              last_update = NULL,
-                             folder = "data") {
+                             folder = "data-raw") {
 
   coc_metadata <-
     daa.analytics::fetch_s3_files(
@@ -132,14 +132,14 @@ get_coc_metadata <- function(s3,
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' missing, saves to the `data` folder in the working directory.
+#' missing, saves to the `data-raw` folder in the working directory.
 #'
 #' @return Datatable relating Organisation Unit IDs to DATIM codes.
 #'
 get_ou_metadata <- function(s3,
                             aws_s3_bucket,
                             last_update = NULL,
-                            folder = "data") {
+                            folder = "data-raw") {
 
   ou_metadata <-
     daa.analytics::fetch_s3_files(
@@ -173,14 +173,14 @@ get_ou_metadata <- function(s3,
 #' to validate whether new data needs to be retrieved from S3. If NULL, always
 #' retrieves dataset from S3 regardless of last update time.
 #' @param folder The folder extension where the output file should be saved. If
-#' missing, saves to the `data` folder in the working directory.
+#' missing, saves to the `data-raw` folder in the working directory.
 #'
 #' @return Datatable relating Period IDs to DATIM codes.
 #'
 get_pe_metadata <- function(s3,
                             aws_s3_bucket,
                             last_update = NULL,
-                            folder = "data") {
+                            folder = "data-raw") {
 
   pe_metadata <-
     daa.analytics::fetch_s3_files(
@@ -213,7 +213,8 @@ get_pe_metadata <- function(s3,
 #'
 create_hierarchy <- function(ou_metadata) {
 
-  ou_uid_names <- ou_metadata %>% dplyr::select(.data$uid, .data$name)
+  ou_uid_names <- ou_metadata %>%
+    dplyr::select(.data$uid, .data$name)
 
   # Cleans and creates OU Hierarchy from levels 3 to 7 with names
   ou_hierarchy <- ou_metadata %>%

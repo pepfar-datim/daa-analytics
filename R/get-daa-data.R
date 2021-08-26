@@ -110,10 +110,10 @@ adorn_daa_data <- function(df) {
     dplyr::filter(.data$Data != "LZbeWYZEkYL") %>%
 
     # Generates human-readable indicator names
-    dplyr::mutate(Data = get_indicator_name(.data$`Data`)) %>%
+    dplyr::mutate(Data = get_indicator_name(.data$Data)) %>%
 
     # Summarizes MOH and PEPFAR data up from coarse and fine disaggregates
-    dplyr::group_by(.data$`Data`, .data$`Organisation unit`, .data$`period`) %>%
+    dplyr::group_by(.data$Data, .data$`Organisation unit`, .data$period) %>%
     dplyr::summarise(moh =
                        sum(.data$moh, na.rm = any(!is.na(.data$moh))),
                      pepfar =

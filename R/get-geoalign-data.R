@@ -14,8 +14,6 @@
 #'
 get_daa_countries <- function(geo_session) {
   # TODO figure out how to handle 2021 datasets
-  end_point <- "dataStore/ou_levels/orgUnitLevels"
-
   # Fetches data from the server
   df <- datimutils::getMetadata(end_point = "dataStore/ou_levels/orgUnitLevels",
                                 d2_session = geo_session)
@@ -64,18 +62,17 @@ get_data_availability <- function(geo_session = geo_session) {
 
   # Loops through all available years to pull data availability from GeoAlign
   df %<>%
-      lapply(function(x) {
-             tryCatch({
-               this_end_point <- paste0(end_point, "/", x)
-               df <- list(end_point = this_end_point,
-                          d2_session = geo_session) %>%
-                 purrr::exec(datimutils::getMetadata, !!!.) %>%
-                 dplyr::mutate(period = x)
-               return(df)
-             }, error = function(e) {
-               return(NA)
-             })
-           }) %>%
+    lapply(function(x) {
+      tryCatch({
+        args <- list(end_point = paste0(end_point, "/", x),
+                     d2_session = geo_session)
+        df2 <- purrr::exec(datimutils::getMetadata, !!!args) %>%
+          dplyr::mutate(period = x)
+        return(df2)
+      }, error = function(e) {
+        return(NA)
+      })
+    }) %>%
     remove_missing_dfs() %>%
     dplyr::bind_rows() %>%
     tidyr::pivot_longer(-c(.data$period, .data$CountryName,
@@ -133,11 +130,12 @@ get_upload_timestamps <- function(geo_session) {
   # Loops through all available years to pull data availability from GeoAlign
   df %<>%
     lapply(function(x) {
-             paste0(end_point, "/", x) %>%
-               list(end_point = .data, geo_session = geo_session) %>%
-               purrr::exec(datimutils::getMetadata, !!!.data) %>%
-               dplyr::mutate(period = x)
-           }) %>%
+      args <- list(end_point = paste0(end_point, "/", x),
+                   geo_session = geo_session)
+      df2 <- purrr::exec(datimutils::getMetadata, !!!args) %>%
+        dplyr::mutate(period = x)
+      return(df2)
+    }) %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(dplyr::across(dplyr::ends_with("Date"), lubridate::ymd_hms))
 

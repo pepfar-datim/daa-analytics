@@ -4,14 +4,14 @@
 \alias{weighted_concordance}
 \title{Calculate Weighted Concordance.}
 \usage{
-weighted_concordance(MOH, PEPFAR, Weighting)
+weighted_concordance(moh, pepfar, weighting)
 }
 \arguments{
-\item{MOH}{The number of patients reported by the MOH at the site.}
+\item{moh}{The number of patients reported by the MOH at the site.}
 
-\item{PEPFAR}{The number of patients reported by PEPFAR at the site.}
+\item{pepfar}{The number of patients reported by PEPFAR at the site.}
 
-\item{Weighting}{The weighting factor given to the site.}
+\item{weighting}{The weighting factor given to the site.}
 }
 \value{
 A single value for the weighted concordance of the site.
