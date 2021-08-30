@@ -7,15 +7,15 @@
 #' number of patients reported by the MOH and PEPFAR as well as the
 #' weighting factor.
 #'
-#' @param MOH The number of patients reported by the MOH at the site.
-#' @param PEPFAR The number of patients reported by PEPFAR at the site.
-#' @param Weighting The weighting factor given to the site.
+#' @param moh The number of patients reported by the MOH at the site.
+#' @param pepfar The number of patients reported by PEPFAR at the site.
+#' @param weighting The weighting factor given to the site.
 #'
 #' @return A single value for the weighted concordance of the site.
 #'
-weighted_concordance <- function(MOH, PEPFAR, Weighting) {
-  if (!is.na(Weighting)) {
-    n <- Weighting * (((MOH + PEPFAR) - abs(MOH - PEPFAR)) / (MOH + PEPFAR))
+weighted_concordance <- function(moh, pepfar, weighting) {
+  if (!is.na(weighting)) {
+    n <- weighting * (((moh + pepfar) - abs(moh - pepfar)) / (moh + pepfar))
   } else{
     n <- NA
   }
@@ -31,15 +31,15 @@ weighted_concordance <- function(MOH, PEPFAR, Weighting) {
 #' number of patients reported by the MOH and PEPFAR as well as the
 #' weighting factor.
 #'
-#' @param MOH The number of patients reported by the MOH at the site.
-#' @param PEPFAR The number of patients reported by PEPFAR at the site.
-#' @param Weighting The weighting factor given to the site.
+#' @param moh The number of patients reported by the MOH at the site.
+#' @param pepfar The number of patients reported by PEPFAR at the site.
+#' @param weighting The weighting factor given to the site.
 #'
 #' @return A single value for the weighted discordance of the site.
 #'
-weighted_discordance <- function(MOH, PEPFAR, Weighting) {
-  if (!is.na(Weighting)) {
-    n <- Weighting * abs(MOH - PEPFAR) / mean(c(MOH, PEPFAR))
+weighted_discordance <- function(moh, pepfar, weighting) {
+  if (!is.na(weighting)) {
+    n <- weighting * abs(moh - pepfar) / mean(c(moh, pepfar))
   } else{
     n <- NA
   }

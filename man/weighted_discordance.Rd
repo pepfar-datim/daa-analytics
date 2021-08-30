@@ -4,14 +4,14 @@
 \alias{weighted_discordance}
 \title{Calculate Weighted Discordance.}
 \usage{
-weighted_discordance(MOH, PEPFAR, Weighting)
+weighted_discordance(moh, pepfar, weighting)
 }
 \arguments{
-\item{MOH}{The number of patients reported by the MOH at the site.}
+\item{moh}{The number of patients reported by the MOH at the site.}
 
-\item{PEPFAR}{The number of patients reported by PEPFAR at the site.}
+\item{pepfar}{The number of patients reported by PEPFAR at the site.}
 
-\item{Weighting}{The weighting factor given to the site.}
+\item{weighting}{The weighting factor given to the site.}
 }
 \value{
 A single value for the weighted discordance of the site.

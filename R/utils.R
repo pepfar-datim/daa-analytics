@@ -30,28 +30,34 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
                     Key = paste0(key, "/data.csv.gz"))
     s3_object_body <- s3_object$Body
 
-    if (length(s3_object_body) > 0){
+    if (length(s3_object_body) > 0) {
       # TODO remove the need to save a temporary file to access data
       if (file.exists(file_path)) {
         unlink(file_path)
       }
       writeBin(s3_object_body, con = file_path)
-      data <- data.table::fread(file_path)
+      my_data <-
+        readr::read_delim(file = file_path,
+                          locale = readr::locale(encoding = "UTF-8"),
+                          col_types = readr::cols(.default = "c"))
       if (!file.exists(file_path)) {
         stop("Could not retreive support file.")
       }
     } else {
       # If file was not updated, retrieves the latest data from the data folder
-      file_name2 <- file.path(folder, paste0(file_name, ".csv.gz"))
+      my_data <-
+        readr::read_delim(file = file_path,
+                          locale = readr::locale(encoding = "UTF-8"),
+                          col_types = readr::cols(.default = "c"))
     }
   },
-  error = function(e){
+  error = function(e) {
     # If there is an error, return NULL for the data.
-    data <- NULL
     warning("S3 returned no data and there is no existing data file.")
+    return(NULL)
   })
 
-  return(data)
+  return(my_data)
 }
 
 #' @export
