@@ -51,7 +51,7 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
                           col_types = readr::cols(.default = "c"))
     }
   },
-  error = function(e) {
+  warning = function() {
     # If there is an error, return NULL for the data.
     warning("S3 returned no data and there is no existing data file.")
     return(NULL)
