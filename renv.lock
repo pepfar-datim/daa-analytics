@@ -752,10 +752,10 @@
     },
     "vroom": {
       "Package": "vroom",
-      "Version": "1.5.4",
+      "Version": "1.5.5",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "1a23013f39e67bb57cbda6f4ddde5470"
+      "Hash": "9c3b3a3f947c7936cea7485349247e5b"
     },
     "waldo": {
       "Package": "waldo",
