@@ -302,10 +302,6 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
         "Service Delivery Area - ANC and/or Maternity" ~ "emr_anc",
       .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         .data$categoryoptioncomboname ==
-        "Service Delivery Area - Early Infant Diagnosis (not Ped ART)" ~
-        "emr_eid",
-      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        .data$categoryoptioncomboname ==
         "Service Delivery Area - HIV/TB" ~ "emr_tb",
       substring(.data$dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
       substring(.data$dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
@@ -319,20 +315,37 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
                        values_fn = list(value = list)) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      emr_tx = any(as.logical(unlist(.data$emr_tx))),
-      emr_hts = any(as.logical(unlist(.data$emr_hts))),
-      emr_anc = any(as.logical(unlist(.data$emr_anc))),
-      emr_eid = any(as.logical(unlist(.data$emr_eid))),
-      emr_tb = any(as.logical(unlist(.data$emr_tb))),
+      emr_TX_CURR = any(as.logical(unlist(.data$emr_tx))),
+      emr_TX_NEW = any(as.logical(unlist(.data$emr_tx))),
+      emr_HTS_TST = any(as.logical(unlist(.data$emr_hts))),
+      emr_PMTCT_STAT = any(as.logical(unlist(.data$emr_anc))),
+      emr_PMTCT_ART = any(as.logical(unlist(.data$emr_anc))),
+      emr_TB_PREV = any(as.logical(unlist(.data$emr_tb))),
       tx_pvls_n = sum(as.numeric(unlist(.data$tx_pvls_n))),
       tx_pvls_d = sum(as.numeric(unlist(.data$tx_pvls_d)))
+    ) %>%
+    dplyr::select(-.data$emr_tx, -.data$emr_hts,
+                  -.data$emr_anc, -.data$emr_tb) %>%
+    dplyr::mutate(across(.cols = dplyr::starts_with("emr_"),
+                         .fns = ~ tidyr::replace_na(.x, FALSE))) %>%
+
+    # Pivots EMR data back to long data format and replaces NAs with FALSE
+    tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
+                        names_to = "indicator",
+                        names_prefix = "emr_",
+                        values_to = "emr_at_site_for_indicator") %>%
+    dplyr::mutate(
+      indicator = dplyr::case_when(
+        indicator == "TB_PREV" & period < 2020 ~ "TB_PREV_LEGACY",
+        indicator == "TB_PREV" & period >= 2020 ~ "TB_PREV",
+        TRUE ~ indicator
+      )
     ) %>%
 
     # Organizes columns for export
     dplyr::select(
-      organisationunitid = .data$sourceid, .data$period,
-      .data$emr_hts, .data$emr_tx, .data$emr_anc, .data$emr_eid, .data$emr_tb,
-      .data$tx_pvls_n, .data$tx_pvls_d
+      organisationunitid = .data$sourceid, .data$period, .data$indicator,
+      .data$emr_at_site_for_indicator, .data$tx_pvls_n, .data$tx_pvls_d
     )
 
   return(pvls_emr)

@@ -34,7 +34,7 @@ combine_data <- function(daa_indicator_data,
 
   df <- daa_indicator_data %>%
     dplyr::left_join(ou_hierarchy, by = c("facilityuid")) %>%
-    dplyr::left_join(pvls_emr, by = c("facilityuid", "period")) %>%
+    dplyr::left_join(pvls_emr, by = c("facilityuid", "period", "indicator")) %>%
     dplyr::left_join(attribute_data %>%
                        dplyr::filter(!is.na(.data$moh_id)),
                      by = c("facilityuid")) %>%
