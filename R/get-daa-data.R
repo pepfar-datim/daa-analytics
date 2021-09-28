@@ -29,7 +29,8 @@ get_daa_data <- function(ou_uid, d2_session) {
         dx = paste(indicator_uids, collapse = ";"),
         pe = period_list,
         ou = paste0("OU_GROUP-POHZmzofoVx;", ou_uid),
-        d2_session = d2_session
+        d2_session = d2_session,
+        retry = 2
       )
     },
     # If error is thrown, then try again splitting query into multiple parts.

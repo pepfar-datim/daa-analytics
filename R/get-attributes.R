@@ -20,7 +20,8 @@ get_attribute_table <- function(ou_uid, d2_session = d2_session) {
     end_point = "organisationUnits",
     values = paste0("path:like:", ou_uid),
     fields = "id,name,geometry,attributeValues[attribute[id,name],value]",
-    d2_session = d2_session
+    d2_session = d2_session,
+    retry = 4
   )
 
   # Returns null if API returns nothing
