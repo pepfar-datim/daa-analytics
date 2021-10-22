@@ -62,6 +62,7 @@ get_data_availability <- function(geo_session = geo_session) {
 
   # Loops through all available years to pull data availability from GeoAlign
   df %<>%
+    .[df != "CS_2021"] %>%
     lapply(function(x) {
       tryCatch({
         args <- list(end_point = paste0(end_point, "/", x),
@@ -75,6 +76,8 @@ get_data_availability <- function(geo_session = geo_session) {
     }) %>%
     remove_missing_dfs() %>%
     dplyr::bind_rows() %>%
+    dplyr::mutate(period = stringr::str_sub(.data$period,
+                  start = -4, end = -1)) %>%
     tidyr::pivot_longer(-c(.data$period, .data$CountryName,
                            .data$CountryCode, .data$generated),
                         names_sep = "_(?=[^_]*$)",
