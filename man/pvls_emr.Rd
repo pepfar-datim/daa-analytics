@@ -5,26 +5,15 @@
 \alias{pvls_emr}
 \title{Viral Load Suppression and Electronic Medical Records data.}
 \format{
-A data frame with 9 variables:
+A data frame with 6 variables:
 \describe{
 \item{organisationunitid}{The numeric ID used to identify the organisation
 unit in DATIM.}
 \item{period}{The fiscal year reporting period.}
-\item{emr_hts}{Boolean value indicating whether a
-facility has an electronic medical records system associated with HIV
-Testing Services.}
-\item{emr_tx}{Boolean value indicating whether a
-facility has an electronic medical records system associated with HIV
-care and treatment services.}
-\item{emr_anc}{Boolean value indicating whether a
-facility has an electronic medical records system associated with HIV
-antenatal care and/or maternity services.}
-\item{emr_eid}{Boolean value indicating whether a
-facility has an electronic medical records system associated with early
-infant diagnosis services.}
-\item{emr_tb}{Boolean value indicating whether a
-facility has an electronic medical records system associated with
-Tuberculosis treatment and testing services for HIV patients.}
+\item{indicator}{The reporting indicator for the DAA.}
+\item{emr_at_site_for_indicator}{Boolean value indicating whether a
+facility has an electronic medical records system associated with the
+given indicator for that row.}
 \item{tx_pvls_n}{The numerator for TX_PVLS, representing the number of
 patients with suppressed viral load test results documented in a given
 period.}

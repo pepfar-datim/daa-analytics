@@ -1,6 +1,6 @@
 Package: daa.analytics
 Title: Utilities for Compiling and Analyzing PEPFAR Data Alignment Activity Data
-Version: 0.1.6
+Version: 0.2.0
 Date: 2021-06-17
 Authors@R: 
     person(given = "Chris",

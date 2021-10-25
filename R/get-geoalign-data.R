@@ -53,21 +53,21 @@ get_data_availability <- function(geo_session = geo_session) {
   end_point <- "dataStore/MOH_country_indicators"
 
   # Fetches data from the server
-  df <- datimutils::getMetadata(end_point = "dataStore/MOH_country_indicators",
+  ls <- datimutils::getMetadata(end_point = "dataStore/MOH_country_indicators",
                                 d2_session = geo_session)
+  args <- ls[ls != "CS_2021"]
 
   if (is.null(df)) {
     return(NULL)
   }
 
   # Loops through all available years to pull data availability from GeoAlign
-  df %<>%
-    .[df != "CS_2021"] %>%
+  df <- args %>%
     lapply(function(x) {
       tryCatch({
-        args <- list(end_point = paste0(end_point, "/", x),
+        args2 <- list(end_point = paste0(end_point, "/", x),
                      d2_session = geo_session)
-        df2 <- purrr::exec(datimutils::getMetadata, !!!args) %>%
+        df2 <- purrr::exec(datimutils::getMetadata, !!!args2) %>%
           dplyr::mutate(period = x)
         return(df2)
       }, error = function(e) {

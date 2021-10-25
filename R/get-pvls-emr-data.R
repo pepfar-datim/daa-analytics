@@ -326,8 +326,8 @@ adorn_pvls_emr <- function(pvls_emr, coc_metadata, de_metadata, pe_metadata) {
     ) %>%
     dplyr::select(-.data$emr_tx, -.data$emr_hts,
                   -.data$emr_anc, -.data$emr_tb) %>%
-    dplyr::mutate(across(.cols = dplyr::starts_with("emr_"),
-                         .fns = ~ tidyr::replace_na(.x, FALSE))) %>%
+    dplyr::mutate(dplyr::across(.cols = dplyr::starts_with("emr_"),
+                                .fns = ~ tidyr::replace_na(.x, FALSE))) %>%
 
     # Pivots EMR data back to long data format and replaces NAs with FALSE
     tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
