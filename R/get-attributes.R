@@ -1,6 +1,4 @@
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Fetch MOH ID and attributes from DATIM
 #'
 #' @description

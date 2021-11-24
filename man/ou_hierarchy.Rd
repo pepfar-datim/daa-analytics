@@ -11,6 +11,19 @@ A data frame with 7 variables:
 unit in DATIM.}
 \item{facilityuid}{The alphanumeric UID used to identify the facility in
 DATIM.}
+\item{namelevel3uid}{The UID of the parent organisation unit at hierarchy
+level 3 to the given facility.}
+\item{namelevel4uid}{The UID of the parent organisation unit at hierarchy
+level 4 to the given facility.}
+\item{namelevel5uid}{The UID of the parent organisation unit at hierarchy
+level 5 to the given facility.}
+\item{namelevel6uid}{For countries with their facility level at hierarchy
+level 6, this will represent the UID of the facility. For countries with
+their facility level at hierarchy level 7, this will represent the parent
+organisation unit at hierarchy level 6 to the given facility.}
+\item{namelevel7uid}{For countries with their facility level at hierarchy
+level 7, this will represent the UID of the facility. For countries with
+their facility level at hierarchy level 6, this value will be 'NA'.}
 \item{namelevel3}{The name of the parent organisation unit at hierarchy
 level 3 to the given facility.}
 \item{namelevel4}{The name of the parent organisation unit at hierarchy

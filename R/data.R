@@ -136,6 +136,19 @@
 #'   unit in DATIM.}
 #'   \item{facilityuid}{The alphanumeric UID used to identify the facility in
 #'   DATIM.}
+#'   \item{namelevel3uid}{The UID of the parent organisation unit at hierarchy
+#'   level 3 to the given facility.}
+#'   \item{namelevel4uid}{The UID of the parent organisation unit at hierarchy
+#'   level 4 to the given facility.}
+#'   \item{namelevel5uid}{The UID of the parent organisation unit at hierarchy
+#'   level 5 to the given facility.}
+#'   \item{namelevel6uid}{For countries with their facility level at hierarchy
+#'   level 6, this will represent the UID of the facility. For countries with
+#'   their facility level at hierarchy level 7, this will represent the parent
+#'   organisation unit at hierarchy level 6 to the given facility.}
+#'   \item{namelevel7uid}{For countries with their facility level at hierarchy
+#'   level 7, this will represent the UID of the facility. For countries with
+#'   their facility level at hierarchy level 6, this value will be 'NA'.}
 #'   \item{namelevel3}{The name of the parent organisation unit at hierarchy
 #'   level 3 to the given facility.}
 #'   \item{namelevel4}{The name of the parent organisation unit at hierarchy
@@ -194,24 +207,6 @@
 #'   \item{reported_by}{A text value indicating whether results were reported
 #'   by just the MOH, just PEPFAR, or both entities at the given site for the
 #'   given indicator during the reporting period.}
-#'   \item{count_of_matched_sites}{The number of facilities in a country for the
-#'   particular indicator and reporting period for which results were reported
-#'   by both the MOH and PEPFAR.}
-#'   \item{pepfar_sum_at_matched_sites}{The total results reported by PEPFAR
-#'   at all facilities in a country for the particular indicator and reporting
-#'   period.}
-#'   \item{weighting}{The PEPFAR results at the particular facility divided by
-#'   the total results reported by PEPFAR at all facilities for the given
-#'   indicator and reporting period. This figure provides the weighting value
-#'   for concordance and discordance metrics.}
-#'   \item{weighted_discordance}{The weighted discordance between the PEPFAR
-#'   and MOH reported results at the particular facility. Can be summed across
-#'   facilities grouped by country, indicator, and period to calculate the
-#'   weighted average discordance.}
-#'   \item{weighted_concordance}{The weighted concordance between the PEPFAR
-#'   and MOH reported results at the particular facility. Can be summed across
-#'   facilities grouped by country, indicator, and period to calculate the
-#'   weighted average concordance.}
 #' }
 #' @source \url{http://www.datim.org/}
 "daa_indicator_data"

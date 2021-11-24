@@ -1,5 +1,4 @@
 #' @export
-#' @importFrom magrittr %>% %<>%
 #' @title Calculate Weighted Concordance.
 #'
 #' @description
@@ -23,7 +22,6 @@ weighted_concordance <- function(moh, pepfar, weighting) {
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
 #' @title Calculate Weighted Discordance.
 #'
 #' @description

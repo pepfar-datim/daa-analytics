@@ -61,8 +61,6 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Get Organisation Unit Name from UID.
 #'
 #' @description

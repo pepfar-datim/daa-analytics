@@ -1,6 +1,4 @@
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Fetch List of Participating Countries from GeoAlign
 #'
 #' @description
@@ -34,8 +32,6 @@ get_daa_countries <- function(geo_session) {
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Fetch Indicator Mapping and Data Availability from GeoAlign
 #'
 #' @description
@@ -104,8 +100,6 @@ get_data_availability <- function(geo_session = geo_session) {
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Fetch Import Timestamps from GeoAlign
 #'
 #' @description

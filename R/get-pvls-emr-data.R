@@ -1,6 +1,5 @@
 # TODO redocument parameters on all of these functions
 #' @export
-#' @importFrom magrittr %>% %<>%
 #' @title Fetch Raw PVLS and EMR Indicator Data.
 #'
 #' @description
@@ -37,8 +36,6 @@ get_pvls_emr_table <- function(s3,
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Fetches Data Element Metadata
 #'
 #' @description
@@ -77,8 +74,6 @@ get_de_metadata <- function(s3,
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Fetch Category Option Combo Metadata
 #'
 #' @description
@@ -117,8 +112,6 @@ get_coc_metadata <- function(s3,
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Fetches Organsation Unit Metadata
 #'
 #' @description
@@ -158,8 +151,6 @@ get_ou_metadata <- function(s3,
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Fetches Period Metadata
 #'
 #' @description
@@ -198,8 +189,6 @@ get_pe_metadata <- function(s3,
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Generates Organisation Unit Hierarchy
 #'
 #' @description
@@ -240,15 +229,13 @@ create_hierarchy <- function(ou_metadata) {
                      by = c("namelevel7uid" = "uid"), keep = FALSE) %>%
     dplyr::select(.data$organisationunitid,
                   .data$facilityuid,
-                  paste0("namelevel", 3:7))
+                  dplyr::everything())
 
   return(ou_hierarchy)
 }
 
 
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Adorn PVLS and EMR indicator data with metadata.
 #'
 #' @description
