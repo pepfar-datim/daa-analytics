@@ -1,6 +1,4 @@
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Combine DAA datasets together.
 #'
 #' @description
@@ -29,15 +27,27 @@ combine_data <- function(daa_indicator_data,
                      keep = FALSE)
 
   ou_hierarchy %<>%
-    dplyr::select(-.data$organisationunitid) %>%
+    dplyr::select(.data$facilityuid, .data$namelevel3, .data$namelevel4,
+                  .data$namelevel5, .data$namelevel6, .data$namelevel7) %>%
     unique()
 
   df <- daa_indicator_data %>%
+    # Joins DAA Indicator data to OU hierarchy metadata
     dplyr::left_join(ou_hierarchy, by = c("facilityuid")) %>%
+
+    # Joins PVLS and EMR datasets
     dplyr::left_join(pvls_emr, by = c("facilityuid", "period", "indicator")) %>%
+
+    # Joins site attribute data
     dplyr::left_join(attribute_data %>%
                        dplyr::filter(!is.na(.data$moh_id)),
                      by = c("facilityuid")) %>%
-    dplyr::select(-.data$name, -.data$organisationunitid)
+
+    # Selects rows for export
+    dplyr::select(.data$facilityuid, dplyr::starts_with("namelevel"),
+                  .data$indicator, .data$period, .data$moh, .data$pepfar,
+                  .data$reported_by, dplyr::starts_with("level"),
+                  dplyr::everything(), -.data$name, -.data$organisationunitid)
+
   return(df)
 }

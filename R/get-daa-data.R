@@ -1,6 +1,4 @@
 #' @export
-#' @importFrom magrittr %>% %<>%
-#' @importFrom rlang .data
 #' @title Get DAA Indicator Data
 #'
 #' @description
@@ -67,7 +65,6 @@ get_daa_data <- function(ou_uid, d2_session) {
 }
 
 #' @export
-#' @importFrom magrittr %>% %<>%
 #' @title Adorn DAA Indicator Data
 #'
 #' @description
@@ -128,41 +125,138 @@ adorn_daa_data <- function(df) {
                            ifelse(!is.na(.data$pepfar),
                                   "PEPFAR", "Neither"))) %>%
 
-    # Groups rows by indicator and calculates indicator-specific summaries
-    dplyr::group_by(.data$Data, .data$period) %>%
-    dplyr::mutate(count_of_matched_sites =
-                    sum(ifelse(.data$reported_by == "Both", 1, 0))) %>%
-    dplyr::mutate(pepfar_sum_at_matched_sites =
-                    sum(ifelse(.data$reported_by == "Both",
-                               .data$pepfar, 0))) %>%
-    dplyr::ungroup() %>%
-
-    # Calculates weighting variables
-    dplyr::mutate(weighting =
-                    ifelse(.data$reported_by == "Both",
-                           .data$pepfar / .data$pepfar_sum_at_matched_sites,
-                           NA)) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(weighted_discordance =
-                    daa.analytics::weighted_discordance(.data$moh,
-                                                        .data$pepfar,
-                                                        .data$weighting)) %>%
-    dplyr::mutate(weighted_concordance =
-                    daa.analytics::weighted_concordance(.data$moh,
-                                                        .data$pepfar,
-                                                        .data$weighting)) %>%
-    dplyr::ungroup() %>%
-
     # Reorganizes table for export
     dplyr::select(facilityuid = .data$`Organisation unit`,
                   indicator = .data$`Data`,
                   .data$period,
-                  .data$moh, .data$pepfar, .data$reported_by,
-                  .data$count_of_matched_sites,
-                  .data$pepfar_sum_at_matched_sites, .data$weighting,
-                  .data$weighted_discordance, .data$weighted_concordance)
+                  .data$moh,
+                  .data$pepfar,
+                  .data$reported_by)
+
   return(df)
 }
+
+
+#' Adorn DAA Indicator Data with Weighted Metrics for All Levels
+#'
+#' @param daa_indicator_data Dataframe containing DAA indicator data.
+#' @param ou_hierarchy Dataframe containing the Organisational hierarchy.
+#'
+#' @return A dataframe of DAA Indicator data with weightings and weighted
+#' discordance and concordance calculated for levels 3 through 5.
+#' @export
+#'
+weighting_levels <- function(daa_indicator_data = NULL, ou_hierarchy = NULL) {
+  ou_hierarchy %<>%
+    dplyr::select(-.data$organisationunitid, -paste0("namelevel", 3:7)) %>%
+    unique()
+
+  df <- daa_indicator_data %>%
+    # Joins DAA Indicator data to OU hierarchy metadata
+    dplyr::left_join(ou_hierarchy, by = c("facilityuid")) %>%
+
+    # Calculates Level 3 weighted concordance and discordance
+    dplyr::group_by(.data$indicator,
+                    .data$period,
+                    .data$namelevel3uid) %>%
+    dplyr::mutate(level3_weighting =
+                    ifelse(.data$reported_by == "Both",
+                           .data$pepfar / sum(
+                             ifelse(.data$reported_by == "Both",
+                                    .data$pepfar, 0)),
+                           NA)) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(level3_discordance =
+                    daa.analytics::weighted_discordance(
+                      moh = .data$moh,
+                      pepfar = .data$pepfar,
+                      weighting = .data$level3_weighting),
+                  level3_concordance =
+                    daa.analytics::weighted_concordance(
+                      moh = .data$moh,
+                      pepfar = .data$pepfar,
+                      weighting = .data$level3_weighting)
+    ) %>%
+    dplyr::ungroup() %>%
+
+    # Calculates Level 4 weighted concordance and discordance
+    dplyr::group_by(.data$indicator,
+                    .data$period,
+                    .data$namelevel4uid) %>%
+    dplyr::mutate(level4_weighting =
+                    ifelse(.data$reported_by == "Both",
+                           .data$pepfar / sum(
+                             ifelse(.data$reported_by == "Both",
+                                    .data$pepfar, 0)),
+                           NA)) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(level4_discordance =
+                    daa.analytics::weighted_discordance(
+                      moh = .data$moh,
+                      pepfar = .data$pepfar,
+                      weighting = .data$level4_weighting),
+                  level4_concordance =
+                    daa.analytics::weighted_concordance(
+                      moh = .data$moh,
+                      pepfar = .data$pepfar,
+                      weighting = .data$level4_weighting)
+    )%>%
+    dplyr::ungroup() %>%
+
+    # Calculates Level 5 weighted concordance and discordance
+    dplyr::group_by(.data$indicator,
+                    .data$period,
+                    .data$namelevel5uid) %>%
+    dplyr::mutate(level5_weighting =
+                    ifelse(.data$reported_by == "Both",
+                           .data$pepfar / sum(
+                             ifelse(.data$reported_by == "Both",
+                                    .data$pepfar, 0)),
+                           NA)) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(level5_discordance =
+                    daa.analytics::weighted_discordance(
+                      moh = .data$moh,
+                      pepfar = .data$pepfar,
+                      weighting = .data$level5_weighting),
+                  level5_concordance =
+                    daa.analytics::weighted_concordance(
+                      moh = .data$moh,
+                      pepfar = .data$pepfar,
+                      weighting = .data$level5_weighting)
+    ) %>%
+    dplyr::ungroup() %>%
+
+    # # Calculates Level 6 weighted concordance and discordance
+    # dplyr::group_by(.data$indicator,
+    #                 .data$period,
+    #                 .data$namelevel6uid) %>%
+    # dplyr::mutate(level6_weighting =
+    #                 ifelse(.data$reported_by == "Both",
+    #                        .data$pepfar / sum(
+    #                          ifelse(.data$reported_by == "Both",
+    #                                 .data$pepfar, 0)),
+    #                        NA)) %>%
+  # dplyr::rowwise() %>%
+  # dplyr::mutate(level6_discordance = ifelse(is.na(namelevel7), NA_real_,
+  #                                           daa.analytics::weighted_discordance(
+  #                                             moh = .data$moh,
+  #                                             pepfar = .data$pepfar,
+  #                                             weighting = .data$level6_weighting)),
+  #               level6_concordance = ifelse(is.na(namelevel7), NA_real_,
+  #                                           daa.analytics::weighted_concordance(
+  #                                             moh = .data$moh,
+  #                                             pepfar = .data$pepfar,
+  #                                             weighting = .data$level6_weighting))
+  # ) %>%
+  # dplyr::ungroup() %>%
+
+  # Selects rows for export
+  dplyr::select(-dplyr::starts_with("namelevel"))
+
+  return(df)
+}
+
 
 # Helper functions ------------------------------------------
 #' @title Get Indicator Name
