@@ -31,12 +31,8 @@ current_fiscal_year <- function() {
 #' @return A string containing the country name.
 #'
 get_ou_name <- function(ou_uid) {
-  ou_name <- daa.analytics::daa_countries %>%
-    dplyr::filter(.data$country_uid == ou_uid) %>%
-    dplyr::select(.data$country_name) %>%
-    toString()
-
-  # Returns OU name
+  countries <- daa.analytics::daa_countries
+  ou_name <- countries[countries$country_uid == ou_uid][["country_name"]]
   return(ou_name)
 }
 
