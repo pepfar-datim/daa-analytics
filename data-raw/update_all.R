@@ -6,11 +6,7 @@ source("data-raw/daa_indicators.R")
 
 s3 <- paws::s3()
 aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
-source("data-raw/coc_metadata.R")
-source("data-raw/pe_metadata.R")
-source("data-raw/de_metadata.R")
-source("data-raw/ou_metadata.R")
-source("data-raw/ou_hierarchy.R")
+source("data-raw/update_metadata.R")
 source("data-raw/pvls_emr.R")
 
 datim_secret <- Sys.getenv("DATIM_SECRET")
@@ -23,6 +19,8 @@ geo_secret <- Sys.getenv("GEO_SECRET")
 datimutils::loginToDATIM(geo_secret)
 geo_session <- d2_default_session
 source("data-raw/daa_countries.R")
-source("data-raw/data_availability.R")
+source("data-raw/import_status.R")
 
 source("data-raw/combined_data.R")
+
+source("data-raw/save_csv.R")

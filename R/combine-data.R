@@ -26,11 +26,6 @@ combine_data <- function(daa_indicator_data,
                      by = c("organisationunitid"),
                      keep = FALSE)
 
-  ou_hierarchy %<>%
-    dplyr::select(.data$facilityuid, .data$namelevel3, .data$namelevel4,
-                  .data$namelevel5, .data$namelevel6, .data$namelevel7) %>%
-    unique()
-
   df <- daa_indicator_data %>%
     # Joins DAA Indicator data to OU hierarchy metadata
     dplyr::left_join(ou_hierarchy, by = c("facilityuid")) %>%
@@ -44,10 +39,20 @@ combine_data <- function(daa_indicator_data,
                      by = c("facilityuid")) %>%
 
     # Selects rows for export
-    dplyr::select(.data$facilityuid, dplyr::starts_with("namelevel"),
-                  .data$indicator, .data$period, .data$moh, .data$pepfar,
-                  .data$reported_by, dplyr::starts_with("level"),
-                  dplyr::everything(), -.data$name, -.data$organisationunitid)
+    dplyr::select(.data$facilityuid,
+                  dplyr::starts_with("namelevel"),
+                  .data$indicator,
+                  .data$period,
+                  .data$moh,
+                  .data$pepfar,
+                  .data$reported_by,
+                  dplyr::starts_with("level"),
+                  dplyr::starts_with("emr"),
+                  .data$tx_pvls_n,
+                  .data$tx_pvls_d,
+                  .data$moh_id,
+                  .data$longitude,
+                  .data$latitude)
 
   return(df)
 }

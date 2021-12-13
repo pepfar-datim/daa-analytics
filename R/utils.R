@@ -1,86 +1,4 @@
 #' @export
-#' @title Fetch data from S3 bucket.
-#'
-#' @description
-#' Extracts data from a specific S3 bucket, saves it to a folder, and returns
-#' a dataframe with the same data.
-#'
-#' @param s3 The s3 object created by the paws package containing
-#' user credentials.
-#' @param aws_s3_bucket The URL for the particular bucket being accessed.
-#' @param key The specific folder where the DAA data being accessed
-#' is stored on S3.
-#' @param folder The folder where the .csv.gz temporary file should
-#' be locally stored.
-#' @param file_name The file name for the .csv.gz temporary file to
-#' be locally stored.
-#' @param last_update The date and time the dataset was last updated.
-#'
-#' @return A dataframe of the data located in the specified S3 sub-bucket.
-#'
-fetch_s3_files <- function(s3, aws_s3_bucket, key,
-                           folder = "data", file_name, last_update = NULL) {
-  file_path <- file.path(folder, paste0(file_name, ".csv.gz"))
-  s3_object_body <- NULL
-  # TODO remove the need for `folder` and `file_name` arguments
-  tryCatch({
-    s3_object <-
-      s3$get_object(Bucket = aws_s3_bucket,
-                    # IfModifiedSince = last_update,
-                    Key = paste0(key, "/data.csv.gz"))
-    s3_object_body <- s3_object$Body
-
-    if (length(s3_object_body) > 0) {
-      # TODO remove the need to save a temporary file to access data
-      if (file.exists(file_path)) {
-        unlink(file_path)
-      }
-      writeBin(s3_object_body, con = file_path)
-      my_data <-
-        readr::read_delim(file = file_path,
-                          locale = readr::locale(encoding = "UTF-8"),
-                          col_types = readr::cols(.default = "c"))
-      if (!file.exists(file_path)) {
-        stop("Could not retreive support file.")
-      }
-    } else {
-      # If file was not updated, retrieves the latest data from the data folder
-      my_data <-
-        readr::read_delim(file = file_path,
-                          locale = readr::locale(encoding = "UTF-8"),
-                          col_types = readr::cols(.default = "c"))
-    }
-  },
-  error = function(e) {
-    # If there is an error, return NULL for the data.
-    warning("S3 returned no data and there is no existing data file.")
-    return(NULL)
-  })
-
-  return(my_data)
-}
-
-#' @export
-#' @title Get Organisation Unit Name from UID.
-#'
-#' @description
-#' Returns the country name based on the organisation unit UID.
-#'
-#' @param ou_uid UID for the Operating Unit whose data is being queried.
-#'
-#' @return A string containing the country name.
-#'
-get_ou_name <- function(ou_uid) {
-  ou_name <- daa.analytics::daa_countries %>%
-    dplyr::filter(.data$country_uid == ou_uid) %>%
-    dplyr::select(.data$country_name) %>%
-    toString()
-
-  # Returns OU name
-  return(ou_name)
-}
-
-#' @export
 #' @title Return current FY based on system date.
 #'
 #' @return Current FY as numeric.
@@ -98,3 +16,106 @@ current_fiscal_year <- function() {
 
   return(curr_fy)
 }
+
+
+#' @export
+#' @title Get Indicator Name
+#'
+#' @description
+#' Converts Indicator UID into a human-readable name.
+#'
+#' @param uid UID for Indicator
+#'
+#' @return Indicator name as a string.
+#'
+#' @noRd
+#'
+get_indicator_name <- function(uid) {
+  get_name <- daa.analytics::daa_indicators$indicator
+  names(get_name) <- daa.analytics::daa_indicators$uid
+  indicator_name <- unname(get_name[uid])
+  return(indicator_name)
+}
+
+
+#' @export
+#' @title Get Organisation Unit Name from UID.
+#'
+#' @description
+#' Returns the country name based on the organisation unit UID.
+#'
+#' @param ou_uid UID for the Operating Unit whose data is being queried.
+#'
+#' @return A string containing the country name.
+#'
+get_ou_name <- function(ou_uid) {
+  countries <- daa.analytics::daa_countries
+  ou_name <- countries[countries$country_uid == ou_uid][["country_name"]]
+  return(ou_name)
+}
+
+
+#' @title Remove missing data
+#'
+#' @description
+#' Takes in a list of dataframes and removes any that are missing.
+#'
+#' @param my_list A list of dataframes.
+#'
+#' @return A list of dataframes with missing dataframes removed.
+#'
+#' @noRd
+#'
+remove_missing_dfs <- function(my_list) {
+  new_list <- my_list[which(!is.na(my_list))]
+  return(new_list)
+}
+
+
+#' @export
+#' @title Calculate Weighted Concordance.
+#'
+#' @description
+#' Calculates the weighted concordance for a given site using the total
+#' number of patients reported by the MOH and PEPFAR as well as the
+#' weighting factor.
+#'
+#' @param moh The number of patients reported by the MOH at the site.
+#' @param pepfar The number of patients reported by PEPFAR at the site.
+#' @param weighting The weighting factor given to the site.
+#'
+#' @return A single value for the weighted concordance of the site.
+#'
+weighted_concordance <- function(moh, pepfar, weighting) {
+  if (!is.na(weighting)) {
+    n <- weighting * (((moh + pepfar) - abs(moh - pepfar)) / (moh + pepfar))
+  } else{
+    n <- NA
+  }
+  return(n)
+}
+
+
+#' @export
+#' @title Calculate Weighted Discordance.
+#'
+#' @description
+#' Calculates the weighted discordance for a given site using the total
+#' number of patients reported by the MOH and PEPFAR as well as the
+#' weighting factor.
+#'
+#' @param moh The number of patients reported by the MOH at the site.
+#' @param pepfar The number of patients reported by PEPFAR at the site.
+#' @param weighting The weighting factor given to the site.
+#'
+#' @return A single value for the weighted discordance of the site.
+#'
+weighted_discordance <- function(moh, pepfar, weighting) {
+  if (!is.na(weighting)) {
+    n <- weighting * abs(moh - pepfar) / mean(c(moh, pepfar))
+  } else{
+    n <- NA
+  }
+  return(n)
+}
+

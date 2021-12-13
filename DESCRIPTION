@@ -1,6 +1,6 @@
 Package: daa.analytics
 Title: Utilities for Compiling and Analyzing PEPFAR Data Alignment Activity Data
-Version: 0.3.0
+Version: 0.4.0
 Date: 2021-06-17
 Authors@R: 
     person(given = "Chris",
@@ -11,8 +11,8 @@ Authors@R:
 Description: General functions for pulling, joining, analyzing, and visualizing DAA data.
 URL: https://github.com/cnemarich/daa-analytics
 BugReports: https://github.com/cnemarich/daa-analytics
-Depends: R (>= 3.6.0)
-Imports:
+Depends: R (>= 4.1.1)
+Imports: 
     dplyr (>= 1.0.6),
     lubridate (>= 1.7.10),
     purrr (>= 0.3.4),
@@ -21,16 +21,16 @@ Imports:
     magrittr (>= 2.0.1),
     readr (>= 2.0.1),
     paws (>= 0.1.11),
-    datimutils (>= 0.1.1),
+    datimutils (>= 0.1.2),
     R.utils (>= 2.10.1),
     rlang (>= 0.4.11)
-Suggests:
-    devtools (>= 2.4.2),
-    testthat (>= 3.0.2),
-    usethis (>= 2.0.1)
+Suggests: 
+    devtools (>= 2.4.3),
+    testthat (>= 3.1.1),
+    usethis (>= 2.1.3)
 Remotes: pepfar-datim/datimutils
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
