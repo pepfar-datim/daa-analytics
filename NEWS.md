@@ -1,3 +1,27 @@
+# daa.analytics v0.4.0
+
+## Bug fixes
+* Fixes minor bug with how `adorn_weights` and `combine_data` handle
+  Organization Units with duplicative UIDs.
+
+## Breaking changes
+* Deprecates `get_coc_metadata`, `get_de_metadata`, `get_ou_metadata`,
+  `get_pe_metadata`, and `get_pvls_emr_data` for a single function called
+  `get_s3_data` which takes in an argument named `dataset_name` to indicate
+  which file to update.
+* Renames `get_data_availability` to `get_import_history`.
+* Renames `weighting_levels` to `adorn_weights`.
+  
+## New features
+* `get_s3_data` and `fetch_s3_files` now both allow the user to only update
+  files if the data has changed on S3 since the last time a file was grabbed.
+
+## Minor improvements and fixes
+* Updates R from version 3.6.3 to version 4.1.1
+* Updates versions of several required and suggested packages
+* New `data-raw` files added for updating data for a single OU and
+  for saving CSVs with country data.
+
 # daa.analytics v0.3.0
 
 ## Breaking changes
