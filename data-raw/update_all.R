@@ -22,3 +22,5 @@ source("data-raw/daa_countries.R")
 source("data-raw/import_status.R")
 
 source("data-raw/combined_data.R")
+
+source("data-raw/save_csv.R")
