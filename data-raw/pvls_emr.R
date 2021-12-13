@@ -8,11 +8,12 @@
 if(!exists("coc_metadata")){ load("data/coc_metadata.Rda") }
 if(!exists("de_metadata")){ load("data/de_metadata.Rda") }
 if(!exists("pe_metadata")){ load("data/pe_metadata.Rda") }
-pvls_emr <- daa.analytics::get_pvls_emr_table(s3 = s3,
-                                              aws_s3_bucket = aws_s3_bucket,
-                                              last_update = NULL) %>%
-  daa.analytics::adorn_pvls_emr(pvls_emr = .,
-                                coc_metadata = coc_metadata,
-                                de_metadata = de_metadata,
-                                pe_metadata = pe_metadata)
+pvls_emr_raw <- daa.analytics::get_s3_data(s3 = s3,
+                                           aws_s3_bucket = aws_s3_bucket,
+                                           dataset_name = "pvls_emr_raw",
+                                           folder = "data-raw")
+pvls_emr <- daa.analytics::adorn_pvls_emr(pvls_emr_raw = pvls_emr_raw,
+                                          coc_metadata = coc_metadata,
+                                          de_metadata = de_metadata,
+                                          pe_metadata = pe_metadata)
 usethis::use_data(pvls_emr, overwrite = TRUE)

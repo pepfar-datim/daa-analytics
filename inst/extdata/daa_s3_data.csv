@@ -1,0 +1,6 @@
+﻿file_name,key,filters
+pvls_emr_raw,datim/www.datim.org/moh_daa_data_value_emr_pvls,
+de_metadata,datim/www.datim.org/data_element,"c('dataelementid' = 'dataelementid', 'dataelementname' = 'shortname')"
+coc_metadata,datim/www.datim.org/category_option_combo,"c('categoryoptioncomboid' = 'categoryoptioncomboid', 'categoryoptioncomboname' = 'name')"
+ou_metadata,datim/www.datim.org/organisation_unit,"c('organisationunitid' = 'organisationunitid', 'path' = 'path', 'name' = 'shortname', 'uid' = 'uid')"
+pe_metadata,datim/www.datim.org/moh_daa_period_structure,"c('periodid' = 'periodid', 'iso' = 'iso')"
