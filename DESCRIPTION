@@ -11,8 +11,8 @@ Authors@R:
 Description: General functions for pulling, joining, analyzing, and visualizing DAA data.
 URL: https://github.com/cnemarich/daa-analytics
 BugReports: https://github.com/cnemarich/daa-analytics
-Depends: R (>= 3.6.0)
-Imports:
+Depends: R (>= 4.1.1)
+Imports: 
     dplyr (>= 1.0.6),
     lubridate (>= 1.7.10),
     purrr (>= 0.3.4),
