@@ -18,7 +18,25 @@ current_fiscal_year <- function() {
 }
 
 
+#' @export
+#' @title Get Indicator Name
+#'
+#' @description
+#' Converts Indicator UID into a human-readable name.
+#'
+#' @param uid UID for Indicator
+#'
+#' @return Indicator name as a string.
+#'
+#' @noRd
+#'
+get_indicator_name <- function(uid) {
+  get_name <- daa.analytics::daa_indicators$indicator
+  names(get_name) <- daa.analytics::daa_indicators$uid
+  indicator_name <- unname(get_name[uid])
+  return(indicator_name)
 }
+
 
 #' @export
 #' @title Get Organisation Unit Name from UID.
