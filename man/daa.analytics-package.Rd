@@ -11,13 +11,13 @@ General functions for pulling, joining, analyzing, and visualizing DAA data.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/cnemarich/daa-analytics}
-  \item Report bugs at \url{https://github.com/cnemarich/daa-analytics}
+  \item \url{https://github.com/pepfar-datim/daa-analytics}
+  \item Report bugs at \url{https://github.com/pepfar-datim/daa-analytics}
 }
 
 }
 \author{
-\strong{Maintainer}: Chris Nemarich \email{cnemarich@guidehousefederal.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Chris Nemarich \email{cnemarich@guidehousefederal.com}
 
 }
 \keyword{internal}
