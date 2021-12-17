@@ -50,7 +50,7 @@ get_indicator_name <- function(uid) {
 #'
 get_ou_name <- function(ou_uid) {
   countries <- daa.analytics::daa_countries
-  ou_name <- countries[countries$country_uid == ou_uid][["country_name"]]
+  ou_name <- countries[countries$country_uid == ou_uid, ][["country_name"]]
   return(ou_name)
 }
 

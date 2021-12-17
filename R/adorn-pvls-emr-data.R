@@ -20,7 +20,8 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
                            de_metadata = NULL,
                            pe_metadata = NULL) {
 
-  pvls_emr %<>%
+  pvls_emr <-
+    pvls_emr_raw %>%
     # Joins to period data and cleans and filters periods
     dplyr::left_join(pe_metadata, by = "periodid") %>%
 
