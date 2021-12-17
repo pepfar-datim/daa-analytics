@@ -1,16 +1,15 @@
 Package: daa.analytics
 Title: Utilities for Compiling and Analyzing PEPFAR Data Alignment Activity Data
-Version: 0.4.0
-Date: 2021-06-17
+Version: 0.4.1
+Date: 2021-12-17
 Authors@R: 
     person(given = "Chris",
            family = "Nemarich",
            role = c("aut", "cre"),
-           email = "cnemarich@guidehousefederal.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "cnemarich@guidehousefederal.com")
 Description: General functions for pulling, joining, analyzing, and visualizing DAA data.
-URL: https://github.com/cnemarich/daa-analytics
-BugReports: https://github.com/cnemarich/daa-analytics
+URL: https://github.com/pepfar-datim/daa-analytics
+BugReports: https://github.com/pepfar-datim/daa-analytics
 Depends: R (>= 4.1.1)
 Imports: 
     dplyr (>= 1.0.6),
