@@ -5,4 +5,7 @@
 # geo_session <- d2_default_session
 
 import_history <- daa.analytics::get_import_history(geo_session = geo_session)
+try(expr = {
+  waldo::compare(daa.analytics::import_history, import_history)
+}, silent = TRUE)
 usethis::use_data(import_history, overwrite = TRUE)

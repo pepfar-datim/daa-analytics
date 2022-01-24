@@ -22,4 +22,7 @@ daa_indicator_data <- daa.analytics::daa_countries %>%
                                    adorn_emr = TRUE)
   }) %>%
   dplyr::bind_rows()
+try(expr = {
+  waldo::compare(daa.analytics::daa_indicator_data, daa_indicator_data)
+}, silent = TRUE)
 usethis::use_data(daa_indicator_data, overwrite = TRUE)

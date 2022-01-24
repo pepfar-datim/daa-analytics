@@ -6,4 +6,5 @@
 # geo_session <- d2_default_session
 
 daa_countries <- daa.analytics::get_daa_countries(geo_session = geo_session)
+waldo::compare(daa.analytics::daa_countries, daa_countries)
 usethis::use_data(daa_countries, overwrite = TRUE)

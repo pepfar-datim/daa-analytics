@@ -18,4 +18,5 @@ daa_indicators <-
     "LZbeWYZEkYL", "TB_PREV_LEGACY", "2018-2019 (Therapy Type)",            #14
     "oFFlA4vaSWD", "TB_PREV", "2020-2021"                                   #15
   )
+waldo::compare(daa.analytics::daa_indicators, daa_indicators)
 usethis::use_data(daa_indicators, overwrite = TRUE)

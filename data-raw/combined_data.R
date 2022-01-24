@@ -8,4 +8,7 @@ combined_data <- daa.analytics::combine_data(
   ou_hierarchy = ou_hierarchy,
   pvls_emr = pvls_emr,
   attribute_data = attribute_data)
+try(expr = {
+  waldo::compare(daa.analytics::combined_data, combined_data)
+}, silent = TRUE)
 usethis::use_data(combined_data, overwrite = TRUE)
