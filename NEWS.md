@@ -1,3 +1,26 @@
+# daa.analytics v0.5.0
+
+## Bug fixes
+* Fixes minor bugs in `get_ou_name` and `adorn_pvls_emr`.
+
+## Breaking changes
+* Renames `emr_at_site_for_indicator` column to `emr_present` in relevant
+  datasets.
+* Renames `data_availability` dataset to `import_history`
+  
+## New features
+* Creates `global_summary` function to generate a summary table of DAA results
+  across all countries, indicators, and fiscal years of the activity.
+
+## Minor improvements and fixes
+* Moves document output folder from variable defined in each `data_raw` file
+  to an environmental variable, `OUTPUT_FOLDER`.
+* Updates `data_raw` scripts for `attribute_data` and `daa_indicator_data`
+  datasets so countries are fetched in alphabetical order and country names
+  are printed as each query is made to DATIM.
+* The `save_csv` file in `data_raw` has been updated to fetch the new
+  `global_summary` dataset and save it to a CSV.
+
 # daa.analytics v0.4.0
 
 ## Bug fixes
