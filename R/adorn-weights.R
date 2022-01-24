@@ -123,7 +123,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
       # Calculates EMR weighted concordance and discordance
       dplyr::group_by(.data$indicator,
                       .data$period,
-                      .data$emr_at_site_for_indicator) %>%
+                      .data$emr_present) %>%
       dplyr::mutate(emr_weighting = .data$pepfar / sum(.data$pepfar)) %>%
       dplyr::rowwise() %>%
       dplyr::mutate(emr_discordance =
@@ -144,7 +144,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
     dplyr::bind_rows(misaligned_sites, aligned_sites) %>%
     # Selects rows for export
     dplyr::select(-dplyr::starts_with("namelevel"),
-                  -.data$emr_at_site_for_indicator,
+                  -.data$emr_present,
                   -dplyr::starts_with("tx_pvls"))
 
   return(df)

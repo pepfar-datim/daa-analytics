@@ -87,7 +87,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
                         names_to = "indicator",
                         names_prefix = "emr_",
-                        values_to = "emr_at_site_for_indicator") %>%
+                        values_to = "emr_present") %>%
     dplyr::mutate(
       indicator = dplyr::case_when(
         indicator == "TB_PREV" & period < 2020 ~ "TB_PREV_LEGACY",
@@ -99,7 +99,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     # Organizes columns for export
     dplyr::select(
       organisationunitid = .data$sourceid, .data$period, .data$indicator,
-      .data$emr_at_site_for_indicator, .data$tx_pvls_n, .data$tx_pvls_d
+      .data$emr_present, .data$tx_pvls_n, .data$tx_pvls_d
     )
 
   return(pvls_emr)
