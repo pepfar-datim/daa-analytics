@@ -19,7 +19,7 @@ geo_secret <- Sys.getenv("GEO_SECRET")
 datimutils::loginToDATIM(geo_secret)
 geo_session <- d2_default_session
 source("data-raw/daa_countries.R")
-source("data-raw/import_status.R")
+source("data-raw/import_history.R")
 
 source("data-raw/combined_data.R")
 

@@ -8,10 +8,12 @@
 if(!exists("ou_hierarchy")){ load("data/ou_hierarchy.Rda") }
 if(!exists("pvls_emr")){ load("data/pvls_emr.Rda") }
 
-daa_indicator_data <- daa.analytics::daa_countries$country_uid %>%
-  {.[!. %in% "YM6xn5QxNpY"]} %>%
+daa_indicator_data <- daa.analytics::daa_countries %>%
+  dplyr::filter(country_uid != "YM6xn5QxNpY") %>%
+  dplyr::arrange(country_name) %>%
+  .$country_uid %>%
   lapply(., function(x){
-    print(daa.analytics::get_ou_name(x))
+    print(paste0("Fetching indicator data for ", daa.analytics::get_ou_name(x)))
     daa.analytics::get_daa_data(x, d2_session = d2_session) %>%
       daa.analytics::adorn_daa_data() %>%
       daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy,
