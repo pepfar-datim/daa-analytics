@@ -21,7 +21,7 @@ given indicator during the reporting period.}
 }
 }
 \source{
-\url{http://www.datim.org/}
+\url{https://www.datim.org/}
 }
 \usage{
 daa_indicator_data

@@ -21,7 +21,7 @@ period are recorded as 'NA'.}
 }
 }
 \source{
-\url{http://www.geoalign.org/}
+\url{https://www.geoalign.org/}
 }
 \usage{
 import_history

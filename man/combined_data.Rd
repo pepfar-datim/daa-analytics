@@ -63,7 +63,7 @@ patients with a viral load test result documented in a given period.}
 }
 }
 \source{
-\url{http://www.datim.org/}
+\url{https://www.datim.org/}
 }
 \usage{
 combined_data

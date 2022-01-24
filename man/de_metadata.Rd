@@ -14,7 +14,7 @@ data element in DATIM.}
 }
 }
 \source{
-\url{http://www.datim.org/}
+\url{https://www.datim.org/}
 }
 \usage{
 de_metadata

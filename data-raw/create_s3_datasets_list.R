@@ -14,5 +14,5 @@ s3_datasets <- tibble::tribble(
   "pe_metadata",	"datim/www.datim.org/moh_daa_period_structure",
   c('periodid' = 'periodid', 'iso' = 'iso')                              #5
 )
-
+waldo::compare(daa.analytics::s3_datasets, s3_datasets)
 usethis::use_data(s3_datasets, overwrite = TRUE, compress = "gzip")

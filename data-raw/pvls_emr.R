@@ -16,4 +16,7 @@ pvls_emr <- daa.analytics::adorn_pvls_emr(pvls_emr_raw = pvls_emr_raw,
                                           coc_metadata = coc_metadata,
                                           de_metadata = de_metadata,
                                           pe_metadata = pe_metadata)
+try(expr = {
+  waldo::compare(daa.analytics::pvls_emr, pvls_emr)
+}, silent = TRUE)
 usethis::use_data(pvls_emr, overwrite = TRUE)
