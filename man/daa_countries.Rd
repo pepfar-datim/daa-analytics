@@ -16,7 +16,7 @@ facilities are located for the particular country.}
 }
 }
 \source{
-\url{http://www.datim.org/}
+\url{https://www.datim.org/}
 }
 \usage{
 daa_countries

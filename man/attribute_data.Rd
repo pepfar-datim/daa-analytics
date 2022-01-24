@@ -15,7 +15,7 @@ A data frame with 5 variables:
 }
 }
 \source{
-\url{http://www.datim.org/}
+\url{https://www.datim.org/}
 }
 \usage{
 attribute_data

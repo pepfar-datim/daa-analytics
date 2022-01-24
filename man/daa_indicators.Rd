@@ -13,7 +13,7 @@ A data frame with 14 rows and 3 variables:
 }
 }
 \source{
-\url{http://www.datim.org/}
+\url{https://www.datim.org/}
 }
 \usage{
 daa_indicators

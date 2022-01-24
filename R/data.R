@@ -13,7 +13,7 @@
 #'   \item{longitude}{Longitude of the facility as recorded in DATIM.}
 #'   \item{latitude}{Latitude of the facility as recorded in DATIM.}
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "attribute_data"
 
 #' Category Option Combo metadata.
@@ -28,7 +28,7 @@
 #'   Combination in DATIM.}
 #'   ...
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "coc_metadata"
 
 #' Period metadata.
@@ -41,7 +41,7 @@
 #'   \item{iso}{The ISO date/time value for the period.}
 #'   ...
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "pe_metadata"
 
 #' Data Element metadata.
@@ -55,7 +55,7 @@
 #'   \item{dataelementname}{The name of the Data Element in DATIM.}
 #'   ...
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "de_metadata"
 
 #' Organisation Unit metadata.
@@ -72,7 +72,7 @@
 #'   \item{uid}{The alphanumeric UID associated with the organisation unit
 #'   in DATIM.}
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "ou_metadata"
 
 #' DAA country list.
@@ -88,7 +88,7 @@
 #'   \item{facility_level}{The organisation unit hierarchy level at which
 #'   facilities are located for the particular country.}
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "daa_countries"
 
 #' DAA indicator list.
@@ -101,7 +101,7 @@
 #'   \item{indicator}{The short name of the indicator.}
 #'   \item{notes}{Notes on years and disaggregates relevant to the DAA.}
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "daa_indicators"
 
 #' Country DAA Import History.
@@ -123,7 +123,7 @@
 #'   recorded as 'Yes' or 'No'. Periods prior to the most recent reporting
 #'   period are recorded as 'NA'.}
 #' }
-#' @source \url{http://www.geoalign.org/}
+#' @source \url{https://www.geoalign.org/}
 "import_history"
 
 #' Organisation Unit Hierarchy.
@@ -163,7 +163,7 @@
 #'   level 7, this will represent the name of the facility. For countries with
 #'   their facility level at hierarchy level 6, this value will be 'NA'.}
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "ou_hierarchy"
 
 #' Viral Load Suppression and Electronic Medical Records data.
@@ -186,7 +186,7 @@
 #'   \item{tx_pvls_d}{The denominator for TX_PVLS, representing the number of
 #'   patients with a viral load test result documented in a given period.}
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "pvls_emr"
 
 #' DAA Indicator Data.
@@ -208,7 +208,7 @@
 #'   by just the MOH, just PEPFAR, or both entities at the given site for the
 #'   given indicator during the reporting period.}
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "daa_indicator_data"
 
 #' Combined DAA Dataset.
@@ -272,5 +272,5 @@
 #'   \item{longitude}{Longitude of the facility as recorded in DATIM.}
 #'   \item{latitude}{Latitude of the facility as recorded in DATIM.}
 #' }
-#' @source \url{http://www.datim.org/}
+#' @source \url{https://www.datim.org/}
 "combined_data"

@@ -40,7 +40,7 @@ their facility level at hierarchy level 6, this value will be 'NA'.}
 }
 }
 \source{
-\url{http://www.datim.org/}
+\url{https://www.datim.org/}
 }
 \usage{
 ou_hierarchy

@@ -13,7 +13,7 @@ A data frame with 2 variables:
 }
 }
 \source{
-\url{http://www.datim.org/}
+\url{https://www.datim.org/}
 }
 \usage{
 pe_metadata
