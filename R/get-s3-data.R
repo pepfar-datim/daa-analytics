@@ -15,8 +15,10 @@
 #'
 get_s3_data <- function(s3, aws_s3_bucket, dataset_name = NULL, folder = NULL) {
   s3_datasets <- daa.analytics::s3_datasets
-  key <- s3_datasets[s3_datasets$dataset_name == dataset_name,][["key"]]
-  filters <- s3_datasets[s3_datasets$dataset_name == dataset_name,][["filters"]]
+  key <-
+    s3_datasets[s3_datasets$dataset_name == dataset_name, ][["key"]]
+  filters <-
+    s3_datasets[s3_datasets$dataset_name == dataset_name, ][["filters"]]
 
   data <- daa.analytics::fetch_s3_files(
     s3 = s3,
@@ -95,24 +97,3 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
 
   return(my_data)
 }
-
-
-# pvls_emr_timestamp <- function() {
-#   file_name <- "data.csv.gz"
-#
-#   s3_bucket <- base::getOption("s3_bucket")
-#   s3_ext <- base::getOption("s3_ext")
-#   bucket_ext <- paste0(s3_bucket, s3_ext)
-#
-#   tm <- aws.s3::get_bucket_df(s3_bucket) %>%
-#     dplyr::filter(Key == paste0(s3_ext,
-#                                 "moh_daa_data_value_emr_pvls/",
-#                                 file_name)) %>%
-#     dplyr::select("LastModified") %>%
-#     .[[1]] %>%
-#     lubridate::parse_date_time("YmdHMS") %>%
-#     as.POSIXct() %>%
-#     format(tz = "UTC", usetz = TRUE)
-#
-#   return(tm)
-# }

@@ -118,4 +118,3 @@ weighted_discordance <- function(moh, pepfar, weighting) {
   }
   return(n)
 }
-

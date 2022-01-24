@@ -7,10 +7,11 @@
 global_summary(combined_data)
 }
 \arguments{
-\item{combined_data}{}
+\item{combined_data}{The combined dataset of DAA data for processing into a
+summary file.}
 }
 \value{
-
+Summary table dataframe
 }
 \description{
 Prepare Global Summary Table of DAA Data

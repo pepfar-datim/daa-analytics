@@ -62,7 +62,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
                       moh = .data$moh,
                       pepfar = .data$pepfar,
                       weighting = .data$level4_weighting)
-    )%>%
+    ) %>%
     dplyr::ungroup() %>%
 
     # Calculates Level 5 weighted concordance and discordance
@@ -149,4 +149,3 @@ adorn_weights <- function(daa_indicator_data = NULL,
 
   return(df)
 }
-
