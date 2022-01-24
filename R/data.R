@@ -104,7 +104,7 @@
 #' @source \url{http://www.datim.org/}
 "daa_indicators"
 
-#' Data availability.
+#' Country DAA Import History.
 #'
 #' A dataset containing information regarding whether a country provided
 #' an mapping and data for DAA indicators in each year of the activity.
@@ -124,7 +124,7 @@
 #'   period are recorded as 'NA'.}
 #' }
 #' @source \url{http://www.geoalign.org/}
-"data_availability"
+"import_history"
 
 #' Organisation Unit Hierarchy.
 #'
