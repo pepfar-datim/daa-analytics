@@ -4,7 +4,12 @@
 \alias{get_s3_data}
 \title{Fetch DAA S3 Data set}
 \usage{
-get_s3_data(s3, aws_s3_bucket, dataset_name = NULL, folder = NULL)
+get_s3_data(
+  s3 = paws::s3(),
+  aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
+  dataset_name = NULL,
+  folder = "data-raw"
+)
 }
 \arguments{
 \item{s3}{The s3 object created by the paws package containing
@@ -12,9 +17,9 @@ user credentials.}
 
 \item{aws_s3_bucket}{The URL for the particular bucket being accessed.}
 
-\item{folder}{The folder extension where the output file should be saved.}
+\item{dataset_name}{The name of the dataset to be returned.}
 
-\item{file_name}{The name of the dataset to be returned.}
+\item{folder}{The folder extension where the output file should be saved.}
 }
 \value{
 data A dataframe of the indicated data set.

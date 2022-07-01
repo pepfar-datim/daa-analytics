@@ -7,13 +7,21 @@
 #' @param s3 The s3 object created by the paws package containing
 #' user credentials.
 #' @param aws_s3_bucket The URL for the particular bucket being accessed.
-#' @param file_name The name of the dataset to be returned.
+#' @param dataset_name The name of the dataset to be returned.
 #' @param folder The folder extension where the output file should be saved.
 #'
 #' @return data A dataframe of the indicated data set.
 #' @export
 #'
-get_s3_data <- function(s3, aws_s3_bucket, dataset_name = NULL, folder = NULL) {
+get_s3_data <- function(s3 = paws::s3(),
+                        aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
+                        dataset_name = NULL,
+                        folder = "data-raw") {
+  stopifnot("ERROR: Must provide an S3 Bucket address!" = aws_s3_bucket != "",
+            "ERROR: Must provide the name of the dataset to retrieve!" =
+              !is.null(dataset_name),
+            "ERROR: Must provide the name of the folder where the output file should be saved!" =
+              !is.null(folder) | folder != "")
   s3_datasets <- daa.analytics::s3_datasets
   key <- s3_datasets[s3_datasets$dataset_name == dataset_name,][["key"]]
   filters <- s3_datasets[s3_datasets$dataset_name == dataset_name,][["filters"]]
@@ -27,10 +35,10 @@ get_s3_data <- function(s3, aws_s3_bucket, dataset_name = NULL, folder = NULL) {
   )
 
   if (!is.na(filters)) {
-    data %<>% dplyr::select(unlist(filters))
+    data <- dplyr::select(data, unlist(filters))
   }
 
-  return(data)
+  data
 }
 
 
@@ -53,8 +61,15 @@ get_s3_data <- function(s3, aws_s3_bucket, dataset_name = NULL, folder = NULL) {
 #'
 #' @return A dataframe of the data located in the specified S3 sub-bucket.
 #'
-fetch_s3_files <- function(s3, aws_s3_bucket, key,
-                           folder = "data", file_name) {
+fetch_s3_files <- function(s3 = paws::s3(),
+                           aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
+                           key = NULL,
+                           folder = "data-raw",
+                           file_name = NULL) {
+  stopifnot("ERROR: Must provide an S3 Bucket address!" = aws_s3_bucket != "",
+            "ERROR: Must provide key to the S3 object!" = !is.null(key),
+            "ERROR: Must provide the filename to save data to!" =
+              !is.null(file_name) | file_name != "")
   file_path <- file.path(folder, paste0(file_name, ".csv.gz"))
   s3_object_body <- NULL
   last_update <- file.info(file_path)$ctime
@@ -62,7 +77,7 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
   tryCatch({
     s3_object <-
       s3$get_object(Bucket = aws_s3_bucket,
-                    IfModifiedSince = last_update,
+                    # IfModifiedSince = last_update,
                     Key = paste0(key, "/data.csv.gz"))
     s3_object_body <- s3_object$Body
 
@@ -93,5 +108,5 @@ fetch_s3_files <- function(s3, aws_s3_bucket, key,
     return(NULL)
   })
 
-  return(my_data)
+  my_data
 }

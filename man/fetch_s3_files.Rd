@@ -4,7 +4,13 @@
 \alias{fetch_s3_files}
 \title{Fetch data from S3 bucket.}
 \usage{
-fetch_s3_files(s3, aws_s3_bucket, key, folder = "data", file_name)
+fetch_s3_files(
+  s3 = paws::s3(),
+  aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
+  key = NULL,
+  folder = "data-raw",
+  file_name = NULL
+)
 }
 \arguments{
 \item{s3}{The s3 object created by the paws package containing
