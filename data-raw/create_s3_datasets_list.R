@@ -12,7 +12,10 @@ s3_datasets <- tibble::tribble(
   c('organisationunitid' = 'organisationunitid',
     'path' = 'path', 'name' = 'shortname', 'uid' = 'uid'),               #4
   "pe_metadata",	"datim/www.datim.org/moh_daa_period_structure",
-  c('periodid' = 'periodid', 'iso' = 'iso')                              #5
+  c('periodid' = 'periodid', 'iso' = 'iso'),                             #5
+  "duplicate_ids",
+  "datim/www.datim.org/moh_daa_data_integrity_duplicate_ids", NA,        #6
+  "null_ids", "datim/www.datim.org/moh_daa_data_integrity_null_ids", NA  #7
 )
 
-usethis::use_data(s3_datasets, overwrite = TRUE, compress = "gzip")
+usethis::use_data(s3_datasets, overwrite = TRUE)

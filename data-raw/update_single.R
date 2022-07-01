@@ -5,8 +5,6 @@ folder <- "C:/Users/cnemarich002/OneDrive - Guidehouse/Documents/project_DAA/raw
 
 library(magrittr)
 
-source("data-raw/daa_indicators.R")
-
 s3 <- paws::s3()
 aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
 source("data-raw/update_metadata.R")

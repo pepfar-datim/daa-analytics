@@ -5,8 +5,8 @@
 # datimutils::loginToDATIM("~/.secrets/datim.json")
 # d2_session <- d2_default_session
 
-if(!exists("ou_hierarchy")){ load("data/ou_hierarchy.Rda") }
-if(!exists("pvls_emr")){ load("data/pvls_emr.Rda") }
+if(!exists("ou_hierarchy")){ load("support_files/ou_hierarchy.Rda") }
+if(!exists("pvls_emr")){ load("support_files/pvls_emr.Rda") }
 
 daa_indicator_data <- daa.analytics::daa_countries$country_uid %>%
   {.[!. %in% "YM6xn5QxNpY"]} %>%
