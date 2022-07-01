@@ -8,16 +8,39 @@
 if(!exists("ou_hierarchy")){ load("support_files/ou_hierarchy.Rda") }
 if(!exists("pvls_emr")){ load("support_files/pvls_emr.Rda") }
 
-daa_indicator_data <- daa.analytics::daa_countries$country_uid %>%
-  {.[!. %in% "YM6xn5QxNpY"]} %>%
-  lapply(., function(x){
-    print(daa.analytics::get_ou_name(x))
-    daa.analytics::get_daa_data(x, d2_session = d2_session) %>%
-      daa.analytics::adorn_daa_data() %>%
-      daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy,
-                                   pvls_emr = pvls_emr,
-                                   adorn_level6 = TRUE,
-                                   adorn_emr = TRUE)
-  }) %>%
-  dplyr::bind_rows()
-usethis::use_data(daa_indicator_data, overwrite = TRUE)
+daa_indicator_raw <-
+  daa.analytics::daa_countries[["country_uid"]] |>
+  daa.analytics::get_daa_data(fiscal_year = c(2018, 2019, 2020, 2021), d2_session = d2_session)
+
+save(daa_indicator_raw, file = "support_files/daa_indicator_raw.rda")
+
+daa_indicator_filtered <-
+  daa_indicator_raw |>
+  dplyr::select(data_element, period, org_unit, category_option_combo, attribute_option_combo, value) |>
+  ## Aggregate categoryOptionCombo data for now
+  dplyr::group_by(data_element, period, org_unit, attribute_option_combo) |>
+  dplyr::summarise(value = sum(as.numeric(value))) |>
+  dplyr::ungroup() |>
+  ## Filter out unwanted indicators
+  dplyr::filter(!period %in% c("2017Oct", "2018Oct") |
+                  !data_element %in% c("BRalYZhcHpi", "V6hxDYUZFBq", "xwVNaDjMe9z", "IXkZ7eWtFHs")) |>
+  ## Filter out military sites
+  dplyr::filter(!org_unit %in% {
+    dplyr::filter(
+      tidyr::unnest(
+        dplyr::rename(
+          datimutils::getOrgUnits(unique(daa_indicator_raw$org_unit),
+                                  fields = c("id", "name", "organisationUnitGroups[id,name]")),
+        ou_id = id, ou_name = name),
+      cols = "organisationUnitGroups"), id == "nwQbMeALRjL")[["ou_id"]]
+    })
+
+daa_indicator_data <-
+  daa_indicator_filtered |>
+  daa.analytics::adorn_daa_data(include_coc = FALSE, d2_session = d2_session) |>
+  daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy,
+                               pvls_emr = pvls_emr,
+                               adorn_level6 = FALSE,
+                               adorn_emr = TRUE)
+
+save(daa_indicator_data, file = "support_files/daa_indicator_data.rda")
