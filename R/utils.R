@@ -4,12 +4,12 @@
 #' @return Current FY as numeric.
 #'
 current_fiscal_year <- function() {
-  current_year <- Sys.Date() %>%
-    format("%Y") %>%
+  current_year <- Sys.Date() |>
+    format("%Y") |>
     as.numeric()
 
-  current_month <- Sys.Date() %>%
-    format("%m") %>%
+  current_month <- Sys.Date() |>
+    format("%m") |>
     as.numeric()
 
   curr_fy <- ifelse(current_month > 9, current_year + 1, current_year)
@@ -19,39 +19,20 @@ current_fiscal_year <- function() {
 
 
 #' @export
-#' @title Get Indicator Name
+#'
+#' @title Prints message if session is interactive.
 #'
 #' @description
-#' Converts Indicator UID into a human-readable name.
+#' Supplied a message, will print it only if the session is currently interactive.
 #'
-#' @param uid UID for Indicator
+#' @param x Message to print.
 #'
-#' @return Indicator name as a string.
+#' @return Printed message, \code{x}.
 #'
-#' @noRd
-#'
-get_indicator_name <- function(uid) {
-  get_name <- daa.analytics::daa_indicators$indicator
-  names(get_name) <- daa.analytics::daa_indicators$uid
-  indicator_name <- unname(get_name[uid])
-  return(indicator_name)
-}
-
-
-#' @export
-#' @title Get Organisation Unit Name from UID.
-#'
-#' @description
-#' Returns the country name based on the organisation unit UID.
-#'
-#' @param ou_uid UID for the Operating Unit whose data is being queried.
-#'
-#' @return A string containing the country name.
-#'
-get_ou_name <- function(ou_uid) {
-  countries <- daa.analytics::daa_countries
-  ou_name <- countries[countries$country_uid == ou_uid][["country_name"]]
-  return(ou_name)
+interactive_print <- function(x) {
+  if (rlang::is_interactive()) {
+    print(x)
+  }
 }
 
 
@@ -118,4 +99,3 @@ weighted_discordance <- function(moh, pepfar, weighting) {
   }
   return(n)
 }
-
