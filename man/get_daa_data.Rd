@@ -4,10 +4,16 @@
 \alias{get_daa_data}
 \title{Get DAA Indicator Data}
 \usage{
-get_daa_data(ou_uid, d2_session)
+get_daa_data(
+  ou_uid,
+  fiscal_year,
+  d2_session = dynGet("d2_default_session", inherits = TRUE)
+)
 }
 \arguments{
-\item{ou_uid}{UID for the Operating Unit whose data is being queried.}
+\item{ou_uid}{UIDs for the Operating Units whose data are being queried.}
+
+\item{fiscal_year}{Fiscal years for which data should be gathered.}
 
 \item{d2_session}{DHIS2 Session id for the DATIM session.}
 }
