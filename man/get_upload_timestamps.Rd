@@ -4,7 +4,9 @@
 \alias{get_upload_timestamps}
 \title{Fetch Import Timestamps from GeoAlign}
 \usage{
-get_upload_timestamps(geo_session)
+get_upload_timestamps(
+  geo_session = dynGet("d2_default_session", inherits = TRUE)
+)
 }
 \arguments{
 \item{geo_session}{DHIS2 Session id for the GeoAlign session.}

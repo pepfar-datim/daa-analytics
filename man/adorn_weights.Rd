@@ -16,6 +16,15 @@ adorn_weights(
 \item{daa_indicator_data}{Dataframe containing DAA indicator data.}
 
 \item{ou_hierarchy}{Dataframe containing the Organisational hierarchy.}
+
+\item{pvls_emr}{Dataframe containing TX_PVLS and EMR data. Only needed if
+\code{adorn_emr} is TRUE.}
+
+\item{adorn_level6}{Boolean indicating whether to adorn weights for
+SNU level 6 for countries with facilities at level 7.}
+
+\item{adorn_emr}{Boolean indicating whether to adorn weights based
+on whether EMR is or is not present at a site.}
 }
 \value{
 A dataframe of DAA Indicator data with weightings and weighted

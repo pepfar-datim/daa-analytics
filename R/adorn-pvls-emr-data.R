@@ -20,46 +20,46 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
                            de_metadata = NULL,
                            pe_metadata = NULL) {
 
-  pvls_emr %<>%
+  pvls_emr <- pvls_emr_raw |>
     # Joins to period data and cleans and filters periods
-    dplyr::left_join(pe_metadata, by = "periodid") %>%
+    dplyr::left_join(pe_metadata, by = "periodid") |>
 
     # Filters for only Calendar Q3 / Fiscal Q4 results
-    dplyr::filter(substring(.data$iso, 5, 6) == "Q3") %>%
-    dplyr::mutate(period = as.numeric(substring(.data$iso, 1, 4))) %>%
+    dplyr::filter(substring(iso, 5, 6) == "Q3") |>
+    dplyr::mutate(period = as.numeric(substring(iso, 1, 4))) |>
 
     # Joins to Data Element, Category Option Combo, and Attribute Metadata
-    dplyr::left_join(de_metadata, by = "dataelementid") %>%
-    dplyr::left_join(coc_metadata, by = "categoryoptioncomboid") %>%
-    # dplyr::left_join(coc_metadata %>%
-    #                    dplyr::select(.data$categoryoptioncomboid,
+    dplyr::left_join(de_metadata, by = "dataelementid") |>
+    dplyr::left_join(coc_metadata, by = "categoryoptioncomboid") |>
+    # dplyr::left_join(coc_metadata |>
+    #                    dplyr::select(categoryoptioncomboid,
     #                                  attributename =
-    #                                    .data$categoryoptioncomboname),
+    #                                    categoryoptioncomboname),
     #                  by = c("attributeoptioncomboid" =
-    #                           "categoryoptioncomboid")) %>%
+    #                           "categoryoptioncomboid")) |>
 
     # Drops a number of columns before continuing on
-    dplyr::select(-.data$iso, -.data$periodid, -.data$attributeoptioncomboid,
-                  -.data$dataelementid, -.data$categoryoptioncomboid) %>%
+    dplyr::select(-iso, -periodid, -attributeoptioncomboid,
+                  -dataelementid, -categoryoptioncomboid) |>
 
     # Cleans indicator names and pivots data
     dplyr::mutate(indicator = dplyr::case_when(
-      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        .data$categoryoptioncomboname ==
+      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        categoryoptioncomboname ==
         "Service Delivery Area - Care and Treatment" ~ "emr_tx",
-      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        .data$categoryoptioncomboname ==
+      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        categoryoptioncomboname ==
         "Service Delivery Area - HIV Testing Services" ~ "emr_hts",
-      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        .data$categoryoptioncomboname ==
+      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        categoryoptioncomboname ==
         "Service Delivery Area - ANC and/or Maternity" ~ "emr_anc",
-      .data$dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-        .data$categoryoptioncomboname ==
+      dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+        categoryoptioncomboname ==
         "Service Delivery Area - HIV/TB" ~ "emr_tb",
-      substring(.data$dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
-      substring(.data$dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
+      substring(dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
+      substring(dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
       TRUE ~ NA_character_
-    )) %>%
+    )) |>
 
     # TODO Clean and bring categoryOptionCombos into the rest of the app
     dplyr::select(-.data$dataelementname, -.data$categoryoptioncomboname) %>%
@@ -93,7 +93,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
         indicator == "TB_PREV" & period >= 2020 ~ "TB_PREV",
         TRUE ~ indicator
       )
-    ) %>%
+    ) |>
 
     # Organizes columns for export
     dplyr::select(
@@ -101,5 +101,5 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       .data$emr_at_site_for_indicator, .data$tx_pvls_n, .data$tx_pvls_d
     )
 
-  return(pvls_emr)
+  pvls_emr
 }

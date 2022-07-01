@@ -14,19 +14,17 @@ get_daa_countries <- function(geo_session) {
   # TODO figure out how to handle 2021 datasets
   # Fetches data from the server
   df <- datimutils::getMetadata(end_point = "dataStore/ou_levels/orgUnitLevels",
-                                d2_session = geo_session)
+                                d2_session = dynGet("d2_default_session", inherits = TRUE))
 
   if (is.null(df)) {
     return(NULL)
   }
 
-  df %<>%
-    dplyr::bind_rows(.id = "Country") %>%
-    dplyr::rename(country_name = .data$Country,
-                  country_uid = .data$uid,
-                  country_code = .data$code,
-                  facility_level = .data$facility) %>%
-    dplyr::filter(.data$country_name != "demo_country")
-
-  return(df)
+  df |>
+    dplyr::bind_rows(.id = "Country") |>
+    dplyr::rename(country_name = Country,
+                  country_uid = uid,
+                  country_code = code,
+                  facility_level = facility) |>
+    dplyr::filter(country_name != "demo_country")
 }

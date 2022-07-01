@@ -4,7 +4,10 @@
 \alias{get_attribute_table}
 \title{Fetch MOH ID and attributes from DATIM}
 \usage{
-get_attribute_table(ou_uid, d2_session = d2_session)
+get_attribute_table(
+  ou_uid,
+  d2_session = dynGet("d2_default_session", inherits = TRUE)
+)
 }
 \arguments{
 \item{ou_uid}{UID for the Operating Unit whose data is being queried}

@@ -2,6 +2,12 @@
 #'
 #' @param daa_indicator_data Dataframe containing DAA indicator data.
 #' @param ou_hierarchy Dataframe containing the Organisational hierarchy.
+#' @param pvls_emr Dataframe containing TX_PVLS and EMR data. Only needed if
+#' \code{adorn_emr} is TRUE.
+#' @param adorn_level6 Boolean indicating whether to adorn weights for
+#' SNU level 6 for countries with facilities at level 7.
+#' @param adorn_emr Boolean indicating whether to adorn weights based
+#' on whether EMR is or is not present at a site.
 #'
 #' @return A dataframe of DAA Indicator data with weightings and weighted
 #' discordance and concordance calculated for levels 3 through 5.
@@ -13,19 +19,14 @@ adorn_weights <- function(daa_indicator_data = NULL,
                           adorn_level6 = FALSE,
                           adorn_emr = FALSE) {
 
-  df <- daa_indicator_data %>%
+  df <- daa_indicator_data |>
     # Joins DAA Indicator data to OU hierarchy metadata
-    dplyr::left_join(ou_hierarchy %>%
-                       dplyr::select(-.data$organisationunitid,
-                                     -paste0("namelevel", 3:7)) %>%
-                       unique(),
+    dplyr::left_join(unique(dplyr::select(ou_hierarchy, facilityuid, paste0("namelevel", 3:7, "uid"))),
                      by = c("facilityuid"))
 
-  misaligned_sites <- df %>%
-    dplyr::filter(.data$reported_by != "Both")
+  misaligned_sites <- dplyr::filter(df, reported_by != "Both")
 
-  aligned_sites <- df %>%
-    dplyr::filter(.data$reported_by == "Both") %>%
+  aligned_sites <- dplyr::filter(df, reported_by == "Both") |>
 
     # Calculates Level 3 weighted concordance and discordance
     dplyr::group_by(.data$indicator,
@@ -40,11 +41,11 @@ adorn_weights <- function(daa_indicator_data = NULL,
                       weighting = .data$level3_weighting),
                   level3_concordance =
                     daa.analytics::weighted_concordance(
-                      moh = .data$moh,
-                      pepfar = .data$pepfar,
-                      weighting = .data$level3_weighting)
-    ) %>%
-    dplyr::ungroup() %>%
+                      moh = moh,
+                      pepfar = pepfar,
+                      weighting = level3_weighting)
+    ) |>
+    dplyr::ungroup() |>
 
     # Calculates Level 4 weighted concordance and discordance
     dplyr::group_by(.data$indicator,
@@ -59,11 +60,11 @@ adorn_weights <- function(daa_indicator_data = NULL,
                       weighting = .data$level4_weighting),
                   level4_concordance =
                     daa.analytics::weighted_concordance(
-                      moh = .data$moh,
-                      pepfar = .data$pepfar,
-                      weighting = .data$level4_weighting)
-    )%>%
-    dplyr::ungroup() %>%
+                      moh = moh,
+                      pepfar = pepfar,
+                      weighting = level4_weighting)
+    ) |>
+    dplyr::ungroup() |>
 
     # Calculates Level 5 weighted concordance and discordance
     dplyr::group_by(.data$indicator,
@@ -78,10 +79,10 @@ adorn_weights <- function(daa_indicator_data = NULL,
                       weighting = .data$level5_weighting),
                   level5_concordance =
                     daa.analytics::weighted_concordance(
-                      moh = .data$moh,
-                      pepfar = .data$pepfar,
-                      weighting = .data$level5_weighting)
-    ) %>%
+                      moh = moh,
+                      pepfar = pepfar,
+                      weighting = level5_weighting)
+    ) |>
     dplyr::ungroup()
 
   if (adorn_level6 && any(!is.na(aligned_sites$namelevel7uid))) {
@@ -99,24 +100,24 @@ adorn_weights <- function(daa_indicator_data = NULL,
                         weighting = .data$level6_weighting),
                     level6_concordance =
                       daa.analytics::weighted_concordance(
-                        moh = .data$moh,
-                        pepfar = .data$pepfar,
-                        weighting = .data$level6_weighting)
-      ) %>%
+                        moh = moh,
+                        pepfar = pepfar,
+                        weighting = level6_weighting)
+      ) |>
       dplyr::ungroup()
   }
 
   if (adorn_emr) {
     # Clean pvls_emr and ou_hierarchy datasets to avoid
     # duplication of facilities with multiple organisationunitid numbers
-    pvls_emr %<>%
-      dplyr::left_join(ou_hierarchy %>%
-                         dplyr::select(.data$organisationunitid,
-                                       .data$facilityuid),
+    pvls_emr <-
+      dplyr::left_join(pvls_emr,
+                       dplyr::select(ou_hierarchy, organisationunitid, facilityuid),
                        by = c("organisationunitid"),
                        keep = FALSE)
 
-    aligned_sites %<>%
+    aligned_sites <-
+      aligned_sites |>
       # Joins PVLS and EMR datasets
       dplyr::left_join(pvls_emr,
                        by = c("facilityuid", "period", "indicator")) %>%
@@ -133,20 +134,20 @@ adorn_weights <- function(daa_indicator_data = NULL,
                         weighting = .data$emr_weighting),
                     emr_concordance =
                       daa.analytics::weighted_concordance(
-                        moh = .data$moh,
-                        pepfar = .data$pepfar,
-                        weighting = .data$emr_weighting)
-      ) %>%
+                        moh = moh,
+                        pepfar = pepfar,
+                        weighting = emr_weighting)
+      ) |>
       dplyr::ungroup()
   }
 
   df <-
-    dplyr::bind_rows(misaligned_sites, aligned_sites) %>%
+    dplyr::bind_rows(misaligned_sites, aligned_sites) |>
     # Selects rows for export
     dplyr::select(-dplyr::starts_with("namelevel"),
                   -.data$emr_at_site_for_indicator,
                   -dplyr::starts_with("tx_pvls"))
 
-  return(df)
+  df
 }
 

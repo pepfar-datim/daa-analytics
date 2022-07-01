@@ -17,7 +17,7 @@ adorn_daa_data <- function(df) {
     return(NULL)
   }
   # Cleans data and prepares it for export
-  df %<>%
+  df <- df |>
     # Pivots MOH and PEPFAR data out into separate columns
     tidyr::pivot_wider(names_from = .data$`Funding Mechanism`,
                        values_from = .data$`Value`) %>%
