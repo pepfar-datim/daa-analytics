@@ -4,10 +4,16 @@
 \alias{adorn_daa_data}
 \title{Adorn DAA Indicator Data}
 \usage{
-adorn_daa_data(df)
+adorn_daa_data(
+  df,
+  include_coc = FALSE,
+  d2_session = dynGet("d2_default_session", inherits = TRUE)
+)
 }
 \arguments{
 \item{df}{Dataframe containing DAA data indicator data to be adorned.}
+
+\item{d2_session}{R6 session object.}
 }
 \value{
 Dataframe of DAA indicator data for both PEPFAR and the MOH as well
