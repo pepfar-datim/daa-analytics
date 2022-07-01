@@ -62,31 +62,31 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     )) |>
 
     # TODO Clean and bring categoryOptionCombos into the rest of the app
-    dplyr::select(-.data$dataelementname, -.data$categoryoptioncomboname) %>%
-    tidyr::pivot_wider(names_from = .data$indicator,
-                       values_from = .data$value,
-                       values_fn = list(value = list)) %>%
-    dplyr::rowwise() %>%
+    dplyr::select(-dataelementname, -categoryoptioncomboname) |>
+    tidyr::pivot_wider(names_from = indicator,
+                       values_from = value,
+                       values_fn = list(value = list)) |>
+    dplyr::rowwise() |>
     dplyr::mutate(
-      emr_TX_CURR = any(as.logical(unlist(.data$emr_tx))),
-      emr_TX_NEW = any(as.logical(unlist(.data$emr_tx))),
-      emr_HTS_TST = any(as.logical(unlist(.data$emr_hts))),
-      emr_PMTCT_STAT = any(as.logical(unlist(.data$emr_anc))),
-      emr_PMTCT_ART = any(as.logical(unlist(.data$emr_anc))),
-      emr_TB_PREV = any(as.logical(unlist(.data$emr_tb))),
-      tx_pvls_n = sum(as.numeric(unlist(.data$tx_pvls_n))),
-      tx_pvls_d = sum(as.numeric(unlist(.data$tx_pvls_d)))
-    ) %>%
-    dplyr::select(-.data$emr_tx, -.data$emr_hts,
-                  -.data$emr_anc, -.data$emr_tb) %>%
+      emr_TX_CURR = any(as.logical(unlist(emr_tx))),
+      emr_TX_NEW = any(as.logical(unlist(emr_tx))),
+      emr_HTS_TST = any(as.logical(unlist(emr_hts))),
+      emr_PMTCT_STAT = any(as.logical(unlist(emr_anc))),
+      emr_PMTCT_ART = any(as.logical(unlist(emr_anc))),
+      emr_TB_PREV = any(as.logical(unlist(emr_tb))),
+      tx_pvls_n = sum(as.numeric(unlist(tx_pvls_n))),
+      tx_pvls_d = sum(as.numeric(unlist(tx_pvls_d)))
+    ) |>
+    dplyr::select(-emr_tx, -emr_hts,
+                  -emr_anc, -emr_tb) |>
     dplyr::mutate(dplyr::across(.cols = dplyr::starts_with("emr_"),
-                                .fns = ~ tidyr::replace_na(.x, FALSE))) %>%
+                                .fns = ~ tidyr::replace_na(.x, FALSE))) |>
 
     # Pivots EMR data back to long data format and replaces NAs with FALSE
     tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
                         names_to = "indicator",
                         names_prefix = "emr_",
-                        values_to = "emr_at_site_for_indicator") %>%
+                        values_to = "emr_present") |>
     dplyr::mutate(
       indicator = dplyr::case_when(
         indicator == "TB_PREV" & period < 2020 ~ "TB_PREV_LEGACY",
@@ -97,8 +97,8 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
 
     # Organizes columns for export
     dplyr::select(
-      organisationunitid = .data$sourceid, .data$period, .data$indicator,
-      .data$emr_at_site_for_indicator, .data$tx_pvls_n, .data$tx_pvls_d
+      organisationunitid = sourceid, period, indicator,
+      emr_present, tx_pvls_n, tx_pvls_d
     )
 
   pvls_emr
