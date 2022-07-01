@@ -29,17 +29,12 @@ adorn_weights <- function(daa_indicator_data = NULL,
   aligned_sites <- dplyr::filter(df, reported_by == "Both") |>
 
     # Calculates Level 3 weighted concordance and discordance
-    dplyr::group_by(.data$indicator,
-                    .data$period,
-                    .data$namelevel3uid) %>%
-    dplyr::mutate(level3_weighting = .data$pepfar / sum(.data$pepfar)) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(level3_discordance =
-                    daa.analytics::weighted_discordance(
-                      moh = .data$moh,
-                      pepfar = .data$pepfar,
-                      weighting = .data$level3_weighting),
-                  level3_concordance =
+    dplyr::group_by(indicator,
+                    period,
+                    namelevel3uid) |>
+    dplyr::mutate(level3_weighting = pepfar / sum(pepfar)) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(level3_concordance =
                     daa.analytics::weighted_concordance(
                       moh = moh,
                       pepfar = pepfar,
@@ -48,17 +43,12 @@ adorn_weights <- function(daa_indicator_data = NULL,
     dplyr::ungroup() |>
 
     # Calculates Level 4 weighted concordance and discordance
-    dplyr::group_by(.data$indicator,
-                    .data$period,
-                    .data$namelevel4uid) %>%
-    dplyr::mutate(level4_weighting = .data$pepfar / sum(.data$pepfar)) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(level4_discordance =
-                    daa.analytics::weighted_discordance(
-                      moh = .data$moh,
-                      pepfar = .data$pepfar,
-                      weighting = .data$level4_weighting),
-                  level4_concordance =
+    dplyr::group_by(indicator,
+                    period,
+                    namelevel4uid) |>
+    dplyr::mutate(level4_weighting = pepfar / sum(pepfar)) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(level4_concordance =
                     daa.analytics::weighted_concordance(
                       moh = moh,
                       pepfar = pepfar,
@@ -67,17 +57,12 @@ adorn_weights <- function(daa_indicator_data = NULL,
     dplyr::ungroup() |>
 
     # Calculates Level 5 weighted concordance and discordance
-    dplyr::group_by(.data$indicator,
-                    .data$period,
-                    .data$namelevel5uid) %>%
-    dplyr::mutate(level5_weighting = .data$pepfar / sum(.data$pepfar)) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(level5_discordance =
-                    daa.analytics::weighted_discordance(
-                      moh = .data$moh,
-                      pepfar = .data$pepfar,
-                      weighting = .data$level5_weighting),
-                  level5_concordance =
+    dplyr::group_by(indicator,
+                    period,
+                    namelevel5uid) |>
+    dplyr::mutate(level5_weighting = pepfar / sum(pepfar)) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(level5_concordance =
                     daa.analytics::weighted_concordance(
                       moh = moh,
                       pepfar = pepfar,
@@ -86,19 +71,15 @@ adorn_weights <- function(daa_indicator_data = NULL,
     dplyr::ungroup()
 
   if (adorn_level6 && any(!is.na(aligned_sites$namelevel7uid))) {
-    aligned_sites %<>%
+    aligned_sites <-
       # Calculates Level 6 weighted concordance and discordance
-      dplyr::group_by(.data$indicator,
-                      .data$period,
-                      .data$namelevel6uid) %>%
-      dplyr::mutate(level6_weighting = .data$pepfar / sum(.data$pepfar)) %>%
-      dplyr::rowwise() %>%
-      dplyr::mutate(level6_discordance =
-                      daa.analytics::weighted_discordance(
-                        moh = .data$moh,
-                        pepfar = .data$pepfar,
-                        weighting = .data$level6_weighting),
-                    level6_concordance =
+      dplyr::group_by(aligned_sites,
+                      indicator,
+                      period,
+                      namelevel6uid) |>
+      dplyr::mutate(level6_weighting = pepfar / sum(pepfar)) |>
+      dplyr::rowwise() |>
+      dplyr::mutate(level6_concordance =
                       daa.analytics::weighted_concordance(
                         moh = moh,
                         pepfar = pepfar,
@@ -114,25 +95,21 @@ adorn_weights <- function(daa_indicator_data = NULL,
       dplyr::left_join(pvls_emr,
                        dplyr::select(ou_hierarchy, organisationunitid, facilityuid),
                        by = c("organisationunitid"),
-                       keep = FALSE)
+                       keep = FALSE) |>
+      dplyr::select(-organisationunitid)
 
     aligned_sites <-
       aligned_sites |>
       # Joins PVLS and EMR datasets
       dplyr::left_join(pvls_emr,
-                       by = c("facilityuid", "period", "indicator")) %>%
-      # Calculates EMR weighted concordance and discordance
-      dplyr::group_by(.data$indicator,
-                      .data$period,
-                      .data$emr_at_site_for_indicator) %>%
-      dplyr::mutate(emr_weighting = .data$pepfar / sum(.data$pepfar)) %>%
-      dplyr::rowwise() %>%
-      dplyr::mutate(emr_discordance =
-                      daa.analytics::weighted_discordance(
-                        moh = .data$moh,
-                        pepfar = .data$pepfar,
-                        weighting = .data$emr_weighting),
-                    emr_concordance =
+                       by = c("facilityuid", "period", "indicator")) |>
+      # Calculates EMR weighted concordance and discordancew
+      dplyr::group_by(indicator,
+                      period,
+                      emr_present) |>
+      dplyr::mutate(emr_weighting = pepfar / sum(pepfar)) |>
+      dplyr::rowwise() |>
+      dplyr::mutate(emr_concordance =
                       daa.analytics::weighted_concordance(
                         moh = moh,
                         pepfar = pepfar,
@@ -145,9 +122,8 @@ adorn_weights <- function(daa_indicator_data = NULL,
     dplyr::bind_rows(misaligned_sites, aligned_sites) |>
     # Selects rows for export
     dplyr::select(-dplyr::starts_with("namelevel"),
-                  -.data$emr_at_site_for_indicator,
+                  -emr_present,
                   -dplyr::starts_with("tx_pvls"))
 
   df
 }
-
