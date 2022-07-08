@@ -1,17 +1,15 @@
 ## Updates all datasets in the `data` folder
 
 ou_uid <- "HfVjCurKxh2"
-folder <- "C:/Users/cnemarich002/OneDrive - Guidehouse/Documents/project_DAA/raw_country_data/"
-
-library(magrittr)
+output_folder <- Sys.getenv("OUTPUT_FOLDER") |> paste0("raw_country_data/")
 
 s3 <- paws::s3()
 aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
 source("data-raw/update_metadata.R")
 source("data-raw/pvls_emr.R")
 
-datim_secret <- Sys.getenv("DATIM_SECRET")
-datimutils::loginToDATIM(datim_secret)
+secrets <- Sys.getenv("SECRETS_FOLDER") |> paste0("datim.json")
+datimutils::loginToDATIM(secrets)
 d2_session <- d2_default_session
 
 country_attributes <- daa.analytics::get_attribute_table(ou_uid, d2_session = d2_session)
@@ -32,5 +30,5 @@ combined_country_data <- daa.analytics::combine_data(
 # Writes CSV
 date <- base::format(Sys.time(), "%Y%m%d")
 ou_name <- datimutils::getOrgUnits(ou_uid)
-file = paste0(folder, paste(date, ou_name, "raw_data", sep = "_"), ".csv")
+file = paste0(output_folder, paste(date, ou_name, "raw_data", sep = "_"), ".csv")
 write.csv(combined_country_data, file = file, na = "")

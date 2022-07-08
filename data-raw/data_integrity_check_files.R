@@ -1,8 +1,7 @@
 ## code to prepare Data Integrity Check country datasets and Excel files goes here
 require(openxlsx)
-require(magrittr)
 
-folder <- "C:/Users/cnemarich002/OneDrive - Guidehouse/Documents/project_DAA/data_integrity_checks/"
+output_folder <- Sys.getenv("OUTPUT_FOLDER") |> paste0("data_integrity_checks/")
 
 s3 <- paws::s3()
 aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
@@ -24,7 +23,7 @@ countries <-
   lapply(., function(x){
     date <- base::format(Sys.time(), "%Y%m%d")
     print(x)
-    file = paste0(folder, paste(date, x, "integrity_checks", sep = "_"), ".xlsx")
+    file = paste0(output_folder, paste(date, x, "integrity_checks", sep = "_"), ".xlsx")
     wb <- openxlsx::createWorkbook(title = paste(x, "Data Integrity Checks"))
     country_nulls <- nulls[nulls$level3 == x, ]
     country_duplicates <- duplicates[duplicates$country_name == x, ]

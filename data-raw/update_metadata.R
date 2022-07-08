@@ -1,6 +1,5 @@
 # Fetch or update metadata files from S3
 
-library(magrittr)
 s3 <- paws::s3()
 aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
 
@@ -23,7 +22,7 @@ datasets |>
   })
 
 ## code to prepare `ou_hierarchy` dataset
-if(!exists("ou_metadata")){ load("data/ou_metadata.Rda") }
+if(!exists("ou_metadata")){ load("support_files/ou_metadata.Rda") }
 ou_hierarchy <- daa.analytics::create_hierarchy(ou_metadata)
 save(ou_hierarchy, file = "support_files/ou_hierarchy.rda")
 

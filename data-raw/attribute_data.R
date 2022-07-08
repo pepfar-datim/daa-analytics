@@ -1,8 +1,8 @@
 ## code to prepare `attribute_data.R` dataset goes here
 
 # Uncomment this code if you are running this script by itself
-# library(magrittr)
-# datimutils::loginToDATIM("~/.secrets/datim.json")
+# secrets <- Sys.getenv("SECRETS_FOLDER") |> paste0("datim.json")
+# datimutils::loginToDATIM(secrets)
 # d2_session <- d2_default_session
 
 attribute_data <- daa.analytics::daa_countries$country_uid |>
