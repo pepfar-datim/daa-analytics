@@ -18,6 +18,13 @@ adorn_daa_data <- function(df, include_coc = FALSE, d2_session = dynGet("d2_defa
     return(NULL)
   }
 
+  # Set grouping variables
+  group_vars <- if (include_coc == TRUE) {
+    c("org_unit", "indicator", "category_option_combo", "period")
+  } else {
+    c("org_unit", "indicator", "period")
+  }
+
   # Grab metadata for data elements
   de_meta <-
     datimutils::getDataElements(unique(df$data_element),
@@ -30,17 +37,26 @@ adorn_daa_data <- function(df, include_coc = FALSE, d2_session = dynGet("d2_defa
     # Recasts values as numeric
     dplyr::mutate(value = as.numeric(`value`)) |>
 
+    # Adorn indicator names
+    dplyr::left_join(de_meta, by = c("data_element" = "id")) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(indicator = ifelse(indicator == "TB_PREV" && period < 2020, "TB_PREV_LEGACY", indicator)) |>
+    dplyr::ungroup() |>
+
+    # Aggregate site data across coarse and fine indicators
+    dplyr::group_by(!!!rlang::syms(group_vars), attribute_option_combo) |>
+    dplyr::summarise(value = sum(value)) |>
+    dplyr::ungroup() |>
+
     # Pivots MOH and PEPFAR data out into separate columns
+    dplyr::mutate(attribute_option_combo = dplyr::case_when(attribute_option_combo == "00100" ~ "moh",
+                                                            attribute_option_combo == "00200" ~ "pepfar")) |>
     tidyr::pivot_wider(names_from = `attribute_option_combo`,
                        values_from = `value`) |>
 
     # Cleans Period data from the form `2018Oct` to `2019`
     dplyr::mutate(period =
-                    as.numeric(stringr::str_sub(`period`, 0, 4)) + 1) |>
-
-    # Adorn indicator names
-    dplyr::left_join(de_meta, by = c("data_element" = "id")) |>
-    dplyr::mutate(indicator = ifelse(indicator == "TB_PREV" && period < 2020, "TB_PREV_LEGACY", indicator))
+                    as.numeric(stringr::str_sub(`period`, 0, 4)) + 1)
 
   if (include_coc == TRUE) {
     # Grab metadata for category option combos
@@ -54,48 +70,18 @@ adorn_daa_data <- function(df, include_coc = FALSE, d2_session = dynGet("d2_defa
       dplyr::left_join(coc_metadata,
                        by = c("category_option_combo" = "coc_id"),
                        keep = FALSE) |>
-
-      # Summarise indicator data across Age & Age Agg
-      dplyr::group_by(org_unit, indicator, coc_name) |>
-      dplyr::mutate(moh = sum(`00100`), pepfar = sum(`00200`)) |>
-      dplyr::ungroup() |>
-
-      # Creates summary data about reporting institutions and figures
-      dplyr::mutate(reported_by =
-                      ifelse(!is.na(moh),
-                             ifelse(!is.na(pepfar), "Both", "MOH"),
-                             ifelse(!is.na(pepfar), "PEPFAR", "Neither"))) |>
-
-      # Reorganizes table for export
-      dplyr::select(facilityuid = `org_unit`,
-                    indicator,
-                    categoryOptionCombo = `coc_name`,
-                    period,
-                    moh,
-                    pepfar,
-                    reported_by)
-
-  } else {
-    df <- df |>
-      # Summarise indicator data across Age & Age Agg
-      dplyr::group_by(org_unit, indicator, period) |>
-      dplyr::summarise(moh = sum(`00100`), pepfar = sum(`00200`)) |>
-      dplyr::ungroup() |>
-
-      # Creates summary data about reporting institutions and figures
-      dplyr::mutate(reported_by =
-                      ifelse(!is.na(moh),
-                             ifelse(!is.na(pepfar), "Both", "MOH"),
-                             ifelse(!is.na(pepfar), "PEPFAR", "Neither"))) |>
-
-      # Reorganizes table for export
-      dplyr::select(facilityuid = `org_unit`,
-                    indicator,
-                    period,
-                    moh,
-                    pepfar,
-                    reported_by)
+      dplyr::rename(categoryOptionCombo = `coc_name`)
   }
 
-  return(df)
+  df |>
+    # Creates summary data about reporting institutions and figures
+    dplyr::mutate(reported_by =
+                    ifelse(!is.na(moh),
+                           ifelse(!is.na(pepfar), "Both", "MOH"),
+                           ifelse(!is.na(pepfar), "PEPFAR", "Neither"))) |>
+
+    # Reorganizes table for export
+    dplyr::select(!!!rlang::syms(group_vars), moh, pepfar, reported_by) |>
+    dplyr::rename(facilityuid = `org_unit`)
+
 }
