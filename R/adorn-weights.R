@@ -10,7 +10,7 @@
 #' on whether EMR is or is not present at a site.
 #'
 #' @return A dataframe of DAA Indicator data with weightings and weighted
-#' discordance and concordance calculated for levels 3 through 5.
+#' concordance calculated for levels 3 through 5.
 #' @export
 #'
 adorn_weights <- function(daa_indicator_data = NULL,
@@ -28,7 +28,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
 
   aligned_sites <- dplyr::filter(df, reported_by == "Both") |>
 
-    # Calculates Level 3 weighted concordance and discordance
+    # Calculates Level 3 weighted concordance
     dplyr::group_by(indicator,
                     period,
                     namelevel3uid) |>
@@ -42,7 +42,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
     ) |>
     dplyr::ungroup() |>
 
-    # Calculates Level 4 weighted concordance and discordance
+    # Calculates Level 4 weighted concordance
     dplyr::group_by(indicator,
                     period,
                     namelevel4uid) |>
@@ -56,7 +56,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
     ) |>
     dplyr::ungroup() |>
 
-    # Calculates Level 5 weighted concordance and discordance
+    # Calculates Level 5 weighted concordance
     dplyr::group_by(indicator,
                     period,
                     namelevel5uid) |>
@@ -72,7 +72,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
 
   if (adorn_level6 && any(!is.na(aligned_sites$namelevel7uid))) {
     aligned_sites <-
-      # Calculates Level 6 weighted concordance and discordance
+      # Calculates Level 6 weighted concordance
       dplyr::group_by(aligned_sites,
                       indicator,
                       period,
@@ -103,7 +103,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
       # Joins PVLS and EMR datasets
       dplyr::left_join(pvls_emr,
                        by = c("facilityuid", "period", "indicator")) |>
-      # Calculates EMR weighted concordance and discordancew
+      # Calculates EMR weighted concordance
       dplyr::group_by(indicator,
                       period,
                       namelevel3uid,
