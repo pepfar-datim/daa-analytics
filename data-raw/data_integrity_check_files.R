@@ -1,4 +1,5 @@
-## code to prepare Data Integrity Check country datasets and Excel files goes here
+## code to prepare Data Integrity Check country datasets
+## and Excel files goes here
 require(openxlsx)
 
 output_folder <- Sys.getenv("OUTPUT_FOLDER") |> paste0("data_integrity_checks/")
@@ -20,10 +21,11 @@ countries <-
                    dplyr::select(duplicates, "country_name"))[[1]] |>
   unique() |>
   sort() |>
-  lapply(., function(x){
+  lapply(., function(x) {
     date <- base::format(Sys.time(), "%Y%m%d")
     print(x)
-    file = paste0(output_folder, paste(date, x, "integrity_checks", sep = "_"), ".xlsx")
+    file <- paste0(output_folder,
+                   paste(date, x, "integrity_checks", sep = "_"), ".xlsx")
     wb <- openxlsx::createWorkbook(title = paste(x, "Data Integrity Checks"))
     country_nulls <- nulls[nulls$level3 == x, ]
     country_duplicates <- duplicates[duplicates$country_name == x, ]

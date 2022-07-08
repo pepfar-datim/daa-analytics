@@ -13,6 +13,9 @@ adorn_daa_data(
 \arguments{
 \item{df}{Dataframe containing DAA data indicator data to be adorned.}
 
+\item{include_coc}{Boolean indicating whether Category Option Combo data
+should be kept or removed from returned dataset.}
+
 \item{d2_session}{R6 session object.}
 }
 \value{

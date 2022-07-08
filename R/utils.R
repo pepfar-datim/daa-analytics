@@ -23,7 +23,8 @@ current_fiscal_year <- function() {
 #' @title Prints message if session is interactive.
 #'
 #' @description
-#' Supplied a message, will print it only if the session is currently interactive.
+#' Supplied a message, will print it only if the session is
+#' currently interactive.
 #'
 #' @param x Message to print.
 #'
@@ -70,7 +71,7 @@ remove_missing_dfs <- function(my_list) {
 weighted_concordance <- function(moh, pepfar, weighting) {
   if (!is.na(weighting)) {
     n <- weighting * (((moh + pepfar) - abs(moh - pepfar)) / (moh + pepfar))
-  } else{
+  } else {
     n <- NA
   }
   return(n)
@@ -94,7 +95,7 @@ weighted_concordance <- function(moh, pepfar, weighting) {
 weighted_discordance <- function(moh, pepfar, weighting) {
   if (!is.na(weighting)) {
     n <- weighting * abs(moh - pepfar) / mean(c(moh, pepfar))
-  } else{
+  } else {
     n <- NA
   }
   return(n)

@@ -14,7 +14,7 @@ get_daa_countries <- function(geo_session) {
   # TODO figure out how to handle 2021 datasets
   # Fetches data from the server
   df <- datimutils::getMetadata(end_point = "dataStore/ou_levels/orgUnitLevels",
-                                d2_session = dynGet("d2_default_session", inherits = TRUE))
+                                d2_session = geo_session)
 
   if (is.null(df)) {
     return(NULL)

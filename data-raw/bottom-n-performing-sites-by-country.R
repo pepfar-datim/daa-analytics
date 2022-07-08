@@ -1,6 +1,6 @@
 ## Bottom `n` performing sites by country
 
-if(!exists("combined_data")){ load("support_files/combined_data.rda") }
+if (!exists("combined_data")) { load("support_files/combined_data.rda") } #nolint
 
 df <- combined_data |>
   dplyr::filter(period == 2021) |>

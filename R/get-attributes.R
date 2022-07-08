@@ -11,7 +11,9 @@
 #' @return A dataframe of OU site-level attributes including name, id,
 #' MOH ID, and longitude and latitude of the site.
 #'
-get_attribute_table <- function(ou_uid, d2_session = dynGet("d2_default_session", inherits = TRUE)) {
+get_attribute_table <- function(ou_uid,
+                                d2_session = dynGet("d2_default_session",
+                                                    inherits = TRUE)) {
 
   # Fetches data from the server
   df <- datimutils::getMetadata(

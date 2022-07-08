@@ -21,7 +21,9 @@ adorn_weights <- function(daa_indicator_data = NULL,
 
   df <- daa_indicator_data |>
     # Joins DAA Indicator data to OU hierarchy metadata
-    dplyr::left_join(unique(dplyr::select(ou_hierarchy, facilityuid, paste0("namelevel", 3:7, "uid"))),
+    dplyr::left_join(unique(dplyr::select(ou_hierarchy,
+                                          facilityuid,
+                                          paste0("namelevel", 3:7, "uid"))),
                      by = c("facilityuid"))
 
   misaligned_sites <- dplyr::filter(df, reported_by != "Both")
@@ -93,7 +95,9 @@ adorn_weights <- function(daa_indicator_data = NULL,
     # duplication of facilities with multiple organisationunitid numbers
     pvls_emr <-
       dplyr::left_join(pvls_emr,
-                       dplyr::select(ou_hierarchy, organisationunitid, facilityuid),
+                       dplyr::select(ou_hierarchy,
+                                     organisationunitid,
+                                     facilityuid),
                        by = c("organisationunitid"),
                        keep = FALSE) |>
       dplyr::select(-organisationunitid)

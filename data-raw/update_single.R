@@ -12,9 +12,11 @@ secrets <- Sys.getenv("SECRETS_FOLDER") |> paste0("datim.json")
 datimutils::loginToDATIM(secrets)
 d2_session <- d2_default_session
 
-country_attributes <- daa.analytics::get_attribute_table(ou_uid, d2_session = d2_session)
+country_attributes <-
+  daa.analytics::get_attribute_table(ou_uid, d2_session = d2_session)
 
-country_daa_data <- daa.analytics::get_daa_data(ou_uid, d2_session = d2_session) |>
+country_daa_data <-
+  daa.analytics::get_daa_data(ou_uid, d2_session = d2_session) |>
   daa.analytics::adorn_daa_data() |>
   daa.analytics::weighting_levels(ou_hierarchy = ou_hierarchy,
                                   pvls_emr = pvls_emr,
@@ -30,5 +32,6 @@ combined_country_data <- daa.analytics::combine_data(
 # Writes CSV
 date <- base::format(Sys.time(), "%Y%m%d")
 ou_name <- datimutils::getOrgUnits(ou_uid)
-file = paste0(output_folder, paste(date, ou_name, "raw_data", sep = "_"), ".csv")
+file <- paste0(output_folder,
+               paste(date, ou_name, "raw_data", sep = "_"), ".csv")
 write.csv(combined_country_data, file = file, na = "")

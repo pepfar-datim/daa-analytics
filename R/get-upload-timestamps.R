@@ -11,7 +11,8 @@
 #' @return A dataframe of country names with columns for each DAA mapping and
 #' import step with timestamp data for the completion of each step.
 #'
-get_upload_timestamps <- function(geo_session = dynGet("d2_default_session", inherits = TRUE)) {
+get_upload_timestamps <- function(geo_session = dynGet("d2_default_session",
+                                                       inherits = TRUE)) {
 
   end_point <- "dataStore/MOH_imports_status"
 

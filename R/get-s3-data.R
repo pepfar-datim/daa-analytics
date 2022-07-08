@@ -17,14 +17,16 @@ get_s3_data <- function(s3 = paws::s3(),
                         aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
                         dataset_name = NULL,
                         folder = "data-raw") {
-  stopifnot("ERROR: Must provide an S3 Bucket address!" = aws_s3_bucket != "",
-            "ERROR: Must provide the name of the dataset to retrieve!" =
-              !is.null(dataset_name),
-            "ERROR: Must provide the name of the folder where the output file should be saved!" =
-              !is.null(folder) | folder != "")
+  stopifnot(
+    "ERROR: Must provide an S3 Bucket address!" = aws_s3_bucket != "",
+    "ERROR: Must provide the name of the dataset to retrieve!" =
+      !is.null(dataset_name),
+    "ERROR: Must provide folder where the output file should be saved!" =
+      !is.null(folder) | folder != "")
   s3_datasets <- daa.analytics::s3_datasets
-  key <- s3_datasets[s3_datasets$dataset_name == dataset_name,][["key"]]
-  filters <- s3_datasets[s3_datasets$dataset_name == dataset_name,][["filters"]]
+  key <- s3_datasets[s3_datasets$dataset_name == dataset_name, ][["key"]]
+  filters <-
+    s3_datasets[s3_datasets$dataset_name == dataset_name, ][["filters"]]
 
   data <- daa.analytics::fetch_s3_files(
     s3 = s3,

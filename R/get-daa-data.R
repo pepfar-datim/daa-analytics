@@ -6,8 +6,8 @@
 #' @return Filtered dataframe of fiscal years and dataSets
 #' for DAA indicator data.
 #'
-getDataSetUids <- function(fiscal_year = NULL) {
-  dataSetUids <- data.frame(
+get_dataset_uids <- function(fiscal_year = NULL) {
+  dataset_uids <- data.frame(
     fiscal_year = c("2017",
                     "2018",
                     "2019",
@@ -22,36 +22,45 @@ getDataSetUids <- function(fiscal_year = NULL) {
                 "RGDmmG5taRt"
     ))
 
-  # Filter dataSetUids if fiscal years provided
+  # Filter dataset_uids if fiscal years provided
   if (!is.null(fiscal_year)) {
-    dataSetUids <- dataSetUids[dataSetUids$fiscal_year %in% fiscal_year, ]
+    dataset_uids <- dataset_uids[dataset_uids$fiscal_year %in% fiscal_year, ]
   }
 
   # Provide warning if no valid fiscal years provided
-  if (NROW(dataSetUids) == 0) {
+  if (NROW(dataset_uids) == 0) {
     warning("No dataSet UIDs available for the given fiscal years!")
   }
 
-  # Return dataSetUids object
-  dataSetUids
+  # Return dataset_uids object
+  dataset_uids
 }
 
 #' @export
 #' @title Get Data Value Sets
 #'
-#' @param parameters Dataframe of key-value pairs that will be taken as parameters of the API call.
+#' @param parameters Dataframe of key-value pairs that
+#' will be taken as parameters of the API call.
 #' @param d2_session R6 session object
 #'
 #' @return Dataframe with six columns.
 #'
-getDataValueSets <- function(parameters, d2_session  = dynGet("d2_default_session", inherits = TRUE)) {
-  parameters <- stringr::str_c(parameters$key, parameters$value, sep = "=", collapse = "&")
+get_data_value_sets <- function(parameters,
+                                d2_session = dynGet("d2_default_session",
+                                                    inherits = TRUE)) {
+  parameters <- stringr::str_c(parameters$key,
+                               parameters$value,
+                               sep = "=",
+                               collapse = "&")
 
-  url <- paste0(d2_session$base_url, "api/dataValueSets.json?", parameters, "&paging=false")
+  url <- paste0(d2_session$base_url,
+                "api/dataValueSets.json?",
+                parameters,
+                "&paging=false")
 
   interactive_print(url)
 
-  df <- httr::GET(url, httr::timeout(600), handle = d2_session$handle) |>
+  httr::GET(url, httr::timeout(600), handle = d2_session$handle) |>
     httr::content("text") |>
     jsonlite::fromJSON() |>
     purrr::pluck("dataValues") |>
@@ -61,13 +70,6 @@ getDataValueSets <- function(parameters, d2_session  = dynGet("d2_default_sessio
                   attribute_option_combo = "attributeOptionCombo",
                   stored_by = "storedBy",
                   last_updated = "lastUpdated")
-
-  # Returns null if API returns nothing
-  if (is.null(df)) {
-    return(NULL)
-  }
-  # Returns dataframe
-  df
 }
 
 #' @export
@@ -83,33 +85,31 @@ getDataValueSets <- function(parameters, d2_session  = dynGet("d2_default_sessio
 #'
 #' @return Dataframe of unadorned PEPFAR and the MOH DAA indicator data.
 #'
-get_daa_data <- function(ou_uid, fiscal_year, d2_session = dynGet("d2_default_session", inherits = TRUE)) {
+get_daa_data <- function(ou_uid,
+                         fiscal_year,
+                         d2_session = dynGet("d2_default_session",
+                                             inherits = TRUE)) {
 
   interactive_print("Getting data for the following Operating Units:")
   interactive_print(datimutils::getOrgUnits(ou_uid))
 
-  dataSetUids <- getDataSetUids(fiscal_year)
+  dataset_uids <- get_dataset_uids(fiscal_year)
 
-  df <- lapply(fiscal_year, function(x) {
+  lapply(fiscal_year, function(x) {
     interactive_print(paste0("Now getting data for fiscal year ", x, "."))
-    getDataValueSets(parameters = rbind(data.frame(key = "dataSet",
-                                                   value = dataSetUids$dataSet[dataSetUids$fiscal_year == x]),
-                                        data.frame(key = "orgUnit", value = ou_uid),
-                                        data.frame(key = "period", value = paste0(x - 1, "Oct")),
-                                        data.frame(key = c("children",
-                                                           "categoryOptionComboIdScheme",
-                                                           "includeDeleted"),
-                                                   value = c("true",
-                                                             "code",
-                                                             "false"))),
-                     d2_session = d2_session)
+    get_data_value_sets(
+      parameters = rbind(
+        data.frame(key = "dataSet",
+                   value = dataset_uids$dataSet[dataset_uids$fiscal_year == x]),
+        data.frame(key = "orgUnit", value = ou_uid),
+        data.frame(key = "period", value = paste0(x - 1, "Oct")),
+        data.frame(key = c("children",
+                           "categoryOptionComboIdScheme",
+                           "includeDeleted"),
+                   value = c("true",
+                             "code",
+                             "false"))),
+      d2_session = d2_session)
   }) |>
     dplyr::bind_rows()
-
-  # Returns null if API returns nothing
-  if (is.null(df)) {
-    return(NULL)
-  }
-  # Returns dataframe
-  df
 }

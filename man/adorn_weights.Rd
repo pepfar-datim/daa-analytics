@@ -28,7 +28,7 @@ on whether EMR is or is not present at a site.}
 }
 \value{
 A dataframe of DAA Indicator data with weightings and weighted
-discordance and concordance calculated for levels 3 through 5.
+concordance calculated for levels 3 through 5.
 }
 \description{
 Adorn DAA Indicator Data with Weighted Metrics for All Levels

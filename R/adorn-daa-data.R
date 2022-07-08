@@ -7,12 +7,17 @@
 #' as well as other information.
 #'
 #' @param df Dataframe containing DAA data indicator data to be adorned.
+#' @param include_coc Boolean indicating whether Category Option Combo data
+#' should be kept or removed from returned dataset.
 #' @param d2_session R6 session object.
 #'
 #' @return Dataframe of DAA indicator data for both PEPFAR and the MOH as well
 #' as both discordance and concordance metrics.
 #'
-adorn_daa_data <- function(df, include_coc = FALSE, d2_session = dynGet("d2_default_session", inherits = TRUE)) {
+adorn_daa_data <- function(df,
+                           include_coc = FALSE,
+                           d2_session = dynGet("d2_default_session",
+                                               inherits = TRUE)) {
   # Returns null if delivered an empty dataset
   if (is.null(df)) {
     return(NULL)
@@ -40,7 +45,10 @@ adorn_daa_data <- function(df, include_coc = FALSE, d2_session = dynGet("d2_defa
     # Adorn indicator names
     dplyr::left_join(de_meta, by = c("data_element" = "id")) |>
     dplyr::rowwise() |>
-    dplyr::mutate(indicator = ifelse(indicator == "TB_PREV" && period < 2020, "TB_PREV_LEGACY", indicator)) |>
+    dplyr::mutate(indicator =
+                    ifelse(indicator == "TB_PREV" && period < 2020,
+                           "TB_PREV_LEGACY",
+                           indicator)) |>
     dplyr::ungroup() |>
 
     # Aggregate site data across coarse and fine indicators
@@ -49,8 +57,9 @@ adorn_daa_data <- function(df, include_coc = FALSE, d2_session = dynGet("d2_defa
     dplyr::ungroup() |>
 
     # Pivots MOH and PEPFAR data out into separate columns
-    dplyr::mutate(attribute_option_combo = dplyr::case_when(attribute_option_combo == "00100" ~ "moh",
-                                                            attribute_option_combo == "00200" ~ "pepfar")) |>
+    dplyr::mutate(attribute_option_combo = dplyr::case_when(
+      attribute_option_combo == "00100" ~ "moh",
+      attribute_option_combo == "00200" ~ "pepfar")) |>
     tidyr::pivot_wider(names_from = `attribute_option_combo`,
                        values_from = `value`) |>
 

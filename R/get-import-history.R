@@ -11,7 +11,8 @@
 #' @return A dataframe of indicator mapping, disaggregation level, and data
 #' availability organized by activity year and country.
 #'
-get_import_history <- function(geo_session = dynGet("d2_default_session", inherits = TRUE)) {
+get_import_history <- function(geo_session = dynGet("d2_default_session",
+                                                    inherits = TRUE)) {
 
   end_point <- "dataStore/MOH_country_indicators"
 

@@ -7,6 +7,7 @@
 #' @export
 #'
 global_summary <- function(combined_data) {
+  #nolint start: line_length_linter
   combined_data |>
     dplyr::group_by(namelevel3, period, indicator) |>
     dplyr::summarize(
@@ -28,7 +29,7 @@ global_summary <- function(combined_data) {
       ConcordanceOfFacilitiesWithOutEMR = sum(emr_concordance[reported_by == "Both" & emr_present == FALSE & !is.na(emr_present)], na.rm = TRUE)
     ) |>
     dplyr::mutate(
-      across(
+      dplyr::across(
         c(MOH_Results_FacilitiesReportedByBoth,
           PEPFAR_Results_FacilitiesReportedByBoth,
           Pct_PEPFAR_Facilities_ReportedBy_Both_WithEMR,
@@ -37,7 +38,7 @@ global_summary <- function(combined_data) {
           ConcordanceOfFacilitiesWithOutEMR),
         ~ ifelse(CountOfFacilities_ReportedBy_Both == 0, NA, .x))) |>
     dplyr::mutate(
-      across(
+      dplyr::across(
         c(Pct_PEPFAR_Reported_Facilities_ReportedBy_MOH,
           Pct_MOH_Facilities_SupportedBy_PEPFAR),
         ~ ifelse(CountOfFacilities_ReportedBy_PEPFAR == 0 | CountOfFacilities_ReportedBy_MOH == 0, NA, .x))) |>
@@ -46,12 +47,13 @@ global_summary <- function(combined_data) {
       ConcordanceOfFacilitiesWithOutEMR = ifelse(Pct_PEPFAR_Facilities_ReportedBy_Both_WithEMR == 1, NA, ConcordanceOfFacilitiesWithOutEMR)
     ) |>
     dplyr::mutate(
-      across(c(MOH_Results_Total,
+      dplyr::across(c(MOH_Results_Total,
                MOH_Results_FacilitiesReportedByBoth),
              ~ ifelse(CountOfFacilities_ReportedBy_MOH == 0, NA, .x))) |>
     dplyr::mutate(
-      across(c(PEPFAR_Results_Total,
+      dplyr::across(c(PEPFAR_Results_Total,
                PEPFAR_Results_FacilitiesReportedByBoth,
                Pct_PEPFAR_Facilities_WithEMR),
              ~ ifelse(CountOfFacilities_ReportedBy_PEPFAR == 0, NA, .x)))
+  # nolint end
 }

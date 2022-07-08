@@ -11,18 +11,17 @@ datasets <- c(
 )
 
 datasets |>
-  lapply(function(x){
+  lapply(function(x) {
     print(paste0("Getting the ", x, " dataset."))
     data <- daa.analytics::get_s3_data(s3 = s3,
                                        aws_s3_bucket = aws_s3_bucket,
                                        dataset_name = x,
                                        folder = "data-raw")
     assign(x = x, value = data)
-    do.call("save", list(as.name(x), file = paste0("support_files/", as.name(x), ".rda")))
+    save(list = x, file = paste0("support_files/", {x}, ".rda")) #nolint
   })
 
 ## code to prepare `ou_hierarchy` dataset
-if(!exists("ou_metadata")){ load("support_files/ou_metadata.Rda") }
+if (!exists("ou_metadata")) { load("support_files/ou_metadata.Rda") } #nolint
 ou_hierarchy <- daa.analytics::create_hierarchy(ou_metadata)
 save(ou_hierarchy, file = "support_files/ou_hierarchy.rda")
-

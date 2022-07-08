@@ -13,5 +13,6 @@ interactive_print(x)
 Printed message, \code{x}.
 }
 \description{
-Supplied a message, will print it only if the session is currently interactive.
+Supplied a message, will print it only if the session is
+currently interactive.
 }
