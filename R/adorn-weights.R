@@ -106,6 +106,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
       # Calculates EMR weighted concordance and discordancew
       dplyr::group_by(indicator,
                       period,
+                      namelevel3uid,
                       emr_present) |>
       dplyr::mutate(emr_weighting = pepfar / sum(pepfar)) |>
       dplyr::rowwise() |>
