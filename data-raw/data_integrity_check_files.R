@@ -4,17 +4,14 @@ require(openxlsx)
 
 output_folder <- Sys.getenv("OUTPUT_FOLDER") |> paste0("data_integrity_checks/")
 
-s3 <- paws::s3()
 aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
 
-nulls <- daa.analytics::get_s3_data(s3 = s3,
-                                    aws_s3_bucket = aws_s3_bucket,
+nulls <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
                                     dataset_name = "null_ids",
-                                    folder = "data-raw")
-duplicates <- daa.analytics::get_s3_data(s3 = s3,
-                                         aws_s3_bucket = aws_s3_bucket,
+                                    folder = "support_files")
+duplicates <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
                                          dataset_name = "duplicate_ids",
-                                         folder = "data-raw")
+                                         folder = "support_files")
 
 countries <-
   rbind(dplyr::select(nulls, country_name = "level3"),

@@ -18,9 +18,9 @@ Imports:
     stringr (>= 1.4.0),
     tidyr (>= 1.1.3),
     readr (>= 2.0.1),
-    paws (>= 0.1.11),
     datimutils (>= 0.1.2),
     rlang (>= 0.4.11),
+    aws.s3,
     httr,
     jsonlite
 Suggests: 

@@ -100,3 +100,39 @@ weighted_discordance <- function(moh, pepfar, weighting) {
   }
   return(n)
 }
+
+#' Check for availability and freshness of cached dataset
+#'
+#' @param cache_path Path to the cached file to be checked.
+#' @param max_cache_age Maximum age at which the cache is considered "fresh".
+#'
+#' @return cache Returns the cached dataset if it is available and
+#' fresh, otherwise returns NULL.
+#' @export
+check_cache <- function(cache_path, max_cache_age = NULL) {
+
+  # Checks arguments ####
+  stopifnot("ERROR: Must provide path to cache file!" =
+              !rlang::is_missing(cache_path))
+
+  # Checks if cache file exists and can be read ####
+  if (!file.exists(cache_path)) { return(NULL) } # nolint
+  if (file.access(cache_path, 4) != 0) { return(NULL )} # nolint
+
+  # Check whether cache is stale ####
+  if (!is.null(max_cache_age)) {
+    is_lt <- function(x, y)  x < y
+    cache_age_dur <- lubridate::as.duration(
+      lubridate::interval(file.info(cache_path)$mtime, Sys.time()))
+    max_cache_age_dur <- lubridate::duration(max_cache_age)
+    is_fresh <- is_lt(cache_age_dur, max_cache_age_dur)
+    if (!is_fresh) { return(NULL) } # nolint
+  }
+
+  # If file exists, can be read, and is fresh, loads and returns cache ####
+  interactive_print("Loading cache file")
+  cache <- readRDS(cache_path)
+
+  # Returns cache object ####
+  cache
+}

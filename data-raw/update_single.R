@@ -3,7 +3,6 @@
 ou_uid <- "HfVjCurKxh2"
 output_folder <- Sys.getenv("OUTPUT_FOLDER") |> paste0("raw_country_data/")
 
-s3 <- paws::s3()
 aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
 source("data-raw/update_metadata.R")
 source("data-raw/pvls_emr.R")

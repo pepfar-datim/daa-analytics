@@ -5,10 +5,14 @@
 # secrets <- Sys.getenv("SECRETS_FOLDER") |> paste0("datim.json")
 # datimutils::loginToDATIM(secrets)
 # d2_session <- d2_default_session
-
-if(!exists("ou_hierarchy")){ load("support_files/ou_hierarchy.Rda") }
-if(!exists("pvls_emr")){ load("support_files/pvls_emr.Rda") }
 # nolint end
+
+if(!exists("ou_hierarchy")){
+  ou_hierarchy <- readRDS("support_files/ou_hierarchy.rds")
+  }
+if(!exists("pvls_emr")){
+  pvls_emr <- load("support_files/pvls_emr.Rda")
+  }
 
 daa_indicator_raw <-
   daa.analytics::daa_countries[["country_uid"]] |>
