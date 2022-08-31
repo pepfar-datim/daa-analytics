@@ -1,3 +1,80 @@
+#' Adorn Indicator Metadata
+#'
+#' @param df Dataframe containing DAA data indicator data to be adorned.
+#' @param aggregate_names Indicates whether indicators should be rolled up
+#' across "Age" and "Age Aggregate" data elements. Also will filter out
+#' certain data elements from 2017 and 2018 that would cause duplication.
+#' @param d2_session R6 session object.
+#'
+#' @return df An adorned dataframe
+#' @export
+adorn_indicators <- function(df,
+                             aggregate_names,
+                             d2_session = dynGet("d2_default_session",
+                                                 inherits = TRUE)) {
+  # Grab metadata for data elements
+  de_meta <-
+    datimutils::getDataElements(unique(df$data_element),
+                                fields = c("id", "name"),
+                                d2_session = d2_session)
+
+  if (aggregate_names == TRUE) {
+    de_meta <- dplyr::mutate(de_meta, indicator = sub("\\w*(?=\\s)", "", name))
+    ## Filter out unwanted indicators
+    df <- dplyr::filter(df,
+                        !period %in% c("2017Oct", "2018Oct") |
+                          !data_element %in% c("BRalYZhcHpi",
+                                               "V6hxDYUZFBq",
+                                               "xwVNaDjMe9z",
+                                               "IXkZ7eWtFHs"))
+  }
+
+  df <-
+    # Adorn indicator names
+    dplyr::left_join(df, de_meta, by = c("data_element" = "id")) |>
+      dplyr::rowwise() |>
+      dplyr::mutate(indicator =
+                      ifelse(grepl("TB_PREV", indicator) && period < 2020,
+                             sub("TB_PREV", "TB_PREV_LEGACY", indicator),
+                             indicator)) |>
+      dplyr::ungroup()
+
+  if (aggregate_names == TRUE) {
+    df <-
+      # Aggregate site data across coarse and fine indicators
+      dplyr::group_by(df, tidyselect::everything(), -value) |>
+      dplyr::summarise(value = sum(value)) |>
+      dplyr::ungroup()
+  }
+
+  df
+}
+
+#' Adorn Category Option Combo Metadata
+#'
+#' @param df Dataframe containing DAA data indicator data to be adorned.
+#' @param d2_session R6 session object.
+#'
+#' @return df An adorned dataframe
+#' @export
+adorn_category_option_combos <- function(df,
+                                         d2_session = dynGet("d2_default_session",
+                                                             inherits = TRUE)) {
+  # Grab metadata for category option combos
+  coc_metadata <-
+    datimutils::getCatOptionCombos(unique(df$category_option_combo),
+                                   fields = c("id", "name")) |>
+    dplyr::rename("coc_id" = "id", "coc_name" = "name")
+
+  # Adorn category option combo metadata
+  df <- dplyr::left_join(df, coc_metadata,
+                         by = c("category_option_combo" = "coc_id"),
+                         keep = FALSE) |>
+    dplyr::rename("categoryOptionCombo" = "coc_name")
+
+  df
+}
+
 #' @export
 #' @title Adorn DAA Indicator Data
 #'
@@ -9,13 +86,15 @@
 #' @param df Dataframe containing DAA data indicator data to be adorned.
 #' @param include_coc Boolean indicating whether Category Option Combo data
 #' should be kept or removed from returned dataset.
+#' @param aggregate_indicators Indicates whether indicators should be rolled up
+#' across "Age" and "Age Aggregate" data elements. Also will filter out
+#' certain data elements from 2017 and 2018 that would cause duplication.
 #' @param d2_session R6 session object.
 #'
-#' @return Dataframe of DAA indicator data for both PEPFAR and the MOH as well
-#' as both discordance and concordance metrics.
-#'
+#' @return df An adorned dataframe.
 adorn_daa_data <- function(df,
                            include_coc = FALSE,
+                           aggregate_indicators = TRUE,
                            d2_session = dynGet("d2_default_session",
                                                inherits = TRUE)) {
   # Returns null if delivered an empty dataset
@@ -23,38 +102,34 @@ adorn_daa_data <- function(df,
     return(NULL)
   }
 
-  # Set grouping variables
-  group_vars <- if (include_coc == TRUE) {
-    c("org_unit", "indicator", "category_option_combo", "period")
-  } else {
-    c("org_unit", "indicator", "period")
-  }
+  stopifnot("ERROR: Dataframe has incorrect column names!" =
+              all(c("org_unit", "indicator", "period", "value") %in% colnames(df)),
+            "ERROR: Must include category_option_combo column in dataframe if intending to include that data" = # nolint
+              "category_option_combo" %in% colnames(df))
 
-  # Grab metadata for data elements
-  de_meta <-
-    datimutils::getDataElements(unique(df$data_element),
-                                fields = c("id", "name"),
-                                d2_session = d2_session) |>
-    dplyr::mutate(indicator = stringr::str_extract(name, "\\w*(?=\\s)"))
+  if (include_coc == TRUE) {
+    my_vars <- c("data_element",
+                 "org_unit",
+                 "category_option_combo",
+                 "attribute_option_combo",
+                 "value")
+  } else {
+    my_vars <- c("data_element",
+                 "org_unit",
+                 "attribute_option_combo",
+                 "value")
+  }
 
   # Cleans data and prepares it for export
   df <- df |>
+    # Selects appropriate variables
+    dplyr::select(my_vars) |>
+    dplyr::rename("facilityuid" = "org_unit") |>
+
     # Recasts values as numeric
     dplyr::mutate(value = as.numeric(`value`)) |>
 
-    # Adorn indicator names
-    dplyr::left_join(de_meta, by = c("data_element" = "id")) |>
-    dplyr::rowwise() |>
-    dplyr::mutate(indicator =
-                    ifelse(indicator == "TB_PREV" && period < 2020,
-                           "TB_PREV_LEGACY",
-                           indicator)) |>
-    dplyr::ungroup() |>
-
-    # Aggregate site data across coarse and fine indicators
-    dplyr::group_by(!!!rlang::syms(group_vars), attribute_option_combo) |>
-    dplyr::summarise(value = sum(value)) |>
-    dplyr::ungroup() |>
+    adorn_indicators(aggregate_indicators = aggregate_indicators) |>
 
     # Pivots MOH and PEPFAR data out into separate columns
     dplyr::mutate(attribute_option_combo = dplyr::case_when(
@@ -68,29 +143,12 @@ adorn_daa_data <- function(df,
                     as.numeric(stringr::str_sub(`period`, 0, 4)) + 1)
 
   if (include_coc == TRUE) {
-    # Grab metadata for category option combos
-    coc_metadata <-
-      datimutils::getCatOptionCombos(unique(df$category_option_combo),
-                                     fields = c("id", "name")) |>
-      dplyr::rename(coc_id = id, coc_name = name)
-
-    # Adorn category option combo metadata
-    df <- df |>
-      dplyr::left_join(coc_metadata,
-                       by = c("category_option_combo" = "coc_id"),
-                       keep = FALSE) |>
-      dplyr::rename(categoryOptionCombo = `coc_name`)
+    df <- adorn_category_option_combos(df, d2_session = d2_session)
   }
 
-  df |>
-    # Creates summary data about reporting institutions and figures
-    dplyr::mutate(reported_by =
-                    ifelse(!is.na(moh),
-                           ifelse(!is.na(pepfar), "Both", "MOH"),
-                           ifelse(!is.na(pepfar), "PEPFAR", "Neither"))) |>
-
-    # Reorganizes table for export
-    dplyr::select(!!!rlang::syms(group_vars), moh, pepfar, reported_by) |>
-    dplyr::rename(facilityuid = `org_unit`)
-
+  # Creates summary data about reporting institutions and figures
+  dplyr::mutate(df, reported_by =
+                  ifelse(!is.na(moh),
+                         ifelse(!is.na(pepfar), "Both", "MOH"),
+                         ifelse(!is.na(pepfar), "PEPFAR", "Neither")))
 }

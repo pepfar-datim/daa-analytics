@@ -17,39 +17,13 @@ if(!exists("pvls_emr")){
 daa_indicator_raw <-
   daa.analytics::daa_countries[["country_uid"]] |>
   daa.analytics::get_daa_data(fiscal_year = c(2018, 2019, 2020, 2021),
-                              d2_session = d2_session)
+                              d2_session = d2_session) |>
+  ## Filter out military sites
+  dplyr::filter(!org_unit %in% datimutils::getOrgUnitGroups(
+    "nwQbMeALRjL",
+    fields = "organisationUnits[id,name]"))
 
 save(daa_indicator_raw, file = "support_files/daa_indicator_raw.rda")
-
-daa_indicator_filtered <-
-  daa_indicator_raw |>
-  dplyr::select(data_element,
-                period,
-                org_unit,
-                category_option_combo,
-                attribute_option_combo,
-                value) |>
-  ## Aggregate categoryOptionCombo data for now
-  dplyr::group_by(data_element, period, org_unit, attribute_option_combo) |>
-  dplyr::summarise(value = sum(as.numeric(value))) |>
-  dplyr::ungroup() |>
-  ## Filter out unwanted indicators
-  dplyr::filter(!period %in% c("2017Oct", "2018Oct") |
-                  !data_element %in% c("BRalYZhcHpi",
-                                       "V6hxDYUZFBq",
-                                       "xwVNaDjMe9z",
-                                       "IXkZ7eWtFHs")) |>
-  ## Filter out military sites
-  dplyr::filter(!org_unit %in% {
-    dplyr::filter(
-      tidyr::unnest(
-        dplyr::rename(
-          datimutils::getOrgUnits(
-            unique(daa_indicator_raw$org_unit),
-            fields = "id,name,organisationUnitGroups[id,name]"),
-        ou_id = id, ou_name = name),
-      cols = "organisationUnitGroups"), id == "nwQbMeALRjL")[["ou_id"]]
-    })
 
 daa_indicator_data <-
   daa_indicator_filtered |>

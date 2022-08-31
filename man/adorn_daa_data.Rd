@@ -7,6 +7,7 @@
 adorn_daa_data(
   df,
   include_coc = FALSE,
+  aggregate_indicators = TRUE,
   d2_session = dynGet("d2_default_session", inherits = TRUE)
 )
 }
@@ -16,11 +17,14 @@ adorn_daa_data(
 \item{include_coc}{Boolean indicating whether Category Option Combo data
 should be kept or removed from returned dataset.}
 
+\item{aggregate_indicators}{Indicates whether indicators should be rolled up
+across "Age" and "Age Aggregate" data elements. Also will filter out
+certain data elements from 2017 and 2018 that would cause duplication.}
+
 \item{d2_session}{R6 session object.}
 }
 \value{
-Dataframe of DAA indicator data for both PEPFAR and the MOH as well
-as both discordance and concordance metrics.
+df An adorned dataframe.
 }
 \description{
 Cleans and adorns a dataframe of DAA data containing UIDs with indicator
