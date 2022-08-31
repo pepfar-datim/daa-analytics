@@ -19,7 +19,7 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
                         cache_folder = NULL) {
   stopifnot(
     "ERROR: Must provide either an S3 Bucket address or a cache folder!" =
-      !missing(aws_s3_bucket) && aws_s3_bucket != "" || !is.null(cache_folder),
+      aws_s3_bucket != "" || !is.null(cache_folder),
     "ERROR: Must provide the name of the dataset to retrieve!" =
       !is.null(dataset_name))
 
