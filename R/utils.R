@@ -103,8 +103,7 @@ weighted_discordance <- function(moh, pepfar, weighting) {
 
 #' Check for availability and freshness of cached dataset
 #'
-#' @param cache_path Path to the cached file to be checked.
-#' @param max_cache_age Maximum age at which the cache is considered "fresh".
+#' @inheritParams daa_analytics_params
 #'
 #' @return cache Returns the cached dataset if it is available and
 #' fresh, otherwise returns NULL.

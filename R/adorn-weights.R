@@ -1,16 +1,9 @@
 #' Adorn DAA Indicator Data with Weighted Metrics for All Levels
 #'
-#' @param daa_indicator_data Dataframe containing DAA indicator data.
-#' @param ou_hierarchy Dataframe containing the Organisational hierarchy.
-#' @param pvls_emr Dataframe containing TX_PVLS and EMR data. Only needed if
-#' \code{adorn_emr} is TRUE.
-#' @param adorn_level6 Boolean indicating whether to adorn weights for
-#' SNU level 6 for countries with facilities at level 7.
-#' @param adorn_emr Boolean indicating whether to adorn weights based
-#' on whether EMR is or is not present at a site.
+#' @inheritParams daa_analytics_params
 #'
 #' @return A dataframe of DAA Indicator data with weightings and weighted
-#' concordance calculated for levels 3 through 5.
+#' concordance calculated fo all requested levels.
 #' @export
 #'
 adorn_weights <- function(daa_indicator_data = NULL,

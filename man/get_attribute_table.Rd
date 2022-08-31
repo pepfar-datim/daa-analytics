@@ -10,9 +10,9 @@ get_attribute_table(
 )
 }
 \arguments{
-\item{ou_uid}{UID for the Operating Unit whose data is being queried}
+\item{ou_uid}{UID for the Operating Unit whose data is being queried.}
 
-\item{d2_session}{DHIS2 Session id for the DATIM session.}
+\item{d2_session}{R6 session object.}
 }
 \value{
 A dataframe of OU site-level attributes including name, id,

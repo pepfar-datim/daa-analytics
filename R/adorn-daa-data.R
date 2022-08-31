@@ -1,10 +1,6 @@
 #' Adorn Indicator Metadata
 #'
-#' @param df Dataframe containing DAA data indicator data to be adorned.
-#' @param aggregate_names Indicates whether indicators should be rolled up
-#' across "Age" and "Age Aggregate" data elements. Also will filter out
-#' certain data elements from 2017 and 2018 that would cause duplication.
-#' @param d2_session R6 session object.
+#' @inheritParams daa_analytics_params
 #'
 #' @return df An adorned dataframe
 #' @export
@@ -52,8 +48,7 @@ adorn_indicators <- function(df,
 
 #' Adorn Category Option Combo Metadata
 #'
-#' @param df Dataframe containing DAA data indicator data to be adorned.
-#' @param d2_session R6 session object.
+#' @inheritParams daa_analytics_params
 #'
 #' @return df An adorned dataframe
 #' @export
@@ -83,13 +78,7 @@ adorn_category_option_combos <- function(df,
 #' names, fiscal years, and weighted concordance and discordance information,
 #' as well as other information.
 #'
-#' @param df Dataframe containing DAA data indicator data to be adorned.
-#' @param include_coc Boolean indicating whether Category Option Combo data
-#' should be kept or removed from returned dataset.
-#' @param aggregate_indicators Indicates whether indicators should be rolled up
-#' across "Age" and "Age Aggregate" data elements. Also will filter out
-#' certain data elements from 2017 and 2018 that would cause duplication.
-#' @param d2_session R6 session object.
+#' @inheritParams daa_analytics_params
 #'
 #' @return df An adorned dataframe.
 adorn_daa_data <- function(df,

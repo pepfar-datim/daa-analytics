@@ -11,11 +11,7 @@ adorn_indicators(
 )
 }
 \arguments{
-\item{df}{Dataframe containing DAA data indicator data to be adorned.}
-
-\item{aggregate_names}{Indicates whether indicators should be rolled up
-across "Age" and "Age Aggregate" data elements. Also will filter out
-certain data elements from 2017 and 2018 that would cause duplication.}
+\item{df}{Dataframe containing data to be adorned.}
 
 \item{d2_session}{R6 session object.}
 }

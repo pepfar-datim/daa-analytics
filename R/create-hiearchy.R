@@ -5,10 +5,9 @@
 #' Uses the Organisation unit metadata file to generate a wide datatable of the
 #' organisation unit hierarchy from Level 3 to Level 7.
 #'
-#' @param ou_metadata Dataframe containing organisation unit metadata.
+#' @inheritParams daa_analytics_params
 #'
-#' @return Dataframe containing wide format organisation unit hierarchy from
-#' Level 3 to Level 7.
+#' @return Dataframe containing wide format organisation unit hierarchy.
 #'
 create_hierarchy <- function(ou_metadata) {
 

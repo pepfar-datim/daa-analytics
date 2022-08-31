@@ -5,10 +5,7 @@
 #' Combines DAA Indicator, PVLS and EMR data, and Site attribute data together
 #' and exports them as a single dataframe.
 #'
-#' @param daa_indicator_data Dataframe containing DAA indicator data.
-#' @param ou_hierarchy Dataframe containing the Organisational hierarchy.
-#' @param pvls_emr Dataframe of PVLS and EMR data joined with metadata.
-#' @param attribute_data Dataframe of site attribute data.
+#' @inheritParams daa_analytics_params
 #'
 #' @return A dataframe containing the DAA indicator data, PVLS and EMR indicator
 #' data, and the site attribute data for a single country.

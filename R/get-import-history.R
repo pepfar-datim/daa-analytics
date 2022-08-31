@@ -6,7 +6,7 @@
 #' regarding whether countries have provided indicator mappings, the
 #' disaggregation level, and whether data was imported for that indicator.
 #'
-#' @param geo_session DHIS2 Session id for the GeoAlign session.
+#' @inheritParams daa_analytics_params
 #'
 #' @return A dataframe of indicator mapping, disaggregation level, and data
 #' availability organized by activity year and country.

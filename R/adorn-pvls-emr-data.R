@@ -6,12 +6,11 @@
 #' by the `get_pvls_emr_table()` function and adorns it with all of the
 #' appropriate metadata for Data Elements, Category Option Combos,
 #' Organisation unit names and UIDs, Organisation unit hierarchy, and periods.
+#' Users must provide either a valid aws_s3_bucket argument and have their
+#' S3 credentials stored in an .Rprofile file or provide a cache folder where
+#' all the appropriate metadata can be found.
 #'
-#' @param pvls_emr_raw Unadorned dataframe of PVLS and EMR indicator data.
-#' @param coc_metadata Dataframe containing category option combination
-#' metadata.
-#' @param de_metadata Dataframe containing data element metadata.
-#' @param pe_metadata Dataframe containing period metadata.
+#' @inheritParams daa_analytics_params
 #'
 #' @return Dataframe containing adorned PVLS and EMR indicator data.
 #'

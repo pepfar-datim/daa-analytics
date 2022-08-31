@@ -1,7 +1,6 @@
 #' Prepare Global Summary Table of DAA Data
 #'
-#' @param combined_data The combined dataset of DAA data for processing into a
-#' summary file.
+#' @inheritParams daa_analytics_params
 #'
 #' @return Summary table dataframe
 #' @export

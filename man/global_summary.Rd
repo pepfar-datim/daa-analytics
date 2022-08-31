@@ -7,8 +7,7 @@
 global_summary(combined_data)
 }
 \arguments{
-\item{combined_data}{The combined dataset of DAA data for processing into a
-summary file.}
+\item{combined_data}{Dataframe containing adorned DAA indicator data combined with PVLS & EMR data.}
 }
 \value{
 Summary table dataframe

@@ -13,11 +13,7 @@ get_s3_data(
 \arguments{
 \item{aws_s3_bucket}{The URL for the particular bucket being accessed.}
 
-\item{dataset_name}{The name of the dataset to be returned.}
-
-\item{cache_folder}{The folder extension where cache files are located.
-If not provided, will not check for an existing cache and will not save
-a copy of the dataset to a new or updated cache.}
+\item{dataset_name}{The name of the dataset to be returned from S3.}
 }
 \value{
 data A dataframe of the indicated data set.
@@ -26,4 +22,7 @@ data A dataframe of the indicated data set.
 Fetches the indicated DAA data set from S3, applies appropriate
 naming, and returns as a dataframe. If no S3 Bucket is provided
 but a cache_folder is, then will attempt to retrieve a cache file.
+If no cache_folder is provided, then will not check for an existing
+cache and will not save a copy of the retrieved datset to a new or
+updated cache file.
 }

@@ -5,7 +5,7 @@
 #' Extracts list of all countries that participate in the DAA, including
 #' name, UID, three-letter acronym, and facility level.
 #'
-#' @param geo_session DHIS2 Session id for the GeoAlign session.
+#' @inheritParams daa_analytics_params
 #'
 #' @return A dataframe of DAA country names, UIDs, three-letter acronyms,
 #' and facility level.

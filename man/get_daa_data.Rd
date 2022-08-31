@@ -11,11 +11,11 @@ get_daa_data(
 )
 }
 \arguments{
-\item{ou_uid}{UIDs for the Operating Units whose data are being queried.}
+\item{ou_uid}{UID for the Operating Unit whose data is being queried.}
 
-\item{fiscal_year}{Fiscal years for which data should be gathered.}
+\item{fiscal_year}{List of fiscal years starting in October to be included.}
 
-\item{d2_session}{DHIS2 Session id for the DATIM session.}
+\item{d2_session}{R6 session object.}
 }
 \value{
 Dataframe of unadorned PEPFAR and the MOH DAA indicator data.

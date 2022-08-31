@@ -5,8 +5,7 @@
 #' Gets data on site attributes for a specific operating unit from DATIM or
 #' DATIM4U, including site name, id, MOH ID, longitude, and latitude.
 #'
-#' @param ou_uid UID for the Operating Unit whose data is being queried
-#' @param d2_session DHIS2 Session id for the DATIM session.
+#' @inheritParams daa_analytics_params
 #'
 #' @return A dataframe of OU site-level attributes including name, id,
 #' MOH ID, and longitude and latitude of the site.

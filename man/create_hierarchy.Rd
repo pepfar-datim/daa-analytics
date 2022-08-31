@@ -4,14 +4,19 @@
 \alias{create_hierarchy}
 \title{Generates Organisation Unit Hierarchy}
 \usage{
-create_hierarchy(ou_metadata)
+create_hierarchy(
+  ou_metadata = NULL,
+  aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
+  cache_folder = NULL
+)
 }
 \arguments{
 \item{ou_metadata}{Dataframe containing organisation unit metadata.}
+
+\item{aws_s3_bucket}{The URL for the particular bucket being accessed.}
 }
 \value{
-Dataframe containing wide format organisation unit hierarchy from
-Level 3 to Level 7.
+Dataframe containing wide format organisation unit hierarchy.
 }
 \description{
 Uses the Organisation unit metadata file to generate a wide datatable of the

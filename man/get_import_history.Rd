@@ -7,7 +7,7 @@
 get_import_history(geo_session = dynGet("d2_default_session", inherits = TRUE))
 }
 \arguments{
-\item{geo_session}{DHIS2 Session id for the GeoAlign session.}
+\item{geo_session}{R6 session object specifically for a DHIS2 GeoAlign session.}
 }
 \value{
 A dataframe of indicator mapping, disaggregation level, and data

@@ -7,7 +7,7 @@
 get_dataset_uids(fiscal_year = NULL)
 }
 \arguments{
-\item{fiscal_year}{List of fiscal years starting in October.}
+\item{fiscal_year}{List of fiscal years starting in October to be included.}
 }
 \value{
 Filtered dataframe of fiscal years and dataSets

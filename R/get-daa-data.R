@@ -1,7 +1,7 @@
 #' @export
 #' @title Get Data Set UIDs
 #'
-#' @param fiscal_year List of fiscal years starting in October.
+#' @inheritParams daa_analytics_params
 #'
 #' @return Filtered dataframe of fiscal years and dataSets
 #' for DAA indicator data.
@@ -44,9 +44,7 @@ get_dataset_uids <- function(fiscal_year = NULL) {
 #' Fetches DAA indicator data for both PEPFAR and the MOH partner for a single
 #' country.
 #'
-#' @param ou_uid UIDs for the Operating Units whose data are being queried.
-#' @param fiscal_year Fiscal years for which data should be gathered.
-#' @param d2_session DHIS2 Session id for the DATIM session.
+#' @inheritParams daa_analytics_params
 #'
 #' @return Dataframe of unadorned PEPFAR and the MOH DAA indicator data.
 #'

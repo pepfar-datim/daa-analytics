@@ -10,7 +10,7 @@ adorn_category_option_combos(
 )
 }
 \arguments{
-\item{df}{Dataframe containing DAA data indicator data to be adorned.}
+\item{df}{Dataframe containing data to be adorned.}
 
 \item{d2_session}{R6 session object.}
 }

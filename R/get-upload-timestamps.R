@@ -6,7 +6,7 @@
 #' regarding whether a country has completed each step of the DAA process
 #' with timestamps for completion.
 #'
-#' @param geo_session DHIS2 Session id for the GeoAlign session.
+#' @inheritParams daa_analytics_params
 #'
 #' @return A dataframe of country names with columns for each DAA mapping and
 #' import step with timestamp data for the completion of each step.
