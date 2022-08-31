@@ -2,7 +2,8 @@
 #'
 #' @description
 #' Fetches the indicated DAA data set from S3, applies appropriate
-#' naming, and returns as a dataframe.
+#' naming, and returns as a dataframe. If no S3 Bucket is provided
+#' but a cache_folder is, then will attempt to retrieve a cache file.
 #'
 #' @param aws_s3_bucket The URL for the particular bucket being accessed.
 #' @param dataset_name The name of the dataset to be returned.
@@ -17,14 +18,14 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
                         dataset_name = NULL,
                         cache_folder = NULL) {
   stopifnot(
-    "ERROR: Must provide an S3 Bucket address!" = aws_s3_bucket != "",
+    "ERROR: Must provide either an S3 Bucket address or a cache folder!" =
+      !missing(aws_s3_bucket) && aws_s3_bucket != "" || !is.null(cache_folder),
     "ERROR: Must provide the name of the dataset to retrieve!" =
       !is.null(dataset_name))
 
-  s3_datasets <- daa.analytics::s3_datasets
-  key <- s3_datasets[s3_datasets$dataset_name == dataset_name, ][["key"]]
-  filters <-
-    s3_datasets[s3_datasets$dataset_name == dataset_name, ][["filters"]]
+  s3_data <- daa.analytics::s3_datasets
+  key <- s3_data[s3_data$dataset_name == dataset_name, ][["key"]]
+  filters <- s3_data[s3_data$dataset_name == dataset_name, ][["filters"]]
 
   # Check freshness of cache ####
   if (!is.null(cache_folder)) {
@@ -36,7 +37,7 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
   if (!is.null(cached_data)) {
     # If fresh cache was found, return that dataset ####
     return(cached_data)
-  } else {
+  } else if (!missing(aws_s3_bucket)) {
     # If no fresh cache, pull dataset from DATIM ####
     data <- tryCatch(
       expr = {
@@ -54,6 +55,8 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
         NULL
       }
     )
+  } else {
+    data <- NULL
   }
 
   # If no data returned from S3 and no cache provided, return error ####
@@ -64,7 +67,7 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
   # If no data returned from S3 and cache provided, try to retrieve cache ####
   if (is.null(data)) {
     cache_data <- check_cache(cache_path, max_cache_age = NULL)
-    if (is.null(cache_data)) {
+    if (!is.null(cache_data)) {
       return(cache_data)
     } else {
       stop("ERROR: No data retrieved from S3 and cache could not be found!")

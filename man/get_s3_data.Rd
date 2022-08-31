@@ -24,5 +24,6 @@ data A dataframe of the indicated data set.
 }
 \description{
 Fetches the indicated DAA data set from S3, applies appropriate
-naming, and returns as a dataframe.
+naming, and returns as a dataframe. If no S3 Bucket is provided
+but a cache_folder is, then will attempt to retrieve a cache file.
 }
