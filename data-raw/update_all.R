@@ -14,7 +14,7 @@ geo_secret <- Sys.getenv("SECRETS_FOLDER") |> paste0("geoalign.json")
 datimutils::loginToDATIM(geo_secret)
 geo_session <- d2_default_session
 source("data-raw/daa_countries.R")
-source("data-raw/import_status.R")
+source("data-raw/import_history.R")
 
 source("data-raw/combined_data.R")
 

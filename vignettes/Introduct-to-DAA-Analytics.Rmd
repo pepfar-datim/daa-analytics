@@ -1,0 +1,259 @@
+---
+title: "Introduction-to-DAA-Briefings"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction-to-DAA-Briefings}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The `DAA-Briefings` package was developed to contain all the additional visualizations and analytics files that
+are necessary.
+
+In order to make use of the `DAA-Briefings` package the user should already have a basic understanding of DATIM/DHIS2. For instance the user should understand:
+
+  -   the data in DHIS2 instances are associated with organisation units, data elements, time periods, and categories and category options such as age and sex;
+
+-   the metadata in DHIS2 have additional properties depending on the metadata type, for instance latitude and longitude for organisation units or description for data elements;
+
+-   organisation units are structured in a hierarchy and data can be aggregated within that hierarchy.
+
+Users should also have a basic understanding of the DAA program and the `daa-analytics` package.
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = TRUE
+)
+```
+
+```{r setup}
+library(datimutils)
+# library(httptest)
+library(magrittr)
+```
+
+```{r, include = FALSE}
+# httptest::start_vignette("play.dhis2.org")
+```
+
+## Logging into DATIM
+
+Before attempting to pull or refresh any data from DATIM, users should log into their account using the `datimutils::loginToDATIM` function. Please refer to the vignette in the `datimutils` package for more information on how this should be performed (https://github.com/pepfar-datim/datimutils/blob/master/vignettes/Introduction-to-datimutils.Rmd).
+
+```{r eval = TRUE}
+loginToDATIM(
+  base_url = "play.dhis2.org/2.36/",
+  username = "admin",
+  password = "district"
+)
+```
+
+The `datimutils` package creates a variable `d2_default_session` when users log in to a DHIS2 system. If you are logging into both DATIM and GeoAlign in a single working session, you may want to save each session object as a local variable that can be passed to `daa.analytics` functions as appropriate:
+```{r echo = TRUE}
+d2_session <- d2_default_session$clone()
+```
+
+## Connecting to S3
+`{daa.analytics}` uses the `{aws.s3}` package to manage connections to S3. Ensure that you have an .Rprofile file set up with the following metadata:
+
+```{r}
+    Sys.setenv(AWS_S3_BUCKET = "prod.pepfar.data.raw")
+    Sys.setenv(AWS_ACCESS_KEY_ID = "XXXXXXXXXXXXXXXXXXXX")
+    Sys.setenv(AWS_SECRET_ACCESS_KEY = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    Sys.setenv(AWS_REGION = "us-east-2")
+```
+
+The function `get_s3_data` is set up to access a number of pre-defined datasets on S3. These include the following:
+
+```{r}
+data <- tibble::tribble(
+  ~dataset_name, ~key, ~filters,
+  "pvls_emr_raw", "datim/www.datim.org/moh_daa_data_value_emr_pvls", NA, #1
+  "de_metadata", "datim/www.datim.org/data_element",
+  c("dataelementid" = "dataelementid", "dataelementname" = "shortname"), #2
+  "coc_metadata",	"datim/www.datim.org/category_option_combo",
+  c("categoryoptioncomboid" = "categoryoptioncomboid",
+    "categoryoptioncomboname" = "name"),                                 #3
+  "ou_metadata",	"datim/www.datim.org/organisation_unit",
+  c("organisationunitid" = "organisationunitid",
+    "path" = "path", "name" = "shortname", "uid" = "uid"),               #4
+  "pe_metadata",	"datim/www.datim.org/moh_daa_period_structure",
+  c("periodid" = "periodid", "iso" = "iso"),                             #5
+  "duplicate_ids",
+  "datim/www.datim.org/moh_daa_data_integrity_duplicate_ids", NA,        #6
+  "null_ids", "datim/www.datim.org/moh_daa_data_integrity_null_ids", NA  #7
+)
+print(data)
+```
+
+As you can see, the short name of the dataset is defined for user reference when calling `get_s3_data`, while an S3 location key is named, as well as a set of filters to be applied to the dataset once it has been pulled down from the cloud.
+
+**NOTE: If you would like to add, modify, or remove any of the pre-defined datasets that the `get_s3_data` function can query, please refer to the `data-raw/create_s3_datasets_list.R` file.**
+
+To fetch a dataset, you call the function in the following way:
+
+```{r echo = TRUE}
+aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
+de_metadata <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                                          dataset_name = "de_metadata",
+                                          cache_folder = "support_files")
+
+head(de_metadata)
+```
+
+If you do not provide an `aws_s3_bucket` argument, but there is one stored as an environment variable, the function will pull the value from that location.
+
+If you do not provide a cache folder, the function will not try to retrieve a cached file and it will also not save a copy after retrieving it from S3. Providing a cache folder will ensure that a copy is saved locally for use later.
+
+**NOTE: You must provide either AWS S3 bucket information OR a cache folder with a valid cache file for the function to work!!**
+
+## Loading metadata and data from S3
+
+A number of important metadata files are stored on S3 in the PDAP Data Lake, which must first be downloaded prior to addressing other data sources.
+
+The full list of metadata that should be pulled include the following:
+```{r echo = TRUE}
+# Category Option Combination Metadata
+coc_metadata <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                                           dataset_name = "coc_metadata",
+                                           cache_folder = "support_files")
+
+head(coc_metadata)
+
+# Data Element (Indicator) Metadata
+de_metadata <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                                          dataset_name = "de_metadata",
+                                          cache_folder = "support_files")
+
+head(de_metadata)
+
+# Organisation Unit Metadata
+ou_metadata <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                                          dataset_name = "ou_metadata",
+                                          cache_folder = "support_files")
+
+head(ou_metadata)
+
+# Period Metadata
+pe_metadata <-  daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                                           dataset_name = "pe_metadata",
+                                           cache_folder = "support_files")
+
+head(pe_metadata)
+```
+
+Once you have the `ou_metadata` dataset, you can also compile a full organisation hierarchy showing the relationship from Country all the way down to facility levels:
+
+``` {r echo = TRUE}
+ou_hierarchy <- daa.analytics::create_hierarchy(ou_metadata = ou_metadata)
+
+head(ou_hierarchy)
+```
+
+
+## Loading PVLS and EMR data
+
+There is also a dataset you can load from S3 that contains Viral Load Suppression (VLS) and Electronic Medical Record (EMR) data for each facility. That is, the number of patients at that facility who are virally suppressed and whether that facility has an electronic medical records system. It can be obtained in the following way:
+
+```{r echo = TRUE}
+pvls_emr_raw <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                                           dataset_name = "pvls_emr_raw",
+                                           cache_folder = "support_files")
+
+
+```
+
+## Loading DAA Indicator Data from DATIM
+
+There are two datasets that are pulled directly from DATIM itself, including the `daa_indicator_data` dataset and the `attribute_data` datasets. Please ensure that you are logged into DATIM before trying to access these files.
+
+You can obtain DAA Indicator data, in this case for eSwatini, in the following way:
+```{r echo = TRUE}
+ou_uid <- "V0qMZH29CtN"
+eswatini_daa_data <- daa.analytics::get_daa_data(ou_uid = ou_uid,
+                                                 fiscal_year = c(2021),
+                                                 d2_session = d2_session)
+```
+
+You can also obtain attribute data for the country, showing the logitude and lattitude of different facilities and their MOH ID number as follows:
+```{r echo = TRUE}
+eswatini_attributes <- daa.analytics::get_attribute_table(ou_uid = ou_uid,
+                                                          d2_session = d2_session)
+```
+
+## Obtaining data from GeoAlign
+
+GeoAlign also holds several useful dataset, including the list of countries participating in DAA as well as the import history of countries that shows what type of mapping that country completed (Fine/Coarse/None) for each indicator in each year.
+
+```{r echo=TRUE}
+# Sign into GeoAlign
+loginToDATIM(
+  base_url = "geoalign.datim.org/",
+  username = "admin",
+  password = "district"
+)
+
+# Clone the session object and name it `geo_session` to distinguish that this session object is associated with GeoAlign
+geo_session <- d2_default_session$clone()
+
+# Retrieve DAA countries from DATIM
+daa_countries <- daa.analytics::get_daa_countries(geo_session = geo_session)
+
+# Retrieve DAA import history information
+import_history <- daa.analytics::get_import_history(geo_session = geo_session)
+```
+
+
+## Adorning Datasets
+
+Several functions are available for adorning files with a variety of metadata or additional information.
+
+The `adorn_daa_data` function takes a dataset produced by `get_daa_data()` and:
+ * pivots MOH and PEPFAR results data so that they are in different columns
+ * cleans period data to read as a numeric value
+ * Adorns category option combo data (e.g. age & sex data) if `include_coc` parameter is set to TRUE
+ * Drops category option combo data (e.g. age & sex data) if `include_coc` parameter is set to FALSE and aggregates rows accordingly
+ * If `aggregates_indicators` is set to TRUE, cleans indicators and removes distinctions between coarse and fine data indicators.
+ 
+The `adorn_pvls_emr_data` function will take the `pvls_emr_raw` file from S3 and: 
+ * combine it with metadata to provide user-readable names for indicators, periods, etc.
+ * cleans EMR data and combines across categories, showing `TRUE` for `emr_present` if at least one indicator shows an EMR system present at the site.
+ * separates `TB_PREV` data into `TB_PREV_LEGACY` for data prior to 2020 and `TB_PREV` for data 2020-present due to the change in definition of that indicator.
+
+The `adorn_weights` function adds weighted concordance metrics aggregated at different geography levels or along EMR/No EMR groupings, depending on the list of weights provided to the function.
+
+## Combining Datasets
+
+Once you have all the necessary datasets, you can combine data into a single, unified dataset for analysis purposes. You can provide the necessary datasets directly to the `combine_data` function or provide a cache folder location where they can be found. If no `ou_hierarchy` data is provided, the function will attempt to generate the dataset and will even try to retrieve `ou_metadata` from S3 if it is configured via environment variables.
+
+You can choose to combine data representing one country or multiple countries, but only countries and facilities represented in the `daa_indicator_data` dataset will be represented in the final product.
+
+```{r echo=TRUE}
+combined_dataset <- daa.analytics::combine_data(daa_indicator_data = eswatini_daa_data,
+                                                ou_hierarchy = ou_hierarchy,
+                                                pvls_emr = pvls_emr,
+                                                cache_folder = "support_files")
+```
+
+## Generating Additional Tables
+Two additional tools are available for conducting analysis.
+
+The `global_summary` function will aggregate data up to the national level and create a table containing a number of summary statistics. Code to generate this file can be found in the `data-raw/global_summary.R` file.
+
+The `data-raw/bottom-n-performing-sites-by-country.R` file provides the tools to compile a list of sites in each country that are the worst performing by gap-to-concordance.
+
+## Additional information
+
+Code to create a `combined_data` dataset for all countries is available in the `data-raw/update_all.R` file.
+
+Code to create a `combined_data` dataset for a single country is available in the `data-raw/update-single.R` file.
+
+Code to update just metadata files can be found in the `data-raw/update-metadata.R` file.
+
+```{r, include = FALSE}
+httptest::end_vignette()
+```
+
