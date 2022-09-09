@@ -45,4 +45,6 @@ testing/
 data/*
 data-raw/*.csv.gz
 support_files/*
+!support_files/DoNotDelete.txt
 !data/daa_countries.rda
+!data/s3_datasets.rda
