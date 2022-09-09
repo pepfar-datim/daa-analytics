@@ -17,7 +17,41 @@
 adorn_pvls_emr <- function(pvls_emr_raw = NULL,
                            coc_metadata = NULL,
                            de_metadata = NULL,
-                           pe_metadata = NULL) {
+                           pe_metadata = NULL,
+                           aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
+                           cache_folder = NULL) {
+
+  # Check that either all datasets or S3 bucket or cache folder was provided
+  stopifnot(
+    "ERROR: Must provide either all datasets or an S3 Bucket address or a cache folder!" =
+      (!is.null(coc_metadata) && !is.null(de_metadata) && !is.null(pe_metadata)) ||
+      aws_s3_bucket != "" || !missing(cache_folder))
+
+  # Retrieve metadata from S3 or from cache if no direct file provided
+  if (is.null(coc_metadata)) {
+    coc_metadata <- get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                                dataset_name = "coc_metadata",
+                                cache_folder = cache_folder)
+  }
+  if (is.null(de_metadata)) {
+    de_metadata <- get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                               dataset_name = "de_metadata",
+                               cache_folder = cache_folder)
+  }
+  if (is.null(pe_metadata)) {
+    pe_metadata <- get_s3_data(aws_s3_bucket = aws_s3_bucket,
+                               dataset_name = "pe_metadata",
+                               cache_folder = cache_folder)
+  }
+
+  # Check if all metadata retrieve and throw an error if not available
+  stopifnot(
+    "ERROR: Could not retrieve category option combo metadata!" =
+      !is.null(coc_metadata),
+    "ERROR: Could not retrieve data element metadata!" =
+      !is.null(de_metadata),
+    "ERROR: Could not retrieve period metadata!" =
+      !is.null(pe_metadata))
 
   pvls_emr <- pvls_emr_raw |>
     # Joins to period data and cleans and filters periods

@@ -2,16 +2,9 @@
 
 # nolint start: open_curly_linter
 if (!exists("daa_indicator_data")) { load("support_files/daa_indicator_data.Rda") }
-if (!exists("ou_hierarchy")) {
-  ou_hierarchy <- readRDS("support_files/ou_hierarchy.rds")
-  }
 if (!exists("pvls_emr")) { load("support_files/pvls_emr.Rda") }
-if (!exists("attribute_data")) { load("support_files/attribute_data.Rda") }
 #nolint end
 
-combined_data <- daa.analytics::combine_data(
-  daa_indicator_data = daa_indicator_data,
-  ou_hierarchy = ou_hierarchy,
-  pvls_emr = pvls_emr,
-  attribute_data = attribute_data)
+combined_data <- daa.analytics::combine_data(daa_indicator_data = daa_indicator_data,
+                                             pvls_emr = pvls_emr)
 save(combined_data, file = "support_files/combined_data.rda")
