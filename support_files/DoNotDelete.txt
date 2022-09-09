@@ -1,0 +1,1 @@
+DO NOT DELETE THIS FILE! It is necessary to keep this to ensure that the `support_files` folder does not get deleted.
