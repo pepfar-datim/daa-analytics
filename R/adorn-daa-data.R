@@ -113,7 +113,7 @@ adorn_daa_data <- function(df,
   df <- df |>
     # Selects appropriate variables
     dplyr::select(my_vars) |>
-    dplyr::rename("facilityuid" = "org_unit") |>
+    dplyr::rename("Facility_UID" = "org_unit") |>
 
     # Recasts values as numeric
     dplyr::mutate(value = as.numeric(`value`)) |>

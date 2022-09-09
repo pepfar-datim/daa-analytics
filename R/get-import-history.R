@@ -30,7 +30,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
     lapply(function(x) {
       tryCatch({
         args2 <- list(end_point = paste0(end_point, "/", x),
-                     d2_session = geo_session)
+                      d2_session = geo_session)
         df2 <- purrr::exec(datimutils::getMetadata, !!!args2) |>
           dplyr::mutate(period = x)
         return(df2)
@@ -41,7 +41,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
     remove_missing_dfs() |>
     dplyr::bind_rows() |>
     dplyr::mutate(period = stringr::str_sub(period,
-                  start = -4, end = -1)) |>
+                                            start = -4, end = -1)) |>
     tidyr::pivot_longer(-c(period, CountryName,
                            CountryCode, generated),
                         names_sep = "_(?=[^_]*$)",
@@ -61,7 +61,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
                            hasResultsData,
                            NA_character_)) |>
     dplyr::ungroup() |>
-    dplyr::select(namelevel3 = CountryName, period, indicator,
+    dplyr::select(OU = CountryName, period, indicator,
                   has_disag_mapping, has_results_data)
 
   df

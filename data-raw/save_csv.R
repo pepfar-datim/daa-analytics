@@ -12,6 +12,6 @@ daa.analytics::daa_countries$country_uid |>
     file <- paste0(output_folder,
                    paste(date, ou_name, "raw_data", sep = "_"), ".csv")
     combined_data |>
-      dplyr::filter(namelevel3uid == x) |>
+      dplyr::filter(Facility_UID == x) |>
       write.csv(file = file, na = "", row.names = FALSE)
   })

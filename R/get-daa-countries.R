@@ -22,9 +22,9 @@ get_daa_countries <- function(geo_session) {
 
   df |>
     dplyr::bind_rows(.id = "Country") |>
-    dplyr::rename(country_name = Country,
-                  country_uid = uid,
-                  country_code = code,
-                  facility_level = facility) |>
-    dplyr::filter(country_name != "demo_country")
+    dplyr::rename(OU = Country,
+                  OU_UID = uid,
+                  Country_Code = code,
+                  Facility_Level = facility) |>
+    dplyr::filter(OU != "demo_country")
 }

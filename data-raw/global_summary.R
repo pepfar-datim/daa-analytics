@@ -11,5 +11,5 @@ summary_data <- daa.analytics::global_summary(combined_data) |>
                                  period,
                                  indicator,
                                  CourseOrFine = has_disag_mapping),
-                   by = c("namelevel3", "period", "indicator"))
+                   by = c("Facility_UID", "period", "indicator"))
 write.csv(summary_data, paste0(output_folder, "global_summary.csv"))
