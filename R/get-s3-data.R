@@ -28,12 +28,12 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
 
   # Check freshness of cache ####
   if (!is.null(cache_folder)) {
-    cache_path <- file.path(cache_folder, paste0(dataset_name, ".rds"))
+    cache_path <- file.path(cache_folder, paste0(dataset_name, ".rda"))
     cached_data <- check_cache(cache_path, "1 day")
   }
 
   # Check if fresh cache was returned ####
-  if (!is.null(cached_data)) {
+  if (exists("cached_data") && !is.null(cached_data)) {
     # If fresh cache was found, return that dataset ####
     return(cached_data)
   } else if (!missing(aws_s3_bucket)) {
@@ -81,7 +81,7 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
   # Saves new cache file if cache folder provided ####
   if (!is.null(cache_folder)) {
     interactive_print("Saving an updated cache file...")
-    saveRDS(data, file = cache_path)
+    save(data, file = cache_path)
   }
 
   data

@@ -8,16 +8,21 @@
 # nolint end
 
 if(!exists("ou_hierarchy")){
-  ou_hierarchy <- readRDS("support_files/ou_hierarchy.rds")
-  }
+  ou_hierarchy <- load("support_files/ou_hierarchy.rda")
+}
 if(!exists("pvls_emr")){
-  pvls_emr <- load("support_files/pvls_emr.Rda")
-  }
+  pvls_emr <- load("support_files/pvls_emr.rda")
+}
 
 daa_indicator_raw <-
   daa.analytics::daa_countries[["country_uid"]] |>
-  daa.analytics::get_daa_data(fiscal_year = c(2018, 2019, 2020, 2021),
-                              d2_session = d2_session) |>
+  lapply(function(x) {
+    print(datimutils::getOrgUnits(x))
+    daa.analytics::get_daa_data(ou_uid = x,
+                                fiscal_year = c(2018, 2019, 2020, 2021),
+                                d2_session = d2_session)
+  }) |>
+  dplyr::bind_rows() |>
   ## Filter out military sites
   dplyr::filter(!org_unit %in% datimutils::getOrgUnitGroups(
     "nwQbMeALRjL",
