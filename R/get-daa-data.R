@@ -53,23 +53,31 @@ get_daa_data <- function(ou_uid,
                          d2_session = dynGet("d2_default_session",
                                              inherits = TRUE)) {
 
-  datimutils::getDataValueSets(
-    variable_keys = c("dataSet",
-                      "orgUnit",
-                      "period",
-                      "children",
-                      "categoryOptionComboIdScheme",
-                      "includeDeleted"),
-    variable_values = c(get_dataset_uids(fiscal_year)$dataSet,
-                        ou_uid,
-                        paste0(fiscal_year - 1, "Oct"),
-                        "true",
-                        "code",
-                        "false"),
-    d2_session = d2_session)[, c(data_element,
-                                 period,
-                                 org_unit,
-                                 category_option_combo,
-                                 attribute_option_combo,
-                                 value)]
+  lapply(fiscal_year,
+         function(x) {
+           key_value_pairs <- rbind(
+             data.frame(keys = "dataSet", values = get_dataset_uids(x)$dataSet),
+             data.frame(keys = "orgUnit", values = ou_uid),
+             data.frame(keys = "period", values = paste0(x - 1, "Oct")),
+             data.frame(keys = c("children",
+                                 "categoryOptionComboIdScheme",
+                                 "includeDeleted"),
+                        values = c("true",
+                                   "code",
+                                   "false")))
+
+           datimutils::getDataValueSets(
+             variable_keys = key_value_pairs$keys,
+             variable_values = key_value_pairs$values,
+             d2_session = d2_session)
+         }
+  ) |>
+    dplyr::bind_rows() |>
+    dplyr::select(data_element = dataElement,
+                  period,
+                  org_unit = orgUnit,
+                  category_option_combo = categoryOptionCombo,
+                  attribute_option_combo = attributeOptionCombo,
+                  value)
+
 }
