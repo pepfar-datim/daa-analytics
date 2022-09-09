@@ -1,3 +1,14 @@
+# daa.analytics v0.6.0
+
+## Bug fixes
+
+## Breaking changes
+
+## New features
+
+## Minor improvements and fixes
+
+
 # daa.analytics v0.4.0
 
 ## Bug fixes
