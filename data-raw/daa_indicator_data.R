@@ -19,7 +19,7 @@ daa_indicator_raw <-
   lapply(function(x) {
     print(datimutils::getOrgUnits(x))
     daa.analytics::get_daa_data(ou_uid = x,
-                                fiscal_year = c(2018, 2019, 2020, 2021),
+                                fiscal_year = c(2018, 2019, 2020, 2021, 2022),
                                 d2_session = d2_session)
   }) |>
   dplyr::bind_rows() |>
@@ -31,11 +31,8 @@ daa_indicator_raw <-
 save(daa_indicator_raw, file = "support_files/daa_indicator_raw.rda")
 
 daa_indicator_data <-
-  daa_indicator_filtered |>
+  daa_indicator_raw |>
   daa.analytics::adorn_daa_data(include_coc = FALSE, d2_session = d2_session) |>
-  daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy,
-                               pvls_emr = pvls_emr,
-                               adorn_level6 = FALSE,
-                               adorn_emr = TRUE)
+  daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy)
 
 save(daa_indicator_data, file = "support_files/daa_indicator_data.rda")

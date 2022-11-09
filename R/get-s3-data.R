@@ -54,6 +54,8 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
         NULL
       }
     )
+    print(head (data))
+    data
   } else {
     data <- NULL
   }

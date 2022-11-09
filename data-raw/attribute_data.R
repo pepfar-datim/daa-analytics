@@ -12,5 +12,6 @@ attribute_data <- daa.analytics::daa_countries$country_uid |>
     print(paste0("Fetching attribute data for ", x))
     daa.analytics::get_attribute_table(x, d2_session = d2_session)
   }) |>
-  dplyr::bind_rows()
+  dplyr::bind_rows() |>
+  dplyr::rename("Facility_UID" = "facilityuid")
 save(attribute_data, file = "support_files/attribute_data.rda")

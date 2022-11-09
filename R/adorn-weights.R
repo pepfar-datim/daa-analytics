@@ -12,7 +12,7 @@
 #'
 weighted_concordance <- function(df, weighting_name, grouping_columns) {
   df |>
-    dplyr::group_by(indicator, period, !!rlang::sym(grouping_columns)) |>
+    dplyr::group_by(indicator, period, !!!rlang::syms(grouping_columns)) |>
     dplyr::mutate("{weighting_name}" :=
                     (pepfar / sum(pepfar)) * # Multiplies the weighting factor...
                     (((moh + pepfar) - abs(moh - pepfar)) /
@@ -28,7 +28,7 @@ weighted_concordance <- function(df, weighting_name, grouping_columns) {
 #' concordance calculated fo all requested levels.
 #' @export
 #'
-adorn_weights <- function(daa_indicator_data = NULL,
+adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
                           weights_list = c("OU", "SNU1", "SNU2")) {
 
   # Creates reference table for looking up which columns to group by
@@ -39,6 +39,13 @@ adorn_weights <- function(daa_indicator_data = NULL,
     data.frame(ref = "SNU3", col = c("OU", "SNU1", "SNU2", "SNU3")),
     data.frame(ref = "EMR", col = c("EMR"))
   )
+
+  daa_indicator_data <- daa_indicator_data %>%
+    # Joins DAA Indicator data to OU hierarchy metadata
+    dplyr::left_join(ou_hierarchy %>%
+                       dplyr::select(-organisationunitid) %>%
+                       unique(),
+                     by = c("Facility_UID"))
 
   misaligned_sites <- dplyr::filter(daa_indicator_data, reported_by != "Both")
 
@@ -51,7 +58,7 @@ adorn_weights <- function(daa_indicator_data = NULL,
                            grouping_columns = group_ref[group_ref$ref == x, ][["col"]])
   }
 
-  df <- rbind(aligned_sites, misaligned_sites)
+  df <- dplyr::bind_rows(aligned_sites, misaligned_sites)
 
   df
 }

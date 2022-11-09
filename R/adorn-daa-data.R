@@ -15,7 +15,7 @@ adorn_indicators <- function(df,
                                 d2_session = d2_session)
 
   if (aggregate_names == TRUE) {
-    de_meta <- dplyr::mutate(de_meta, indicator = sub("\\w*(?=\\s)", "", name))
+    de_meta <- dplyr::mutate(de_meta, indicator = gsub(" \\(.*", "", name))
     ## Filter out unwanted indicators
     df <- dplyr::filter(df,
                         !period %in% c("2017Oct", "2018Oct") |
@@ -38,7 +38,7 @@ adorn_indicators <- function(df,
   if (aggregate_names == TRUE) {
     df <-
       # Aggregate site data across coarse and fine indicators
-      dplyr::group_by(df, tidyselect::everything(), -value) |>
+      dplyr::group_by(df, across(!value)) |>
       dplyr::summarise(value = sum(value)) |>
       dplyr::ungroup()
   }
@@ -90,21 +90,24 @@ adorn_daa_data <- function(df,
   if (is.null(df)) {
     return(NULL)
   }
+  print("hello")
 
   stopifnot("ERROR: Dataframe has incorrect column names!" =
-              all(c("org_unit", "indicator", "period", "value") %in% colnames(df)),
+              all(c("org_unit", "data_element", "period", "value") %in% colnames(df)),
             "ERROR: Must include category_option_combo column in dataframe if intending to include that data" = # nolint
               "category_option_combo" %in% colnames(df))
 
   if (include_coc == TRUE) {
     my_vars <- c("data_element",
                  "org_unit",
+                 "period",
                  "category_option_combo",
                  "attribute_option_combo",
                  "value")
   } else {
     my_vars <- c("data_element",
                  "org_unit",
+                 "period",
                  "attribute_option_combo",
                  "value")
   }
@@ -118,7 +121,7 @@ adorn_daa_data <- function(df,
     # Recasts values as numeric
     dplyr::mutate(value = as.numeric(`value`)) |>
 
-    adorn_indicators(aggregate_indicators = aggregate_indicators) |>
+    adorn_indicators(aggregate_names = aggregate_indicators) |>
 
     # Pivots MOH and PEPFAR data out into separate columns
     dplyr::mutate(attribute_option_combo = dplyr::case_when(

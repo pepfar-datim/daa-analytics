@@ -13,11 +13,12 @@
 combine_data <- function(daa_indicator_data = NULL,
                          ou_hierarchy = NULL,
                          pvls_emr = NULL,
+                         attribute_data = NULL,
                          cache_folder = NULL) {
 
   # Check for either presence of all datasets or cache folder ####
   stopifnot("You must either provide all datasets or the location of a cache folder!" =
-              (!is.null(daa_indicator_data) && !is.null(ou_hierachy) && !is.null(pvls_emr)) ||
+              (!is.null(daa_indicator_data) && !is.null(ou_hierarchy) && !is.null(pvls_emr) && !is.null(attribute_data)) ||
               !is.null(cache_folder))
 
   # Checks for cache files if data not provided directly ####
@@ -32,6 +33,10 @@ combine_data <- function(daa_indicator_data = NULL,
     pvls_emr <- check_cache(paste0(cache_folder, "pvls_emr.rda"))
     if (is.null(pvls_emr)) stop("No PVLS & EMR data provided and no cache available!")
   }
+  if (is.null(attribute_data)) {
+    attribute_data <- check_cache(paste0(cache_folder, "attribute_data.rda"))
+    if (is.null(attribute_data)) stop("No Attribute data provided and no cache available!")
+  }
 
   # Clean pvls_emr and ou_hierarchy datasets to avoid
   # duplication of facilities with multiple organisationunitid numbers
@@ -45,7 +50,7 @@ combine_data <- function(daa_indicator_data = NULL,
 
   df <- daa_indicator_data |>
     ## Joins DAA Indicator data to OU hierarchy metadata ####
-    dplyr::left_join(ou_hierarchy, by = c("Facility_UID")) |>
+    ##dplyr::left_join(ou_hierarchy, by = c("Facility_UID")) |>
 
     ## Joins PVLS and EMR datasets ####
     dplyr::left_join(pvls_emr, by = c("Facility_UID", "period", "indicator")) |>
@@ -56,8 +61,7 @@ combine_data <- function(daa_indicator_data = NULL,
                      by = c("Facility_UID")) |>
 
     ## Selects rows for export ####
-    dplyr::select(facilityuid,
-                  dplyr::starts_with("namelevel"),
+    dplyr::select(Facility_UID,
                   indicator,
                   period,
                   moh,
