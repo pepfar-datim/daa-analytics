@@ -90,7 +90,6 @@ adorn_daa_data <- function(df,
   if (is.null(df)) {
     return(NULL)
   }
-  print("hello")
 
   stopifnot("ERROR: Dataframe has incorrect column names!" =
               all(c("org_unit", "data_element", "period", "value") %in% colnames(df)),

@@ -50,5 +50,7 @@ get_attribute_table <- function(ou_uid,
                   facilityuid = id,
                   moh_id = value,
                   longitude,
-                  latitude)
+                  latitude) |>
+
+    dplyr::rename("Facility_UID" = "facilityuid")
 }
