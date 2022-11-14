@@ -2,9 +2,9 @@
 
 output_folder <- Sys.getenv("OUTPUT_FOLDER") |> paste0("raw_country_data/")
 
-if (!exists("combined_data")) { load("support_files/combined_data.Rda") } #nolint
+if (!exists("combined_data")) { combined_data <- readRDS("support_files/combined_data.rds") } #nolint
 
-daa.analytics::daa_countries$country_uid |>
+daa.analytics::daa_countries$OU_UID |> #changed from country_uid to OU_UID coz the daa_countries recognize it as OU_UID
   lapply(function(x) {
     date <- base::format(Sys.time(), "%Y%m%d")
     ou_name <- datimutils::getOrgUnits(x)

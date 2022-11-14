@@ -7,10 +7,10 @@
 # d2_session <- d2_default_session
 # nolint end
 
-attribute_data <- daa.analytics::daa_countries$country_uid |>
+attribute_data <- daa.analytics::daa_countries$OU_UID |>
   lapply(function(x) {
     print(paste0("Fetching attribute data for ", x))
     daa.analytics::get_attribute_table(x, d2_session = d2_session)
   }) |>
   dplyr::bind_rows()
-save(attribute_data, file = "support_files/attribute_data.rda")
+saveRDS(attribute_data, file = "support_files/attribute_data.rds")

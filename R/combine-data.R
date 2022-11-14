@@ -23,18 +23,18 @@ combine_data <- function(daa_indicator_data = NULL,
 
   # Checks for cache files if data not provided directly ####
   if (is.null(daa_indicator_data)) {
-    daa_indicator_data <- check_cache(paste0(cache_folder, "daa_indicator_data.rda"))
+    daa_indicator_data <- check_cache(paste0(cache_folder, "daa_indicator_data.rds"))
     if (is.null(daa_indicator_data)) stop("No DAA indicator data provided and no cache available!")
   }
   if (is.null(ou_hierarchy)) {
     ou_hierachy <- daa.analytics::create_hierarchy(cache_folder = cache_folder)
   }
   if (is.null(pvls_emr)) {
-    pvls_emr <- check_cache(paste0(cache_folder, "pvls_emr.rda"))
+    pvls_emr <- check_cache(paste0(cache_folder, "pvls_emr.rds"))
     if (is.null(pvls_emr)) stop("No PVLS & EMR data provided and no cache available!")
   }
   if (is.null(attribute_data)) {
-    attribute_data <- check_cache(paste0(cache_folder, "attribute_data.rda"))
+    attribute_data <- check_cache(paste0(cache_folder, "attribute_data.rds"))
     if (is.null(attribute_data)) stop("No Attribute data provided and no cache available!")
   }
 

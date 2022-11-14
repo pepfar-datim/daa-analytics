@@ -28,7 +28,7 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
 
   # Check freshness of cache ####
   if (!is.null(cache_folder)) {
-    cache_path <- file.path(cache_folder, paste0(dataset_name, ".rda"))
+    cache_path <- file.path(cache_folder, paste0(dataset_name, ".rds"))
     cached_data <- check_cache(cache_path, "1 day")
   }
 

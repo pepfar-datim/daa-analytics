@@ -8,14 +8,14 @@
 # nolint end
 
 if(!exists("ou_hierarchy")){
-  ou_hierarchy <- load("support_files/ou_hierarchy.rda")
+  ou_hierarchy <- readRDS("support_files/ou_hierarchy.rds")
 }
 if(!exists("pvls_emr")){
-  pvls_emr <- load("support_files/pvls_emr.rda")
+  pvls_emr <- readRDS("support_files/pvls_emr.rds")
 }
 
 daa_indicator_raw <-
-  daa.analytics::daa_countries[["country_uid"]] |>
+  daa.analytics::daa_countries[["OU_UID"]] |> #changed from country_uid to OU_UID coz the daa_countries recognize it as OU_UID
   lapply(function(x) {
     print(datimutils::getOrgUnits(x))
     daa.analytics::get_daa_data(ou_uid = x,
@@ -28,11 +28,11 @@ daa_indicator_raw <-
     "nwQbMeALRjL",
     fields = "organisationUnits[id,name]"))
 
-save(daa_indicator_raw, file = "support_files/daa_indicator_raw.rda")
+saveRDS(daa_indicator_raw, file = "support_files/daa_indicator_raw.rds")
 
 daa_indicator_data <-
   daa_indicator_raw |>
   daa.analytics::adorn_daa_data(include_coc = FALSE, d2_session = d2_session) |>
   daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy)
 
-save(daa_indicator_data, file = "support_files/daa_indicator_data.rda")
+saveRDS(daa_indicator_data, file = "support_files/daa_indicator_data.rds")

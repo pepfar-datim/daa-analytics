@@ -1,7 +1,7 @@
 # Code to prepare the global summary spreadsheet goes here
 
-if(!exists("combined_data")){ load("support_files/combined_data.rda") } #nolint
-if(!exists("import_history")){ load("support_files/import_history.rda") } #nolint
+if(!exists("combined_data")){ combined_data <- readRDS("support_files/combined_data.rds") } #nolint
+if(!exists("import_history")){ import_history <- readRDS("support_files/import_history.rds") } #nolint
 
 output_folder <- Sys.getenv("OUTPUT_FOLDER")
 

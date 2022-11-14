@@ -10,4 +10,4 @@ pvls_emr <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
                                        cache_folder = "support_files") |>
   daa.analytics::adorn_pvls_emr()
 
-save(pvls_emr, file = "support_files/pvls_emr.rda")
+saveRDS(pvls_emr, file = "support_files/pvls_emr.rds")
