@@ -83,7 +83,7 @@ get_s3_data <- function(aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
   # Saves new cache file if cache folder provided ####
   if (!is.null(cache_folder)) {
     interactive_print("Saving an updated cache file...")
-    save(data, file = cache_path)
+    saveRDS(data, file = cache_path)
   }
 
   data
