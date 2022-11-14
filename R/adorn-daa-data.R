@@ -38,8 +38,8 @@ adorn_indicators <- function(df,
   if (aggregate_names == TRUE) {
     df <-
       # Aggregate site data across coarse and fine indicators
-      dplyr::group_by(df, across(!value)) |>
-      dplyr::summarise(value = sum(value)) |>
+      dplyr::group_by(df, across(-contains("value"))) |>
+      dplyr::summarise(value = sum(as.numeric(value))) |>
       dplyr::ungroup()
   }
 
