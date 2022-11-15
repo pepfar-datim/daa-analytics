@@ -19,6 +19,5 @@ datasets |>
 
 ## code to prepare `ou_hierarchy` dataset
 if (!exists("ou_metadata")) { ou_metadata <- readRDS("support_files/ou_metadata.rds") } #nolint
-ou_metadata <- data
 ou_hierarchy <- daa.analytics::create_hierarchy(ou_metadata)
 saveRDS(ou_hierarchy, file = "support_files/ou_hierarchy.rds")
