@@ -58,7 +58,7 @@ adorn_category_option_combos <- function(df,
   # Grab metadata for category option combos
   coc_metadata <-
     datimutils::getCatOptionCombos(unique(df$category_option_combo),
-                                   fields = c("id", "name")) |>
+                                   fields = c("id", "name"), d2_session = d2_session) |>
     dplyr::rename("coc_id" = "id", "coc_name" = "name")
 
   # Adorn category option combo metadata
