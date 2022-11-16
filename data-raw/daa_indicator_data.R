@@ -33,6 +33,6 @@ saveRDS(daa_indicator_raw, file = "support_files/daa_indicator_raw.rds")
 daa_indicator_data <-
   daa_indicator_raw |>
   daa.analytics::adorn_daa_data(include_coc = FALSE, d2_session = d2_session) |>
-  daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy)
+  daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy, weights_list = c("OU", "SNU1", "SNU2", "EMR"), pvls_emr = pvls_emr)
 
 saveRDS(daa_indicator_data, file = "support_files/daa_indicator_data.rds")

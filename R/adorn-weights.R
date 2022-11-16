@@ -29,7 +29,7 @@ weighted_concordance <- function(df, weighting_name, grouping_columns) {
 #' @export
 #'
 adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
-                          weights_list = c("OU", "SNU1", "SNU2")) {
+                          weights_list = c("OU", "SNU1", "SNU2"), pvls_emr = NULL) {
 
   # Creates reference table for looking up which columns to group by
   group_ref <- rbind(
@@ -50,6 +50,32 @@ adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
   misaligned_sites <- dplyr::filter(daa_indicator_data, reported_by != "Both")
 
   aligned_sites <- dplyr::filter(daa_indicator_data, reported_by == "Both")
+
+  #check whether weight_list has EMR or not
+
+  adorn_emr <- "EMR"%in%weights_list
+
+  if (adorn_emr) {
+
+    stopifnot("If EMR option is provided, pvls_emr should not be NULL!" =
+                !is.null(pvls_emr))
+    # Clean pvls_emr and ou_hierarchy datasets to avoid
+    # duplication of facilities with multiple organisationunitid numbers
+    pvls_emr %<>%
+      dplyr::left_join(ou_hierarchy %>%
+                         dplyr::select(organisationunitid,
+                                       Facility_UID),
+                       by = c("organisationunitid"),
+                       keep = FALSE) %>%
+                       dplyr::mutate(EMR = emr_present)
+
+    aligned_sites %<>%
+      # Joins PVLS and EMR datasets
+      dplyr::left_join(pvls_emr,
+                       by = c("Facility_UID", "period", "indicator")) %>%
+      dplyr::select(-dplyr::starts_with("tx_pvls"), -emr_present, -organisationunitid)
+
+  }
 
   for (x in weights_list) {
     aligned_sites <-

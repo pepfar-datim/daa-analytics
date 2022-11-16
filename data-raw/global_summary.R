@@ -7,9 +7,9 @@ output_folder <- Sys.getenv("OUTPUT_FOLDER")
 
 summary_data <- daa.analytics::global_summary(combined_data) |>
   dplyr::left_join(dplyr::select(import_history,
-                                 namelevel3,
+                                 OU,
                                  period,
                                  indicator,
                                  CourseOrFine = has_disag_mapping),
-                   by = c("Facility_UID", "period", "indicator"))
+                   by = c("OU", "period", "indicator"))
 write.csv(summary_data, paste0(output_folder, "global_summary.csv"))
