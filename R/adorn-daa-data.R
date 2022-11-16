@@ -120,7 +120,7 @@ adorn_daa_data <- function(df,
     # Recasts values as numeric
     dplyr::mutate(value = as.numeric(`value`)) |>
 
-    adorn_indicators(aggregate_names = aggregate_indicators) |>
+    adorn_indicators(aggregate_names = aggregate_indicators, d2_session = d2_session) |>
 
     # Pivots MOH and PEPFAR data out into separate columns
     dplyr::mutate(attribute_option_combo = dplyr::case_when(
