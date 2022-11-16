@@ -40,10 +40,10 @@ adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
     data.frame(ref = "EMR", col = c("EMR"))
   )
 
-  daa_indicator_data <- daa_indicator_data %>%
+  daa_indicator_data <- daa_indicator_data |>
     # Joins DAA Indicator data to OU hierarchy metadata
-    dplyr::left_join(ou_hierarchy %>%
-                       dplyr::select(-organisationunitid) %>%
+    dplyr::left_join(ou_hierarchy |>
+                       dplyr::select(-organisationunitid) |>
                        unique(),
                      by = c("Facility_UID"))
 
@@ -61,18 +61,18 @@ adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
                 !is.null(pvls_emr))
     # Clean pvls_emr and ou_hierarchy datasets to avoid
     # duplication of facilities with multiple organisationunitid numbers
-    pvls_emr %<>%
-      dplyr::left_join(ou_hierarchy %>%
+    pvls_emr <- pvls_emr |>
+      dplyr::left_join(ou_hierarchy |>
                          dplyr::select(organisationunitid,
                                        Facility_UID),
                        by = c("organisationunitid"),
-                       keep = FALSE) %>%
+                       keep = FALSE) |>
                        dplyr::mutate(EMR = emr_present)
 
-    aligned_sites %<>%
+    aligned_sites <- aligned_sites |>
       # Joins PVLS and EMR datasets
       dplyr::left_join(pvls_emr,
-                       by = c("Facility_UID", "period", "indicator")) %>%
+                       by = c("Facility_UID", "period", "indicator")) |>
       dplyr::select(-dplyr::starts_with("tx_pvls"), -emr_present, -organisationunitid)
 
   }
