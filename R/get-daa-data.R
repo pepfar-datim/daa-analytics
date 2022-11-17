@@ -61,8 +61,10 @@ get_daa_data <- function(ou_uid,
              data.frame(keys = "period", values = paste0(x - 1, "Oct")),
              data.frame(keys = c("children",
                                  "categoryOptionComboIdScheme",
+                                 "attributeOptionComboIdScheme",
                                  "includeDeleted"),
                         values = c("true",
+                                   "code",
                                    "code",
                                    "false")))
 
