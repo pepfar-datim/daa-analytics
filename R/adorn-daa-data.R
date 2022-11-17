@@ -138,8 +138,9 @@ adorn_daa_data <- function(df,
   }
 
   # Creates summary data about reporting institutions and figures
-  dplyr::mutate(df, reported_by =
+  df <- df |> dplyr::mutate(reported_by =
                   ifelse(!is.na(moh),
                          ifelse(!is.na(pepfar), "Both", "MOH"),
                          ifelse(!is.na(pepfar), "PEPFAR", "Neither")))
+  df
 }
