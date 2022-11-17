@@ -19,7 +19,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
   # Fetches data from the server
   ls <- datimutils::getMetadata(end_point = "dataStore/MOH_country_indicators",
                                 d2_session = geo_session)
-  args <- ls[ls != "CS_2021"]
+  args <- ls[!ls %in% c("config", "DAA_2021", "CS_2021")]
 
   if (is.null(df)) {
     return(NULL)
@@ -31,7 +31,18 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
       tryCatch({
         args2 <- list(end_point = paste0(end_point, "/", x),
                       d2_session = geo_session)
-        df2 <- purrr::exec(datimutils::getMetadata, !!!args2) |>
+        df2 <- purrr::exec(datimutils::getMetadata, !!!args2)
+
+        if(x %in% c(2022, 2021)){
+          df2<-as.data.frame(do.call(rbind, lapply(df2$DAA, as.data.frame)))
+          rownames(df2) <- c(1:nrow(df2))
+          colnames(df2) <- colnames(df2) |> lapply(function(i){ return (gsub('indicatorMapping.', '', i))})
+          df2 <- df2 |> dplyr::select(-code) |>
+                        dplyr::rename("CountryCode" = "countryCode", "CountryName" = "countryName", "TX_NEW_hasMappingData" = "TX_NEW", "HTS_TST_hasMappingData" = "HTS_TST", "TB_PREV_hasMappingData" = "TB_PREV", "TX_CURR_hasMappingData" = "TX_CURR", "PMTCT_ART_hasMappingData" = "PMTCT_ART", "PMTCT_STAT_hasMappingData" = "PMTCT_STAT", "TX_PVLSDEN_hasMappingData" = "TX_PVLS_DEN", "TX_PVLSNUM_hasMappingData" = "TX_PVLS_NUM")
+        }
+
+
+        df2 <- df2 |>
           dplyr::mutate(period = x)
         return(df2)
       }, error = function(e) {
@@ -47,6 +58,9 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
                         names_sep = "_(?=[^_]*$)",
                         names_to = c("indicator", ".value")) |>
     dplyr::rowwise() |>
+    dplyr::mutate(indicator = ifelse(indicator == "TX_PVLSNUM", "TV_PVLS", indicator),
+                  indicator = ifelse(indicator == "TX_PVLSDEN", "TX_PVLS", indicator),
+                  ) |>
     dplyr::mutate(indicator =
                     ifelse(indicator == "TB_PREV" &&
                              as.numeric(period) < 2020,
@@ -60,9 +74,13 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
                     ifelse(period == max(period),
                            hasResultsData,
                            NA_character_)) |>
+
+    dplyr::mutate(has_mapping_result_data =
+                    ifelse(hasMappingData %in% c("No", "NA", NA)&& as.numeric(period) > 2020, "None",
+                           hasMappingData)) |>
     dplyr::ungroup() |>
     dplyr::select(OU = CountryName, period, indicator,
-                  has_disag_mapping, has_results_data)
+                  has_disag_mapping, has_results_data, has_mapping_result_data)
 
   df
 }

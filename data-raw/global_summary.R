@@ -10,6 +10,7 @@ summary_data <- daa.analytics::global_summary(combined_data) |>
                                  OU,
                                  period,
                                  indicator,
-                                 CourseOrFine = has_disag_mapping),
+                                 CourseOrFine = has_disag_mapping,
+                                 DataOrMapping = has_mapping_result_data),
                    by = c("OU", "period", "indicator"))
 write.csv(summary_data, paste0(output_folder, "global_summary.csv"))
