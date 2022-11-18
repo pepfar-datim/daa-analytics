@@ -33,6 +33,19 @@ adorn_indicators <- function(df,
                       ifelse(grepl("TB_PREV", indicator) && period < 2020,
                              sub("TB_PREV", "TB_PREV_LEGACY", indicator),
                              indicator)) |>
+
+    #for denominator for TX_PVLS the are; LZjX8KhIujF and V90qY58Tqmi
+    # for numerator TX_PVLS they are: bISVJGjG2Pa and WxSk9gth9z0
+    dplyr::mutate(indicator =
+                    ifelse(grepl("TX_PVLS", indicator) &&
+                             (data_element %in% c("LZjX8KhIujF", "V90qY58Tqmi")),
+                           sub("TX_PVLS", "TX_PVLS_DEN", indicator),
+                           indicator)) |>
+    dplyr::mutate(indicator =
+                    ifelse(grepl("TX_PVLS", indicator) &&
+                             (data_element %in% c("bISVJGjG2Pa", "WxSk9gth9z0")),
+                           sub("TX_PVLS", "TX_PVLS_NUM", indicator),
+                           indicator)) |>
       dplyr::ungroup()
 
   if (aggregate_names == TRUE) {

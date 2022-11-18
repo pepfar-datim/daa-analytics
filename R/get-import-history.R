@@ -58,8 +58,8 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
                         names_sep = "_(?=[^_]*$)",
                         names_to = c("indicator", ".value")) |>
     dplyr::rowwise() |>
-    dplyr::mutate(indicator = ifelse(indicator == "TX_PVLSNUM", "TV_PVLS", indicator),
-                  indicator = ifelse(indicator == "TX_PVLSDEN", "TX_PVLS", indicator),
+    dplyr::mutate(indicator = ifelse(indicator == "TX_PVLSNUM", "TX_PVLS_NUM", indicator),
+                  indicator = ifelse(indicator == "TX_PVLSDEN", "TX_PVLS_DEN", indicator),
                   ) |>
     dplyr::mutate(indicator =
                     ifelse(indicator == "TB_PREV" &&
