@@ -51,7 +51,7 @@ adorn_indicators <- function(df,
   if (aggregate_names == TRUE) {
     df <-
       # Aggregate site data across coarse and fine indicators
-      dplyr::group_by(df, across(-contains("value"))) |>
+      dplyr::group_by(df, across(-c(value, data_element, name))) |>
       dplyr::summarise(value = sum(as.numeric(value))) |>
       dplyr::ungroup()
   }

@@ -8,10 +8,10 @@ aws_s3_bucket <- Sys.getenv("AWS_S3_BUCKET")
 
 nulls <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
                                     dataset_name = "null_ids",
-                                    folder = "support_files")
+                                    cache_folder = "support_files")
 duplicates <- daa.analytics::get_s3_data(aws_s3_bucket = aws_s3_bucket,
                                          dataset_name = "duplicate_ids",
-                                         folder = "support_files")
+                                         cache_folder = "support_files")
 
 countries <-
   rbind(dplyr::select(nulls, country_name = "level3"),
