@@ -11,14 +11,28 @@
 #' @return A single value for the weighted concordance of the site.
 #'
 weighted_concordance <- function(df, weighting_name, grouping_columns) {
-  df |>
+  df <- df |>
     dplyr::group_by(indicator, period, !!!rlang::syms(grouping_columns)) |>
     dplyr::mutate("{weighting_name}" :=
                     (pepfar / sum(pepfar)) * # Multiplies the weighting factor...
                     (((moh + pepfar) - abs(moh - pepfar)) /
                        (moh + pepfar))) |> # by the concordance value
     dplyr::ungroup()
+
+  if(weighting_name == "OU_Concordance"){
+    df <- df |>
+      dplyr::group_by(indicator, period, !!!rlang::syms(grouping_columns)) |>
+      dplyr::mutate(OU_weighting :=
+                      (pepfar / sum(pepfar))) |>  # Multiplies the weighting factor...
+
+      dplyr::ungroup()
+  }
+
+  df
+
 }
+
+
 
 #' Adorn DAA Indicator Data with Weighted Metrics for All Levels
 #'
@@ -83,6 +97,7 @@ adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
                            weighting_name = paste0(x, "_Concordance"),
                            grouping_columns = group_ref[group_ref$ref == x, ][["col"]])
   }
+
 
   df <- dplyr::bind_rows(aligned_sites, misaligned_sites)
 

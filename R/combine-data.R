@@ -62,6 +62,7 @@ combine_data <- function(daa_indicator_data = NULL,
 
     ## Selects rows for export ####
     dplyr::select(Facility_UID,
+                  Facility,
                   indicator,
                   period,
                   moh,
