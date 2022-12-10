@@ -102,17 +102,27 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     dplyr::summarize( value = sum(value, na.rm = TRUE), .groups = "drop")
 
 
+
+  pvls_emr_base <- expand.grid( sourceid = unique(pvls_emr$sourceid),
+                                period = unique(pvls_emr$period),
+                                indicator = c("TX_NEW","HTS_TST","PMTCT_STAT","TV_PREV"),
+                                  emr_at_site_for_indicator = FALSE )
+
+
   pvls_emr_logical <- pvls_emr %>%
     dplyr::group_by(sourceid, period) %>%
     dplyr::summarise(emr_TX_NEW = any(grepl("emr_tx", indicator)),
                      emr_HTS_TST = any(grepl('emr_hts', indicator)),
                      emr_PMTCT_STAT = any(grepl('emr_anc', indicator)),
                      emr_PMTCT_ART = any(grepl('emr_anc', indicator)),
-                     emr_TB_prev = any(grepl('emr_tb', indicator)), .groups = "drop") %>%
+                     emr_TB_PREV = any(grepl('emr_tb', indicator)), .groups = "drop") %>%
     tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
                         names_to = "indicator",
                         names_prefix = "emr_",
-                        values_to = "emr_at_site_for_indicator")
+                        values_to = "emr_at_site_for_indicator") %>%
+    dplyr::bind_rows(pvls_emr_base) %>%
+    dplyr::group_by(sourceid, period, indicator) %>%
+    dplyr::summarise(emr_at_site_for_indicator = any(emr_at_site_for_indicator), .groups = "drop")
 
   pvls_emr_numeric <- pvls_emr %>%
     dplyr::filter(indicator %in% c("tx_pvls_n", "tx_pvls_d")) %>%
@@ -134,7 +144,8 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     dplyr::select(
       organisationunitid = sourceid, period, indicator,
       emr_at_site_for_indicator, tx_pvls_n, tx_pvls_d
-    )
+    ) %>%
+    dplyr::filter(Reduce(`+`, lapply(., is.na)) != ncol(.))
 
   pvls_emr_joined
 }
