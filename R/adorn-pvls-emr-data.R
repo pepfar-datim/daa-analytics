@@ -96,30 +96,32 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
 
     # TODO Clean and bring categoryOptionCombos into the rest of the app
     dplyr::select(-dataelementname, -categoryoptioncomboname) |>
-    tidyr::pivot_wider(names_from = indicator,
-                       values_from = value,
-                       values_fn = list(value = list)) |>
-    dplyr::rowwise() |>
-    dplyr::mutate(
-      emr_TX_CURR = any(as.logical(unlist(emr_tx))),
-      emr_TX_NEW = any(as.logical(unlist(emr_tx))),
-      emr_HTS_TST = any(as.logical(unlist(emr_hts))),
-      emr_PMTCT_STAT = any(as.logical(unlist(emr_anc))),
-      emr_PMTCT_ART = any(as.logical(unlist(emr_anc))),
-      emr_TB_PREV = any(as.logical(unlist(emr_tb))),
-      tx_pvls_n = sum(as.numeric(unlist(tx_pvls_n))),
-      tx_pvls_d = sum(as.numeric(unlist(tx_pvls_d)))
-    ) |>
-    dplyr::select(-emr_tx, -emr_hts,
-                  -emr_anc, -emr_tb) |>
-    dplyr::mutate(dplyr::across(.cols = dplyr::starts_with("emr_"),
-                                .fns = ~ tidyr::replace_na(.x, FALSE))) |>
+    dplyr::mutate( value = as.numeric(dplyr::case_when(value == 'true' ~ '1',
+                                                       TRUE ~ value))) %>%
+    dplyr::group_by(sourceid, period, indicator) %>%
+    dplyr::summarize( value = sum(value, na.rm = TRUE), .groups = "drop")
 
-    # Pivots EMR data back to long data format and replaces NAs with FALSE
+
+  pvls_emr_logical <- pvls_emr %>%
+    dplyr::group_by(sourceid, period) %>%
+    dplyr::summarise(emr_TX_NEW = any(grepl("emr_tx", indicator)),
+                     emr_HTS_TST = any(grepl('emr_hts', indicator)),
+                     emr_PMTCT_STAT = any(grepl('emr_anc', indicator)),
+                     emr_PMTCT_ART = any(grepl('emr_anc', indicator)),
+                     emr_TB_prev = any(grepl('emr_tb', indicator)), .groups = "drop") %>%
     tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
                         names_to = "indicator",
                         names_prefix = "emr_",
-                        values_to = "emr_present") |>
+                        values_to = "emr_at_site_for_indicator")
+
+  pvls_emr_numeric <- pvls_emr %>%
+    dplyr::filter(indicator %in% c("tx_pvls_n", "tx_pvls_d")) %>%
+    dplyr::group_by(sourceid, period, indicator) %>%
+    dplyr::summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    tidyr::pivot_wider(names_from = indicator,
+                       values_from = value)
+
+  pvls_emr_joined  <- dplyr::full_join(pvls_emr_numeric,pvls_emr_logical, by = c("sourceid", "period")) %>%
     dplyr::mutate(
       indicator = dplyr::case_when(
         indicator == "TB_PREV" & period < 2020 ~ "TB_PREV_LEGACY",
@@ -131,8 +133,8 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     # Organizes columns for export
     dplyr::select(
       organisationunitid = sourceid, period, indicator,
-      emr_present, tx_pvls_n, tx_pvls_d
+      emr_at_site_for_indicator, tx_pvls_n, tx_pvls_d
     )
 
-  pvls_emr
+  pvls_emr_joined
 }
