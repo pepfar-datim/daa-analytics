@@ -14,19 +14,31 @@ if(!exists("pvls_emr")){
   pvls_emr <- readRDS("support_files/pvls_emr.rds")
 }
 
-daa_indicator_raw <-
-  daa.analytics::daa_countries[["OU_UID"]] |> #changed from country_uid to OU_UID coz the daa_countries recognize it as OU_UID
-  lapply(function(x) {
-    print(datimutils::getOrgUnits(x))
-    daa.analytics::get_daa_data(ou_uid = x,
-                                fiscal_year = c(2018, 2019, 2020, 2021, 2022),
-                                d2_session = d2_session)
-  }) |>
-  dplyr::bind_rows() |>
-  ## Filter out military sites
-  dplyr::filter(!org_unit %in% datimutils::getOrgUnitGroups(
-    "nwQbMeALRjL",
-    fields = "organisationUnits[id,name]"))
+daa_countries <- daa.analytics::daa_countries
+my_function <- function(x) {
+  print(datimutils::getOrgUnits(x))
+  daa.analytics::get_daa_data(ou_uid = x,
+                              fiscal_year = c(2018, 2019, 2020, 2021, 2022),
+                              d2_session = d2_session)
+}
+
+daa_indicator_raw <- lapply(daa_countries[["OU_UID"]], my_function)
+
+daa_indicator_raw <- dplyr::bind_rows(daa_indicator_raw)
+
+# Get the indices of the matching values
+indices <- which(daa_indicator_raw$org_unit %in% datimutils::getOrgUnitGroups(
+  "nwQbMeALRjL",
+  fields = "organisationUnits[id,name]")$id)
+
+# Check if there are any matching values
+if(length(indices) > 0) {
+  # Create a new data frame with only the non-matching values
+  daa_indicator_raw <- subset(daa_indicator_raw, !(org_unit %in% daa_indicator_raw$org_unit[indices]))
+
+} else {
+  print("No matching values found")
+}
 
 saveRDS(daa_indicator_raw, file = "support_files/daa_indicator_raw.rds")
 
@@ -36,3 +48,5 @@ daa_indicator_data <-
   daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy, weights_list = c("OU", "SNU1", "SNU2", "EMR"), pvls_emr = pvls_emr)
 
 saveRDS(daa_indicator_data, file = "support_files/daa_indicator_data.rds")
+
+

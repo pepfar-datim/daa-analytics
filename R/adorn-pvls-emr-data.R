@@ -14,6 +14,8 @@
 #'
 #' @return Dataframe containing adorned PVLS and EMR indicator data.
 #'
+#'
+library(data.table)
 adorn_pvls_emr <- function(pvls_emr_raw = NULL,
                            coc_metadata = NULL,
                            de_metadata = NULL,
@@ -44,6 +46,8 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
                                cache_folder = cache_folder)
   }
 
+
+
   # Check if all metadata retrieve and throw an error if not available
   stopifnot(
     "ERROR: Could not retrieve category option combo metadata!" =
@@ -63,7 +67,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
 
     # Joins to Data Element, Category Option Combo, and Attribute Metadata
     dplyr::left_join(de_metadata, by = "dataelementid") |>
-    dplyr::left_join(coc_metadata, by = "categoryoptioncomboid") |>
+    dplyr::left_join(coc_metadata, by = "categoryoptioncomboid")|>
     # dplyr::left_join(coc_metadata |>
     #                    dplyr::select(categoryoptioncomboid,
     #                                  attributename =
@@ -111,20 +115,31 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       tx_pvls_d = sum(as.numeric(unlist(tx_pvls_d)))
     ) |>
     dplyr::select(-emr_tx, -emr_hts,
-                  -emr_anc, -emr_tb) |>
-    dplyr::mutate(dplyr::across(.cols = dplyr::starts_with("emr_"),
-                                .fns = ~ tidyr::replace_na(.x, FALSE))) |>
+                  -emr_anc, -emr_tb)
 
-    # Pivots EMR data back to long data format and replaces NAs with FALSE
-    tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
+    #my optmitized version
+
+    # Convert the data frame to a data table
+  pvls_emr <- as.data.table(pvls_emr)
+
+  # Reorder the columns so the columns you want to update are at the front
+  emr_cols <- names(pvls_emr)[startsWith(names(pvls_emr), "emr_")]
+  pvls_emr <- setcolorder(pvls_emr, c(emr_cols, setdiff(names(pvls_emr), emr_cols)))
+
+  # Use the `:=` operator with column names or positions to update the columns
+  pvls_emr[, (emr_cols) := lapply(.SD, function(x) {
+    ifelse(is.na(x), FALSE, x)
+  }), .SDcols = emr_cols]
+# Pivots EMR data back to long data format and replaces NAs with FALSE
+  pvls_emr <- pvls_emr |> tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
                         names_to = "indicator",
                         names_prefix = "emr_",
                         values_to = "emr_present") |>
-    dplyr::mutate(
-      indicator = dplyr::case_when(
-        indicator == "TB_PREV" & period < 2020 ~ "TB_PREV_LEGACY",
-        indicator == "TB_PREV" & period >= 2020 ~ "TB_PREV",
-        TRUE ~ indicator
+  dplyr::mutate(
+    indicator = dplyr::case_when(
+      indicator == "TB_PREV" & period < 2020 ~ "TB_PREV_LEGACY",
+      indicator == "TB_PREV" & period >= 2020 ~ "TB_PREV",
+      TRUE ~ indicator
       )
     ) |>
 

@@ -19,7 +19,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
   # Fetches data from the server
   ls <- datimutils::getMetadata(end_point = "dataStore/MOH_country_indicators",
                                 d2_session = geo_session)
-  args <- ls[!ls %in% c("config", "DAA_2021", "CS_2021")]
+  args <- ls[!ls %in% c("config", "2021", "CS_2021")]
 
   if (is.null(df)) {
     return(NULL)
@@ -33,7 +33,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
                       d2_session = geo_session)
         df2 <- purrr::exec(datimutils::getMetadata, !!!args2)
 
-        if(x %in% c(2022, 2021)){
+        if(x %in% c(2022)){
           df2<-as.data.frame(do.call(rbind, lapply(df2$DAA, as.data.frame)))
           rownames(df2) <- c(1:nrow(df2))
           colnames(df2) <- colnames(df2) |> lapply(function(i){ return (gsub('indicatorMapping.', '', i))})

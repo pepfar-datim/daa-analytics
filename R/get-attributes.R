@@ -20,7 +20,8 @@ get_attribute_table <- function(ou_uid,
     values = paste0("path:like:", ou_uid),
     fields = "id,name,geometry,attributeValues[attribute[id,name],value]",
     d2_session = d2_session,
-    retry = 4
+    retry = 4,
+    timeout = 300
   )
 
   # Returns null if API returns nothing

@@ -22,7 +22,7 @@ weighted_concordance <- function(df, weighting_name, grouping_columns) {
   if(weighting_name == "OU_Concordance"){
     df <- df |>
       dplyr::group_by(indicator, period, !!!rlang::syms(grouping_columns)) |>
-      dplyr::mutate(OU_weighting :=
+      dplyr::mutate(ab :=
                       (pepfar / sum(pepfar))) |>  # Multiplies the weighting factor...
 
       dplyr::ungroup()
@@ -51,7 +51,7 @@ adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
     data.frame(ref = "SNU1", col = c("OU", "SNU1")),
     data.frame(ref = "SNU2", col = c("OU", "SNU1", "SNU2")),
     data.frame(ref = "SNU3", col = c("OU", "SNU1", "SNU2", "SNU3")),
-    data.frame(ref = "EMR", col = c("EMR"))
+    data.frame(ref = "EMR", col = c("OU","EMR"))
   )
 
   daa_indicator_data <- daa_indicator_data |>
@@ -75,13 +75,14 @@ adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
                 !is.null(pvls_emr))
     # Clean pvls_emr and ou_hierarchy datasets to avoid
     # duplication of facilities with multiple organisationunitid numbers
+
     pvls_emr <- pvls_emr |>
       dplyr::left_join(ou_hierarchy |>
                          dplyr::select(organisationunitid,
                                        Facility_UID),
                        by = c("organisationunitid"),
                        keep = FALSE) |>
-                       dplyr::mutate(EMR = emr_present)
+                      dplyr::mutate(EMR = ifelse(is.na(emr_present), FALSE, emr_present))
 
     aligned_sites <- aligned_sites |>
       # Joins PVLS and EMR datasets

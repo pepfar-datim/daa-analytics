@@ -34,7 +34,7 @@ adorn_indicators <- function(df,
                              sub("TB_PREV", "TB_PREV_LEGACY", indicator),
                              indicator)) |>
 
-    #for denominator for TX_PVLS the are; LZjX8KhIujF and V90qY58Tqmi
+    #for denominator for TX_PVLS they are; LZjX8KhIujF and V90qY58Tqmi
     # for numerator TX_PVLS they are: bISVJGjG2Pa and WxSk9gth9z0
     dplyr::mutate(indicator =
                     ifelse(grepl("TX_PVLS", indicator) &&
