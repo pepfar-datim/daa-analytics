@@ -1,3 +1,4 @@
+library(data.table)
 #' @export
 #' @title Adorn PVLS and EMR indicator data with metadata.
 #'
@@ -120,7 +121,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     #my optmitized version
 
     # Convert the data frame to a data table
-  library(data.table)
+
   pvls_emr <- as.data.table(pvls_emr)
 
   # Reorder the columns so the columns you want to update are at the front
