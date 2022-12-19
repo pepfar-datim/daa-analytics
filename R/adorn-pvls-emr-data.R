@@ -120,7 +120,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     #my optmitized version
 
     # Convert the data frame to a data table
-  pvls_emr <- as.data.table(pvls_emr)
+  pvls_emr <- setDT(pvls_emr)
 
   # Reorder the columns so the columns you want to update are at the front
   emr_cols <- names(pvls_emr)[startsWith(names(pvls_emr), "emr_")]
