@@ -131,9 +131,17 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
   pvls_emr <- data.table::setcolorder(pvls_emr, c(emr_cols, setdiff(names(pvls_emr), emr_cols)))
 
   # Use the `:=` operator with column names or positions to update the columns
-  pvls_emr[, (emr_cols) := lapply(.SD, function(x) {
-    ifelse(is.na(x), FALSE, x)
-  }), .SDcols = emr_cols]
+  if (is.data.table(pvls_emr)) {
+    pvls_emr[, (emr_cols) := lapply(.SD, function(x) {
+      ifelse(is.na(x), FALSE, x)
+    }), .SDcols = emr_cols]
+  } else {
+    pvls_emr <- data.table::as.data.table(pvls_emr)
+    pvls_emr[, (emr_cols) := lapply(.SD, function(x) {
+      ifelse(is.na(x), FALSE, x)
+    }), .SDcols = emr_cols]
+  }
+
 # Pivots EMR data back to long data format and replaces NAs with FALSE
   pvls_emr <- pvls_emr |> tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
                         names_to = "indicator",
