@@ -131,7 +131,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
   pvls_emr <- data.table::setcolorder(pvls_emr, c(emr_cols, setdiff(names(pvls_emr), emr_cols)))
 
   # Use the `:=` operator with column names or positions to update the columns
-  if (is.data.table(pvls_emr)) {
+  if (data.table::is.data.table(pvls_emr)) {
     pvls_emr[, (emr_cols) := lapply(.SD, function(x) {
       ifelse(is.na(x), FALSE, x)
     }), .SDcols = emr_cols]
