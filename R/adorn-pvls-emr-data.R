@@ -84,9 +84,6 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
         "Service Delivery Area - Care and Treatment" ~ "emr_tx",
-      #dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
-       # categoryoptioncomboname ==
-        #"Service Delivery Area - Early Infant Diagnosis (not Ped ART)" ~ "emr_pedart",
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
         "Service Delivery Area - HIV Testing Services" ~ "emr_hts",
@@ -121,6 +118,12 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
                   -emr_anc, -emr_tb) |>
 
     dplyr::mutate_at(dplyr::vars(starts_with("emr_")), ~ifelse(is.na(.), FALSE, .)) |>
+
+    # Pivots EMR data back to long data format and replaces NAs with FALSE
+    tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
+                        names_to = "indicator",
+                        names_prefix = "emr_",
+                        values_to = "emr_present") |>
 
     dplyr::mutate(
       indicator = dplyr::case_when(
