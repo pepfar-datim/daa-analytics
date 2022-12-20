@@ -129,7 +129,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
 
   # Reorder the columns so the columns you want to update are at the front
   emr_cols <- names(pvls_emr)[startsWith(names(pvls_emr), "emr_")]
-  pvls_emr <- setcolorder(pvls_emr, c(emr_cols, setdiff(names(pvls_emr), emr_cols)))
+  pvls_emr <- data.table::setcolorder(pvls_emr, c(emr_cols, setdiff(names(pvls_emr), emr_cols)))
 
   # Use the `:=` operator with column names or positions to update the columns
   pvls_emr[, (emr_cols) := lapply(.SD, function(x) {
