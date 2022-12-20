@@ -16,7 +16,6 @@
 #' @return Dataframe containing adorned PVLS and EMR indicator data.
 #'
 #'
-library(data.table)
 adorn_pvls_emr <- function(pvls_emr_raw = NULL,
                            coc_metadata = NULL,
                            de_metadata = NULL,
@@ -100,10 +99,10 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       substring(dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
       substring(dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
       TRUE ~ NA_character_
-    )) |>
+    ))
 
     # TODO Clean and bring categoryOptionCombos into the rest of the app
-    dplyr::select(-dataelementname, -categoryoptioncomboname) |>
+    pvls_emr <- pvls_emr |> dplyr::select(-dataelementname, -categoryoptioncomboname) |>
     tidyr::pivot_wider(names_from = indicator,
                        values_from = value,
                        values_fn = list(value = list)) |>
@@ -117,32 +116,15 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       emr_TB_PREV = any(as.logical(unlist(emr_tb))),
       tx_pvls_n = sum(as.numeric(unlist(tx_pvls_n))),
       tx_pvls_d = sum(as.numeric(unlist(tx_pvls_d)))
-    ) |>
-    dplyr::select(-emr_tx, -emr_hts,
-                  -emr_anc, -emr_tb)
+    )
+    #dplyr::select(-emr_tx, -emr_hts,
+                 # -emr_anc, -emr_tb)
+  setDT(pvls_emr)
 
-    #my optmitized version
+  pvls_emr <- pvls_emr[, !names(pvls_emr) %in% c("emr_tx", "emr_hts", "emr_anc", "emr_tb"), with = FALSE]
 
-    # Convert the data frame to a data table
-    pvls_emr <- data.table::as.data.table(pvls_emr)
+  pvls_emr[, map_if(.SD, str_starts(names(.SD), "emr_"), ~ tidyr::replace_na(.x, FALSE))]
 
-  # Reorder the columns so the columns you want to update are at the front
-  emr_cols <- names(pvls_emr)[startsWith(names(pvls_emr), "emr_")]
-  pvls_emr <- data.table::setcolorder(pvls_emr, c(emr_cols, setdiff(names(pvls_emr), emr_cols)))
-
-  # Use the `:=` operator with column names or positions to update the columns
-  if (data.table::is.data.table(pvls_emr)) {
-    pvls_emr[, (emr_cols) := lapply(.SD, function(x) {
-      ifelse(is.na(x), FALSE, x)
-    }), .SDcols = emr_cols]
-  } else {
-    pvls_emr <- data.table::as.data.table(pvls_emr)
-    pvls_emr[, (emr_cols) := lapply(.SD, function(x) {
-      ifelse(is.na(x), FALSE, x)
-    }), .SDcols = emr_cols]
-  }
-
-# Pivots EMR data back to long data format and replaces NAs with FALSE
   pvls_emr <- pvls_emr |> tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
                         names_to = "indicator",
                         names_prefix = "emr_",
