@@ -16,7 +16,7 @@
 #' @return Dataframe containing adorned PVLS and EMR indicator data.
 #'
 #'
-
+library(data.table)
 adorn_pvls_emr <- function(pvls_emr_raw = NULL,
                            coc_metadata = NULL,
                            de_metadata = NULL,
@@ -121,9 +121,9 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     #my optmitized version
 
     # Convert the data frame to a data table
-  if (!is.data.table(pvls_emr)) {
+  #if (!is.data.table(pvls_emr)) {
     pvls_emr <- as.data.table(pvls_emr)
-  }
+  #}
   #pvls_emr <- data.table(pvls_emr)
 
 
