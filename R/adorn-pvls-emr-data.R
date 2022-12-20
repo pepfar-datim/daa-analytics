@@ -85,6 +85,9 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
         "Service Delivery Area - Care and Treatment" ~ "emr_tx",
+      #dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
+       # categoryoptioncomboname ==
+        #"Service Delivery Area - Early Infant Diagnosis (not Ped ART)" ~ "emr_pedart",
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
         "Service Delivery Area - HIV Testing Services" ~ "emr_hts",
@@ -121,11 +124,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     #my optmitized version
 
     # Convert the data frame to a data table
-  #if (!is.data.table(pvls_emr)) {
     pvls_emr <- data.table::as.data.table(pvls_emr)
-  #}
-  #pvls_emr <- data.table(pvls_emr)
-
 
   # Reorder the columns so the columns you want to update are at the front
   emr_cols <- names(pvls_emr)[startsWith(names(pvls_emr), "emr_")]
