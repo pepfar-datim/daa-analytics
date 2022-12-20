@@ -99,10 +99,10 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       substring(dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
       substring(dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
       TRUE ~ NA_character_
-    ))
+    )) |>
 
     # TODO Clean and bring categoryOptionCombos into the rest of the app
-    pvls_emr <- pvls_emr |> dplyr::select(-dataelementname, -categoryoptioncomboname) |>
+    dplyr::select(-dataelementname, -categoryoptioncomboname) |>
     tidyr::pivot_wider(names_from = indicator,
                        values_from = value,
                        values_fn = list(value = list)) |>
@@ -116,21 +116,14 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       emr_TB_PREV = any(as.logical(unlist(emr_tb))),
       tx_pvls_n = sum(as.numeric(unlist(tx_pvls_n))),
       tx_pvls_d = sum(as.numeric(unlist(tx_pvls_d)))
-    )
-    #dplyr::select(-emr_tx, -emr_hts,
-                 # -emr_anc, -emr_tb)
-  setDT(pvls_emr)
+    ) |>
+    dplyr::select(-emr_tx, -emr_hts,
+                  -emr_anc, -emr_tb) |>
 
-  pvls_emr <- pvls_emr[, !names(pvls_emr) %in% c("emr_tx", "emr_hts", "emr_anc", "emr_tb"), with = FALSE]
+    dplyr::mutate_at(dplyr::vars(starts_with("emr_")), ~ifelse(is.na(.), FALSE, .)) |>
 
-  pvls_emr[, map_if(.SD, str_starts(names(.SD), "emr_"), ~ tidyr::replace_na(.x, FALSE))]
-
-  pvls_emr <- pvls_emr |> tidyr::pivot_longer(cols = tidyr::starts_with("emr_"),
-                        names_to = "indicator",
-                        names_prefix = "emr_",
-                        values_to = "emr_present") |>
-  dplyr::mutate(
-    indicator = dplyr::case_when(
+    dplyr::mutate(
+      indicator = dplyr::case_when(
       indicator == "TB_PREV" & period < 2020 ~ "TB_PREV_LEGACY",
       indicator == "TB_PREV" & period >= 2020 ~ "TB_PREV",
       TRUE ~ indicator
