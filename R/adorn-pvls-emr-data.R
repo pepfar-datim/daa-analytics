@@ -122,7 +122,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
 
     # Convert the data frame to a data table
   #if (!is.data.table(pvls_emr)) {
-    pvls_emr <- as.data.table(pvls_emr)
+    pvls_emr <- data.table::as.data.table(pvls_emr)
   #}
   #pvls_emr <- data.table(pvls_emr)
 
