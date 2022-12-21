@@ -22,7 +22,7 @@ weighted_concordance <- function(df, weighting_name, grouping_columns) {
   if(weighting_name == "OU_Concordance"){
     df <- df |>
       dplyr::group_by(indicator, period, !!!rlang::syms(grouping_columns)) |>
-      dplyr::mutate(ab :=
+      dplyr::mutate(OU_weighting :=
                       (pepfar / sum(pepfar))) |>  # Multiplies the weighting factor...
 
       dplyr::ungroup()
