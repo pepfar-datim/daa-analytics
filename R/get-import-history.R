@@ -70,6 +70,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
                                                c("No", "NA", NA),
                                              "None",
                                              hasDisagMapping)) |>
+    dplyr::mutate(has_disag_mapping = stringr::str_to_title(has_disag_mapping)) |>
     dplyr::mutate(has_results_data =
                     ifelse(period == max(period),
                            hasResultsData,
@@ -78,6 +79,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
     dplyr::mutate(has_mapping_result_data =
                     ifelse(hasMappingData %in% c("No", "NA", NA)&& as.numeric(period) > 2020, "None",
                            hasMappingData)) |>
+    dplyr::mutate(has_mapping_result_data = stringr::str_to_title(has_mapping_result_data)) |>
     dplyr::ungroup() |>
     dplyr::select(OU = CountryName, period, indicator,
                   has_disag_mapping, has_results_data, has_mapping_result_data)
