@@ -59,6 +59,8 @@ combine_data <- function(daa_indicator_data = NULL,
     dplyr::left_join(attribute_data |>
                        dplyr::filter(!is.na(moh_id)),
                      by = c("Facility_UID")) |>
+    # Filter out 'NA' values in the 'OU' column
+    dplyr::filter(!is.na(OU)) |>
 
     ## Selects rows for export ####
     dplyr::select(Facility_UID,

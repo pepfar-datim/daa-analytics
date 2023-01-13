@@ -6,6 +6,7 @@ if(!exists("import_history")){ import_history <- readRDS("support_files/import_h
 output_folder <- Sys.getenv("OUTPUT_FOLDER")
 
 summary_data <- daa.analytics::global_summary(combined_data) |>
+  dplyr::filter(!is.na(OU)) |>
   dplyr::left_join(dplyr::select(import_history,
                                  OU,
                                  period,
