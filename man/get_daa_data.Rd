@@ -4,12 +4,18 @@
 \alias{get_daa_data}
 \title{Get DAA Indicator Data}
 \usage{
-get_daa_data(ou_uid, d2_session)
+get_daa_data(
+  ou_uid,
+  fiscal_year,
+  d2_session = dynGet("d2_default_session", inherits = TRUE)
+)
 }
 \arguments{
 \item{ou_uid}{UID for the Operating Unit whose data is being queried.}
 
-\item{d2_session}{DHIS2 Session id for the DATIM session.}
+\item{fiscal_year}{List of fiscal years starting in October to be included.}
+
+\item{d2_session}{R6 session object.}
 }
 \value{
 Dataframe of unadorned PEPFAR and the MOH DAA indicator data.

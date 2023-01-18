@@ -5,7 +5,7 @@
 #' Extracts list of all countries that participate in the DAA, including
 #' name, UID, three-letter acronym, and facility level.
 #'
-#' @param geo_session DHIS2 Session id for the GeoAlign session.
+#' @inheritParams daa_analytics_params
 #'
 #' @return A dataframe of DAA country names, UIDs, three-letter acronyms,
 #' and facility level.
@@ -20,13 +20,11 @@ get_daa_countries <- function(geo_session) {
     return(NULL)
   }
 
-  df %<>%
-    dplyr::bind_rows(.id = "Country") %>%
-    dplyr::rename(country_name = .data$Country,
-                  country_uid = .data$uid,
-                  country_code = .data$code,
-                  facility_level = .data$facility) %>%
-    dplyr::filter(.data$country_name != "demo_country")
-
-  return(df)
+  df |>
+    dplyr::bind_rows(.id = "Country") |>
+    dplyr::rename(OU = Country,
+                  OU_UID = uid,
+                  Country_Code = code,
+                  Facility_Level = facility) |>
+    dplyr::filter(OU != "demo_country")
 }

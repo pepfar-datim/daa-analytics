@@ -8,7 +8,9 @@ adorn_pvls_emr(
   pvls_emr_raw = NULL,
   coc_metadata = NULL,
   de_metadata = NULL,
-  pe_metadata = NULL
+  pe_metadata = NULL,
+  aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
+  cache_folder = NULL
 )
 }
 \arguments{
@@ -20,6 +22,8 @@ metadata.}
 \item{de_metadata}{Dataframe containing data element metadata.}
 
 \item{pe_metadata}{Dataframe containing period metadata.}
+
+\item{aws_s3_bucket}{The URL for the particular bucket being accessed.}
 }
 \value{
 Dataframe containing adorned PVLS and EMR indicator data.
@@ -29,4 +33,7 @@ Takes in an unadorned dataframe of PVLS and EMR data in the format exported
 by the \code{get_pvls_emr_table()} function and adorns it with all of the
 appropriate metadata for Data Elements, Category Option Combos,
 Organisation unit names and UIDs, Organisation unit hierarchy, and periods.
+Users must provide either a valid aws_s3_bucket argument and have their
+S3 credentials stored in an .Rprofile file or provide a cache folder where
+all the appropriate metadata can be found.
 }

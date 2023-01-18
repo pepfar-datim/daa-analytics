@@ -7,7 +7,7 @@
 get_daa_countries(geo_session)
 }
 \arguments{
-\item{geo_session}{DHIS2 Session id for the GeoAlign session.}
+\item{geo_session}{R6 session object specifically for a DHIS2 GeoAlign session.}
 }
 \value{
 A dataframe of DAA country names, UIDs, three-letter acronyms,

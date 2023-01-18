@@ -4,3 +4,7 @@
 ^daa-analytics\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^\.travis\.yml$
+^\.circleci$
+^global_summary\.csv$
+^support_files/.*$

@@ -4,12 +4,15 @@
 \alias{get_attribute_table}
 \title{Fetch MOH ID and attributes from DATIM}
 \usage{
-get_attribute_table(ou_uid, d2_session = d2_session)
+get_attribute_table(
+  ou_uid,
+  d2_session = dynGet("d2_default_session", inherits = TRUE)
+)
 }
 \arguments{
-\item{ou_uid}{UID for the Operating Unit whose data is being queried}
+\item{ou_uid}{UID for the Operating Unit whose data is being queried.}
 
-\item{d2_session}{DHIS2 Session id for the DATIM session.}
+\item{d2_session}{R6 session object.}
 }
 \value{
 A dataframe of OU site-level attributes including name, id,

@@ -4,22 +4,25 @@
 \alias{get_s3_data}
 \title{Fetch DAA S3 Data set}
 \usage{
-get_s3_data(s3, aws_s3_bucket, dataset_name = NULL, folder = NULL)
+get_s3_data(
+  aws_s3_bucket = Sys.getenv("AWS_S3_BUCKET"),
+  dataset_name = NULL,
+  cache_folder = NULL
+)
 }
 \arguments{
-\item{s3}{The s3 object created by the paws package containing
-user credentials.}
-
 \item{aws_s3_bucket}{The URL for the particular bucket being accessed.}
 
-\item{folder}{The folder extension where the output file should be saved.}
-
-\item{file_name}{The name of the dataset to be returned.}
+\item{dataset_name}{The name of the dataset to be returned from S3.}
 }
 \value{
 data A dataframe of the indicated data set.
 }
 \description{
 Fetches the indicated DAA data set from S3, applies appropriate
-naming, and returns as a dataframe.
+naming, and returns as a dataframe. If no S3 Bucket is provided
+but a cache_folder is, then will attempt to retrieve a cache file.
+If no cache_folder is provided, then will not check for an existing
+cache and will not save a copy of the retrieved datset to a new or
+updated cache file.
 }

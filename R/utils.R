@@ -4,12 +4,12 @@
 #' @return Current FY as numeric.
 #'
 current_fiscal_year <- function() {
-  current_year <- Sys.Date() %>%
-    format("%Y") %>%
+  current_year <- Sys.Date() |>
+    format("%Y") |>
     as.numeric()
 
-  current_month <- Sys.Date() %>%
-    format("%m") %>%
+  current_month <- Sys.Date() |>
+    format("%m") |>
     as.numeric()
 
   curr_fy <- ifelse(current_month > 9, current_year + 1, current_year)
@@ -19,39 +19,21 @@ current_fiscal_year <- function() {
 
 
 #' @export
-#' @title Get Indicator Name
+#'
+#' @title Prints message if session is interactive.
 #'
 #' @description
-#' Converts Indicator UID into a human-readable name.
+#' Supplied a message, will print it only if the session is
+#' currently interactive.
 #'
-#' @param uid UID for Indicator
+#' @param x Message to print.
 #'
-#' @return Indicator name as a string.
+#' @return Printed message, \code{x}.
 #'
-#' @noRd
-#'
-get_indicator_name <- function(uid) {
-  get_name <- daa.analytics::daa_indicators$indicator
-  names(get_name) <- daa.analytics::daa_indicators$uid
-  indicator_name <- unname(get_name[uid])
-  return(indicator_name)
-}
-
-
-#' @export
-#' @title Get Organisation Unit Name from UID.
-#'
-#' @description
-#' Returns the country name based on the organisation unit UID.
-#'
-#' @param ou_uid UID for the Operating Unit whose data is being queried.
-#'
-#' @return A string containing the country name.
-#'
-get_ou_name <- function(ou_uid) {
-  countries <- daa.analytics::daa_countries
-  ou_name <- countries[countries$country_uid == ou_uid][["country_name"]]
-  return(ou_name)
+interactive_print <- function(x) {
+  if (rlang::is_interactive()) {
+    print(x)
+  }
 }
 
 
@@ -72,50 +54,37 @@ remove_missing_dfs <- function(my_list) {
 }
 
 
+#' Check for availability and freshness of cached dataset
+#'
+#' @inheritParams daa_analytics_params
+#'
+#' @return cache Returns the cached dataset if it is available and
+#' fresh, otherwise returns NULL.
 #' @export
-#' @title Calculate Weighted Concordance.
-#'
-#' @description
-#' Calculates the weighted concordance for a given site using the total
-#' number of patients reported by the MOH and PEPFAR as well as the
-#' weighting factor.
-#'
-#' @param moh The number of patients reported by the MOH at the site.
-#' @param pepfar The number of patients reported by PEPFAR at the site.
-#' @param weighting The weighting factor given to the site.
-#'
-#' @return A single value for the weighted concordance of the site.
-#'
-weighted_concordance <- function(moh, pepfar, weighting) {
-  if (!is.na(weighting)) {
-    n <- weighting * (((moh + pepfar) - abs(moh - pepfar)) / (moh + pepfar))
-  } else{
-    n <- NA
+check_cache <- function(cache_path, max_cache_age = NULL) {
+
+  # Checks arguments ####
+  stopifnot("ERROR: Must provide path to cache file!" =
+              !rlang::is_missing(cache_path))
+
+  # Checks if cache file exists and can be read ####
+  if (!file.exists(cache_path)) { return(NULL) } # nolint
+  if (file.access(cache_path, 4) != 0) { return(NULL )} # nolint
+
+  # Check whether cache is stale ####
+  if (!is.null(max_cache_age)) {
+    is_lt <- function(x, y)  x < y
+    cache_age_dur <- lubridate::as.duration(
+      lubridate::interval(file.info(cache_path)$mtime, Sys.time()))
+    max_cache_age_dur <- lubridate::duration(max_cache_age)
+    is_fresh <- is_lt(cache_age_dur, max_cache_age_dur)
+    if (!is_fresh) { return(NULL) } # nolint
   }
-  return(n)
+
+  # If file exists, can be read, and is fresh, loads and returns cache ####
+  interactive_print("Loading cache file")
+  cache <- readRDS(cache_path)
+
+  # Returns cache object ####
+  cache
 }
-
-
-#' @export
-#' @title Calculate Weighted Discordance.
-#'
-#' @description
-#' Calculates the weighted discordance for a given site using the total
-#' number of patients reported by the MOH and PEPFAR as well as the
-#' weighting factor.
-#'
-#' @param moh The number of patients reported by the MOH at the site.
-#' @param pepfar The number of patients reported by PEPFAR at the site.
-#' @param weighting The weighting factor given to the site.
-#'
-#' @return A single value for the weighted discordance of the site.
-#'
-weighted_discordance <- function(moh, pepfar, weighting) {
-  if (!is.na(weighting)) {
-    n <- weighting * abs(moh - pepfar) / mean(c(moh, pepfar))
-  } else{
-    n <- NA
-  }
-  return(n)
-}
-

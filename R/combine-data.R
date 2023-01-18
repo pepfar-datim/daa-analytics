@@ -5,54 +5,79 @@
 #' Combines DAA Indicator, PVLS and EMR data, and Site attribute data together
 #' and exports them as a single dataframe.
 #'
-#' @param daa_indicator_data Dataframe containing DAA indicator data.
-#' @param ou_hierarchy Dataframe containing the Organisational hierarchy.
-#' @param pvls_emr Dataframe of PVLS and EMR data joined with metadata.
-#' @param attribute_data Dataframe of site attribute data.
+#' @inheritParams daa_analytics_params
 #'
 #' @return A dataframe containing the DAA indicator data, PVLS and EMR indicator
 #' data, and the site attribute data for a single country.
 #'
-combine_data <- function(daa_indicator_data,
-                         ou_hierarchy,
-                         pvls_emr,
-                         attribute_data) {
+combine_data <- function(daa_indicator_data = NULL,
+                         ou_hierarchy = NULL,
+                         pvls_emr = NULL,
+                         attribute_data = NULL,
+                         cache_folder = NULL) {
+
+  # Check for either presence of all datasets or cache folder ####
+  stopifnot("You must either provide all datasets or the location of a cache folder!" =
+              (!is.null(daa_indicator_data) && !is.null(ou_hierarchy) && !is.null(pvls_emr) && !is.null(attribute_data)) ||
+              !is.null(cache_folder))
+
+  # Checks for cache files if data not provided directly ####
+  if (is.null(daa_indicator_data)) {
+    daa_indicator_data <- check_cache(paste0(cache_folder, "daa_indicator_data.rds"))
+    if (is.null(daa_indicator_data)) stop("No DAA indicator data provided and no cache available!")
+  }
+  if (is.null(ou_hierarchy)) {
+    ou_hierachy <- daa.analytics::create_hierarchy(cache_folder = cache_folder)
+  }
+  if (is.null(pvls_emr)) {
+    pvls_emr <- check_cache(paste0(cache_folder, "pvls_emr.rds"))
+    if (is.null(pvls_emr)) stop("No PVLS & EMR data provided and no cache available!")
+  }
+  if (is.null(attribute_data)) {
+    attribute_data <- check_cache(paste0(cache_folder, "attribute_data.rds"))
+    if (is.null(attribute_data)) stop("No Attribute data provided and no cache available!")
+  }
+
   # Clean pvls_emr and ou_hierarchy datasets to avoid
   # duplication of facilities with multiple organisationunitid numbers
-  pvls_emr %<>%
-    dplyr::left_join(ou_hierarchy %>%
-                       dplyr::select(.data$organisationunitid,
-                                     .data$facilityuid),
+  pvls_emr <-
+    dplyr::left_join(pvls_emr,
+                     ou_hierarchy |>
+                       dplyr::select(organisationunitid,
+                                     Facility_UID),
                      by = c("organisationunitid"),
                      keep = FALSE)
 
-  df <- daa_indicator_data %>%
-    # Joins DAA Indicator data to OU hierarchy metadata
-    dplyr::left_join(ou_hierarchy, by = c("facilityuid")) %>%
+  df <- daa_indicator_data |>
+    ## Joins DAA Indicator data to OU hierarchy metadata ####
+    ##dplyr::left_join(ou_hierarchy, by = c("Facility_UID")) |>
 
-    # Joins PVLS and EMR datasets
-    dplyr::left_join(pvls_emr, by = c("facilityuid", "period", "indicator")) %>%
+    ## Joins PVLS and EMR datasets ####
+    dplyr::left_join(pvls_emr, by = c("Facility_UID", "period", "indicator")) |>
 
-    # Joins site attribute data
-    dplyr::left_join(attribute_data %>%
-                       dplyr::filter(!is.na(.data$moh_id)),
-                     by = c("facilityuid")) %>%
+    ## Joins site attribute data ####
+    dplyr::left_join(attribute_data |>
+                       dplyr::filter(!is.na(moh_id)),
+                     by = c("Facility_UID")) |>
+    # Filter out 'NA' values in the 'OU' column
+    dplyr::filter(!is.na(OU)) |>
 
-    # Selects rows for export
-    dplyr::select(.data$facilityuid,
-                  dplyr::starts_with("namelevel"),
-                  .data$indicator,
-                  .data$period,
-                  .data$moh,
-                  .data$pepfar,
-                  .data$reported_by,
-                  dplyr::starts_with("level"),
+    ## Selects rows for export ####
+    dplyr::select(Facility_UID,
+                  Facility,
+                  indicator,
+                  period,
+                  moh,
+                  pepfar,
+                  reported_by,
+                  dplyr::starts_with("OU"),
+                  dplyr::starts_with("SNU"),
                   dplyr::starts_with("emr"),
-                  .data$tx_pvls_n,
-                  .data$tx_pvls_d,
-                  .data$moh_id,
-                  .data$longitude,
-                  .data$latitude)
+                  tx_pvls_n,
+                  tx_pvls_d,
+                  moh_id,
+                  longitude,
+                  latitude)
 
   return(df)
 }

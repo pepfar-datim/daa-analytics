@@ -44,5 +44,7 @@ testing/
 # Sensitive data files (Review whether these need to be excluded)
 data/*
 data-raw/*.csv.gz
+support_files/*
+!support_files/DoNotDelete.txt
 !data/daa_countries.rda
-!data/daa_indicators.rda
+!data/s3_datasets.rda

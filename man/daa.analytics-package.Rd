@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Chris Nemarich \email{cnemarich@guidehousefederal.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Chris Nemarich \email{cnemarich@guidehousefederal.com}
 
 }
 \keyword{internal}

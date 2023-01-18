@@ -6,20 +6,20 @@
 \usage{
 adorn_weights(
   daa_indicator_data = NULL,
-  ou_hierarchy = NULL,
-  pvls_emr = NULL,
-  adorn_level6 = FALSE,
-  adorn_emr = FALSE
+  weights_list = c("OU", "SNU1", "SNU2")
 )
 }
 \arguments{
 \item{daa_indicator_data}{Dataframe containing DAA indicator data.}
 
-\item{ou_hierarchy}{Dataframe containing the Organisational hierarchy.}
+\item{weights_list}{A list containing the levels at which concordance
+metrics should be calculated. \code{OU} level is the default, calculating
+sites as a share of the overall country. SNU levels 1-3 are supported,
+as well as \code{EMR}, which groups by whether or not a facility has an EMR.}
 }
 \value{
 A dataframe of DAA Indicator data with weightings and weighted
-discordance and concordance calculated for levels 3 through 5.
+concordance calculated fo all requested levels.
 }
 \description{
 Adorn DAA Indicator Data with Weighted Metrics for All Levels

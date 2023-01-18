@@ -1,65 +1,85 @@
 #' @export
+#' @title Get Data Set UIDs
+#'
+#' @inheritParams daa_analytics_params
+#'
+#' @return Filtered dataframe of fiscal years and dataSets
+#' for DAA indicator data.
+#'
+get_dataset_uids <- function(fiscal_year = NULL) {
+  dataset_uids <- data.frame(
+    fiscal_year = c("2017",
+                    "2018",
+                    "2019",
+                    "2020",
+                    "2021",
+                    "2022"),
+    dataSet = c("FJrq7T5emEh",
+                "sfk9cyQSUyi",
+                "OBhi1PUW3OL",
+                "QSodwF4YG9a",
+                "U7qYX49krHK",
+                "RGDmmG5taRt"
+    ))
+
+  # Filter dataset_uids if fiscal years provided
+  if (!is.null(fiscal_year)) {
+    dataset_uids <- dataset_uids[dataset_uids$fiscal_year %in% fiscal_year, ]
+  }
+
+  # Provide warning if no valid fiscal years provided
+  if (NROW(dataset_uids) == 0) {
+    warning("No dataSet UIDs available for the given fiscal years!")
+  }
+
+  # Return dataset_uids object
+  dataset_uids
+}
+
+
+#' @export
 #' @title Get DAA Indicator Data
 #'
 #' @description
 #' Fetches DAA indicator data for both PEPFAR and the MOH partner for a single
 #' country.
 #'
-#' @param ou_uid UID for the Operating Unit whose data is being queried.
-#' @param d2_session DHIS2 Session id for the DATIM session.
+#' @inheritParams daa_analytics_params
 #'
 #' @return Dataframe of unadorned PEPFAR and the MOH DAA indicator data.
 #'
-get_daa_data <- function(ou_uid, d2_session) {
+get_daa_data <- function(ou_uid,
+                         fiscal_year,
+                         d2_session = dynGet("d2_default_session",
+                                             inherits = TRUE)) {
 
-  indicator_uids <- daa.analytics::daa_indicators$uid
+  lapply(fiscal_year,
+         function(x) {
+           key_value_pairs <- rbind(
+             data.frame(keys = "dataSet", values = get_dataset_uids(x)$dataSet),
+             data.frame(keys = "orgUnit", values = ou_uid),
+             data.frame(keys = "period", values = paste0(x - 1, "Oct")),
+             data.frame(keys = c("children",
+                                 "categoryOptionComboIdScheme",
+                                 "attributeOptionComboIdScheme",
+                                 "includeDeleted"),
+                        values = c("true",
+                                   "code",
+                                   "code",
+                                   "false")))
 
-  period_list <-
-    paste(paste0(2017:(daa.analytics::current_fiscal_year()), "Oct"),
-          collapse = ";")
+           datimutils::getDataValueSets(
+             variable_keys = key_value_pairs$keys,
+             variable_values = key_value_pairs$values,
+             d2_session = d2_session)
+         }
+  ) |>
+    dplyr::bind_rows() |>
+    dplyr::select(data_element = dataElement,
+                  period,
+                  org_unit = orgUnit,
+                  category_option_combo = categoryOptionCombo,
+                  attribute_option_combo = attributeOptionCombo,
+                  value)
 
-  # TODO Make this into a tryCatch to future proof against large OUs timing out
-  # Breaks the query into multiple parts for Nigeria to prevent timeout
-  df <- tryCatch({
-      datimutils::getAnalytics(
-        paste0("dimension=SH885jaRe0o:mXjFJEexCHJ;t6dWOH7W5Ml&",
-               "displayProperty=SHORTNAME&outputIdScheme=UID"),
-        dx = paste(indicator_uids, collapse = ";"),
-        pe = period_list,
-        ou = paste0("OU_GROUP-POHZmzofoVx;", ou_uid),
-        d2_session = d2_session,
-        retry = 2
-      )
-    },
-    # If error is thrown, then try again splitting query into multiple parts.
-    error = function(e) {
-      # TODO log this in a log file.
-      # Prints an error message.
-      print(
-        paste0("Error: Timeout was reached after 60 seconds with 0 bytes",
-               "received. Trying again with query broken into smaller chunks.")
-      )
-      # Pulls data for each indicator as an individual query to shrink size
-      indicator_uids %>%
-        # Makes queries for each group of indicators
-        lapply(function(x) {
-          datimutils::getAnalytics(
-            paste0("dimension=SH885jaRe0o:mXjFJEexCHJ;t6dWOH7W5Ml&",
-                   "displayProperty=SHORTNAME&outputIdScheme=UID"),
-            dx = x,
-            pe = period_list,
-            ou = paste0("OU_GROUP-POHZmzofoVx;", ou_uid),
-            d2_session = d2_session
-          )
-        }) %>%
-        # Binds all of the component dataframes together
-        dplyr::bind_rows()
-    }
-  )
-  # Returns null if API returns nothing
-  if (is.null(df)) {
-    return(NULL)
-  }
-  # Returns dataframe
-  return(df)
 }
