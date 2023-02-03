@@ -15,11 +15,10 @@ summary_data <- daa.analytics::global_summary(combined_data) |>
                                  DataOrMapping = has_mapping_result_data),
                    by = c("OU", "period", "indicator")) |>
 
-  dplyr::mutate(DataOrMapping = ifelse(is.na(MOH_Results_Total) | MOH_Results_Total == "None" & CourseOrFine == "Coarse" & period < 2022, "Mapping Coarse",
-                                       ifelse(is.na(MOH_Results_Total) | MOH_Results_Total == "None" & CourseOrFine == "Fine" & period < 2022, "Mapping Fine",
-                                              ifelse(!is.na(MOH_Results_Total) & (is.na(CourseOrFine) | CourseOrFine == "None") & period < 2022, "No Mapping",
-                                                     ifelse(is.na(MOH_Results_Total) | MOH_Results_Total == "None" & (is.na(CourseOrFine) | CourseOrFine == "None") & period < 2022, "No Mapping",
-                                                            ifelse(!is.na(MOH_Results_Total) & CourseOrFine == "Fine" & period < 2022, "Data Fine",
-                                                                   ifelse(!is.na(MOH_Results_Total) & CourseOrFine == "Coarse" & period < 2022, "Data Coarse", DataOrMapping)))))))
+  dplyr::mutate(DataOrMapping = ifelse((is.na(MOH_Results_Total) | MOH_Results_Total == "None") & CourseOrFine == "Coarse" & period < 2022, "Mapping Coarse",
+                                ifelse((is.na(MOH_Results_Total) | MOH_Results_Total == "None") & CourseOrFine == "Fine" & period < 2022, "Mapping Fine",
+                                ifelse((is.na(CourseOrFine) | CourseOrFine == "None" | CourseOrFine == "NA") & period < 2022, "No Mapping",
+                                ifelse(!is.na(MOH_Results_Total) & CourseOrFine == "Fine" & period < 2022, "Data Fine",
+                                ifelse(!is.na(MOH_Results_Total) & CourseOrFine == "Coarse" & period < 2022, "Data Coarse", DataOrMapping))))))
 
 write.csv(summary_data, paste0(output_folder, "global_summary.csv"))
