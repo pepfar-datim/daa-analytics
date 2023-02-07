@@ -46,5 +46,5 @@ data/*
 data-raw/*.csv.gz
 support_files/*
 !support_files/DoNotDelete.txt
-!data/daa_countries.rda
-!data/s3_datasets.rda
+!data/daa_countries.rds
+!data/s3_datasets.rds
