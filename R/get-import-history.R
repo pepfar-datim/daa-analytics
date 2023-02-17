@@ -63,7 +63,7 @@ get_import_history <- function(geo_session = dynGet("d2_default_session",
                   ) |>
     dplyr::mutate(indicator =
                     ifelse(indicator == "TB_PREV" &&
-                             as.numeric(period) < 2020,
+                             as.numeric(period) < 2021,
                            "TB_PREV_LEGACY", indicator),
                   period = as.numeric(period),
                   has_disag_mapping = ifelse(hasDisagMapping %in%
