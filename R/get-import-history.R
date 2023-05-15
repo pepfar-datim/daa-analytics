@@ -14,43 +14,72 @@
 get_import_history <- function(geo_session = dynGet("d2_default_session",
                                                     inherits = TRUE)) {
 
-  end_point <- "dataStore/MOH_country_indicators"
+  namespace <- "MOH_country_indicators"
+
 
   # Fetches data from the server
-  ls <- datimutils::getMetadata(end_point = "dataStore/MOH_country_indicators",
+  ls <- datimutils::getDataStoreNamespaceKeys(namespace = "MOH_country_indicators",
                                 d2_session = geo_session)
-  args <- ls[!ls %in% c("config", "2021", "CS_2021")]
+  args <- ls[!ls %in% c("config", "2021", "CS_2021", "2022")]
 
   if (is.null(df)) {
     return(NULL)
   }
+  #separate code to handle 2022 data format
+  df_2022 <- tryCatch({
+    x <- 2022
 
-  # Loops through all available years to pull data availability from GeoAlign
-  df <- args |>
+    args2 <- list(namespace = paste0(namespace, "/", x),
+                  d2_session = geo_session)
+    df2 <- purrr::exec(datimutils::getDataStoreNamespaceKeys, !!!args2)
+
+    if (length(df2$DAA) > 0) {
+      df2 <- as.data.frame(do.call(rbind, lapply(df2$DAA, as.data.frame)))
+      rownames(df2) <- c(1:nrow(df2))
+      colnames(df2) <- colnames(df2) |> lapply(function(i) {
+        return(gsub('indicatorMapping.', '', i))
+      })
+      df2 <- df2 |>
+        dplyr::select(-code) |>
+        dplyr::rename("CountryCode" = "countryCode",
+                      "CountryName" = "countryName",
+                      "TX_NEW_hasMappingData" = "TX_NEW",
+                      "HTS_TST_hasMappingData" = "HTS_TST",
+                      "TB_PREV_hasMappingData" = "TB_PREV",
+                      "TX_CURR_hasMappingData" = "TX_CURR",
+                      "PMTCT_ART_hasMappingData" = "PMTCT_ART",
+                      "PMTCT_STAT_hasMappingData" = "PMTCT_STAT",
+                      "TX_PVLSDEN_hasMappingData" = "TX_PVLS_DEN",
+                      "TX_PVLSNUM_hasMappingData" = "TX_PVLS_NUM")
+      df2 <- df2 |>
+        dplyr::mutate(period = as.character(x))
+    }
+
+    df2
+  }, error = function(e) {
+    NA
+  })
+
+
+  #working code for rest of years
+  df_rest_of_years <- args |>
     lapply(function(x) {
       tryCatch({
-        args2 <- list(end_point = paste0(end_point, "/", x),
+        args2 <- list(namespace = paste0(namespace, "/", x),
                       d2_session = geo_session)
-        df2 <- purrr::exec(datimutils::getMetadata, !!!args2)
-
-        if(x %in% c(2022)){
-          df2<-as.data.frame(do.call(rbind, lapply(df2$DAA, as.data.frame)))
-          rownames(df2) <- c(1:nrow(df2))
-          colnames(df2) <- colnames(df2) |> lapply(function(i){ return (gsub('indicatorMapping.', '', i))})
-          df2 <- df2 |> dplyr::select(-code) |>
-                        dplyr::rename("CountryCode" = "countryCode", "CountryName" = "countryName", "TX_NEW_hasMappingData" = "TX_NEW", "HTS_TST_hasMappingData" = "HTS_TST", "TB_PREV_hasMappingData" = "TB_PREV", "TX_CURR_hasMappingData" = "TX_CURR", "PMTCT_ART_hasMappingData" = "PMTCT_ART", "PMTCT_STAT_hasMappingData" = "PMTCT_STAT", "TX_PVLSDEN_hasMappingData" = "TX_PVLS_DEN", "TX_PVLSNUM_hasMappingData" = "TX_PVLS_NUM")
-        }
-
-
+        df2 <- purrr::exec(datimutils::getDataStoreNamespaceKeys, !!!args2)
         df2 <- df2 |>
+          purrr::map_dfr(as.data.frame) |>
           dplyr::mutate(period = x)
+
         return(df2)
       }, error = function(e) {
         return(NA)
       })
-    }) |>
-    remove_missing_dfs() |>
-    dplyr::bind_rows() |>
+    }) |> remove_missing_dfs()
+
+  #then bind both and proceed
+  df <- dplyr::bind_rows(df_2022, df_rest_of_years) |>
     dplyr::mutate(period = stringr::str_sub(period,
                                             start = -4, end = -1)) |>
     tidyr::pivot_longer(-c(period, CountryName,
