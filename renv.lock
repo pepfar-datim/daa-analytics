@@ -227,9 +227,9 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "pepfar-datim",
       "RemoteRepo": "datimutils",
-      "RemoteRef": "datastore-updates",
-      "RemoteSha": "c792266c0dea99013b64455a6f8f3bf0cccaad70",
-      "Hash": "b5bc320b7332d08c080a1be49a07b99c",
+      "RemoteRef": "master",
+      "RemoteSha": "cd7e37ecfe47739ac6b67c27c5969e97d209366c",
+      "Hash": "0fc03b23a01ab0248a66542db766fe71",
       "Requirements": [
         "R6",
         "httr",
