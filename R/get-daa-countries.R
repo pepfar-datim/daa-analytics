@@ -25,6 +25,6 @@ get_daa_countries <- function(geo_session) {
     dplyr::rename(OU = Country,
                   OU_UID = uid,
                   Country_Code = code,
-                  Facility_Level = facility) |>
-    dplyr::filter(OU != "demo_country")
+                  Facility_Level = facility)
+    #dplyr::filter(OU != "demo_country")
 }
