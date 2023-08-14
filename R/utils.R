@@ -90,6 +90,7 @@ check_cache <- function(cache_path, max_cache_age = NULL) {
 }
 
 #get recent timestamp
+#' @export
 get_last_modified <- function(bucket_name, prefix) {
 
   bucket_name <- Sys.getenv("AWS_S3_BUCKET")
