@@ -106,7 +106,7 @@ get_last_modified <- function(bucket_name, prefix) {
     last_modified <- s3_objects$Contents[[1]]$LastModified
     return(last_modified)
   } else {
-    return("No objects found.")
+    return("Unknown")
   }
 }
 
