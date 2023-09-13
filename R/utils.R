@@ -110,13 +110,19 @@ get_last_modified <- function(bucket_name, prefix) {
   }
 }
 
+#dataValues <- read.csv('/Users/58771/Desktop/dataValueSets.csv', stringsAsFactors = FALSE)
+#mappings <- read.csv('/Users/58771/Desktop/emr_coc_indicator_mapping.csv', stringsAsFactors = FALSE)
+#combined_data_check <- read.csv('/Users/58771/Desktop/DAA/daa-analytics/OUTPUT_FOLDER/combined_data.csv', stringsAsFactors = FALSE)
 
+#require(sqldf)
+#dataValues <- dataValues[dataValues$dataelement == 'mFvVvrRvZgo',]
 
+#merged_data <- sqldf('select * from mappings join dataValues on dataValues.categoryoptioncombo = mappings.coc order by orgunit')
+#emr_check <- sqldf("select indicator, orgunit, period, 'Yes' as has_emr from merged_data group by indicator, orgunit")
+#validate_emr_presence <- sqldf("select A.Facility_UID, A.indicator as combined_data_indicator, A.emr_present, A.EMR, B.orgunit, B.indicator as emr_check_indicator FROM combined_data_check A LEFT JOIN emr_check B ON A.Facility_UID = B.orgunit WHERE B.orgunit IS NULL AND A.period = '2022' AND A.emr_present = 'TRUE' ")
 
-
-
-
-
+#output_folder <- Sys.getenv("OUTPUT_FOLDER")
+#write.csv(combined_data, paste0(output_folder, "combined_data.csv"))
 
 
 

@@ -81,7 +81,7 @@ adorn_weights <- function(daa_indicator_data = NULL, ou_hierarchy,
                          dplyr::select(organisationunitid,
                                        Facility_UID),
                        by = c("organisationunitid"),
-                       keep = FALSE) |>
+                       keep = FALSE)
                       dplyr::mutate(EMR = ifelse(is.na(emr_present), FALSE, emr_present))
 
     aligned_sites <- aligned_sites |>
