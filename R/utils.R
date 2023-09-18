@@ -68,7 +68,10 @@ check_cache <- function(cache_path, max_cache_age = NULL) {
               !rlang::is_missing(cache_path))
 
   # Checks if cache file exists and can be read ####
-  if (!file.exists(cache_path)) { return(NULL) } # nolint
+  if (!file.exists(cache_path) {
+    cat("Cache file does not exist, fetching from bucket...")
+    return(NULL)
+  })# nolint
   if (file.access(cache_path, 4) != 0) { return(NULL )} # nolint
 
   # Check whether cache is stale ####
