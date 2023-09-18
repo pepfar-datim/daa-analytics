@@ -78,7 +78,10 @@ check_cache <- function(cache_path, max_cache_age = NULL) {
       lubridate::interval(file.info(cache_path)$mtime, Sys.time()))
     max_cache_age_dur <- lubridate::duration(max_cache_age)
     is_fresh <- is_lt(cache_age_dur, max_cache_age_dur)
-    if (!is_fresh) { return(NULL) } # nolint
+    if (!is_fresh) {
+      cat("Cache is stale. \n")
+      return(NULL)
+    } # nolint
   }
 
   # If file exists, can be read, and is fresh, loads and returns cache ####
