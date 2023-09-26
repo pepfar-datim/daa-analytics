@@ -6,6 +6,7 @@
 #' @export
 #'
 global_summary <- function(combined_data) {
+  if(!exists("combined_data")){ combined_data <- readRDS("support_files/combined_data.rds") }
   #nolint start: line_length_linter
   result <- combined_data |>
     dplyr::group_by(OU, period, indicator) |>
