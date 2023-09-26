@@ -7,7 +7,7 @@
 #'
 global_summary <- function(combined_data) {
   #nolint start: line_length_linter
-  combined_data |>
+  result <- combined_data |>
     dplyr::group_by(OU, period, indicator) |>
     dplyr::summarize(
       CountOfFacilities_ReportedByBoth = length(Facility_UID[reported_by == "Both"]),
@@ -56,5 +56,7 @@ global_summary <- function(combined_data) {
                PEPFAR_Results_FacilitiesReportedByBoth,
                Pct_PEPFAR_Facilities_WithEMR),
              ~ ifelse(CountOfFacilities_ReportedByPEPFAR == 0, NA, .x)))
+
+  return(result)
   # nolint end
 }
