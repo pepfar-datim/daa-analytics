@@ -93,8 +93,8 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
         "Service Delivery Area - HIV/TB" ~ "emr_tb",
-      substring(dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
-      substring(dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
+      #substring(dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
+      #substring(dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
       TRUE ~ NA_character_
     )) |>
 
@@ -111,8 +111,8 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       emr_PMTCT_STAT = any(as.logical(unlist(emr_anc))),
       emr_PMTCT_ART = any(as.logical(unlist(emr_anc))),
       emr_TB_PREV = any(as.logical(unlist(emr_tb))),
-      tx_pvls_n = sum(as.numeric(unlist(tx_pvls_n))),
-      tx_pvls_d = sum(as.numeric(unlist(tx_pvls_d)))
+      #tx_pvls_n = sum(as.numeric(unlist(tx_pvls_n))),
+      #tx_pvls_d = sum(as.numeric(unlist(tx_pvls_d)))
     ) |>
     dplyr::select(-emr_tx, -emr_hts,
                   -emr_anc, -emr_tb) |>
@@ -136,7 +136,7 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     # Organizes columns for export
     dplyr::select(
       organisationunitid = sourceid, period, indicator,
-      emr_present, tx_pvls_n, tx_pvls_d
+      emr_present
     )
 
   pvls_emr

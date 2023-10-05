@@ -127,7 +127,7 @@ adorn_daa_data <- function(df,
   # Cleans data and prepares it for export
   df <- df |>
     # Selects appropriate variables
-    dplyr::select(my_vars) |>
+    dplyr::select(all_of(my_vars)) |>
     dplyr::rename("Facility_UID" = "org_unit") |>
 
     # Recasts values as numeric

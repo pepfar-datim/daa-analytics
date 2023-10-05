@@ -6,9 +6,9 @@
 #' @export
 #'
 global_summary <- function(combined_data) {
-  if(!exists("combined_data")){ combined_data <- readRDS("support_files/combined_data.rds") }
   #nolint start: line_length_linter
-  result <- combined_data |>
+  #result <-
+    combined_data |>
     dplyr::group_by(OU, period, indicator) |>
     dplyr::summarize(
       CountOfFacilities_ReportedByBoth = length(Facility_UID[reported_by == "Both"]),
@@ -58,6 +58,5 @@ global_summary <- function(combined_data) {
                Pct_PEPFAR_Facilities_WithEMR),
              ~ ifelse(CountOfFacilities_ReportedByPEPFAR == 0, NA, .x)))
 
-  return(result)
   # nolint end
 }
