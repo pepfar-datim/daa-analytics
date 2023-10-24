@@ -68,13 +68,6 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
     # Joins to Data Element, Category Option Combo, and Attribute Metadata
     dplyr::left_join(de_metadata, by = "dataelementid") |>
     dplyr::left_join(coc_metadata, by = "categoryoptioncomboid")|>
-    # dplyr::left_join(coc_metadata |>
-    #                    dplyr::select(categoryoptioncomboid,
-    #                                  attributename =
-    #                                    categoryoptioncomboname),
-    #                  by = c("attributeoptioncomboid" =
-    #                           "categoryoptioncomboid")) |>
-
     # Drops a number of columns before continuing on
     dplyr::select(-iso, -periodid, -attributeoptioncomboid,
                   -dataelementid, -categoryoptioncomboid) |>
@@ -93,8 +86,6 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       dataelementname == "EMR_SITE (N, NoApp, Serv Del Area)" &
         categoryoptioncomboname ==
         "Service Delivery Area - HIV/TB" ~ "emr_tb",
-      #substring(dataelementname, 1, 10) == "TX_PVLS (N" ~ "tx_pvls_n",
-      #substring(dataelementname, 1, 10) == "TX_PVLS (D" ~ "tx_pvls_d",
       TRUE ~ NA_character_
     )) |>
 
@@ -111,8 +102,6 @@ adorn_pvls_emr <- function(pvls_emr_raw = NULL,
       emr_PMTCT_STAT = any(as.logical(unlist(emr_anc))),
       emr_PMTCT_ART = any(as.logical(unlist(emr_anc))),
       emr_TB_PREV = any(as.logical(unlist(emr_tb))),
-      #tx_pvls_n = sum(as.numeric(unlist(tx_pvls_n))),
-      #tx_pvls_d = sum(as.numeric(unlist(tx_pvls_d)))
     ) |>
     dplyr::select(-emr_tx, -emr_hts,
                   -emr_anc, -emr_tb) |>

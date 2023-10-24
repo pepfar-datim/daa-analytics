@@ -6,8 +6,6 @@
 #' @export
 #'
 global_summary <- function(combined_data) {
-  #nolint start: line_length_linter
-  #result <-
     combined_data |>
     dplyr::group_by(OU, period, indicator) |>
     dplyr::summarize(
