@@ -78,7 +78,10 @@ check_cache <- function(cache_path, max_cache_age = NULL) {
       lubridate::interval(file.info(cache_path)$mtime, Sys.time()))
     max_cache_age_dur <- lubridate::duration(max_cache_age)
     is_fresh <- is_lt(cache_age_dur, max_cache_age_dur)
-    if (!is_fresh) { return(NULL) } # nolint
+    if (!is_fresh) {
+      cat("Cache is stale. \n")
+      return(NULL)
+    } # nolint
   }
 
   # If file exists, can be read, and is fresh, loads and returns cache ####
@@ -88,3 +91,34 @@ check_cache <- function(cache_path, max_cache_age = NULL) {
   # Returns cache object ####
   cache
 }
+
+#get recent timestamp
+#' @export
+get_last_modified <- function(bucket_name, prefix) {
+
+  bucket_name <- Sys.getenv("AWS_S3_BUCKET")
+  prefix <- "datim/www.datim.org/moh_daa_data_value_emr_pvls/data.csv.gz"
+  # Create an S3 client
+  s3_client <- paws::s3()
+
+  # List objects in the S3 bucket with the specified prefix
+  s3_objects <- s3_client$list_objects(Bucket = bucket_name, Prefix = prefix)
+
+
+  if (!is.null(s3_objects$Contents) && length(s3_objects$Contents) > 0) {
+    last_modified <- s3_objects$Contents[[1]]$LastModified
+    return(last_modified)
+  } else {
+    return("Unknown")
+  }
+}
+
+
+
+
+
+
+
+
+
+
