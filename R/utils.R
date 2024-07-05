@@ -113,7 +113,13 @@ get_last_modified <- function(bucket_name, prefix) {
   }
 }
 
-
+#Zimbabwe facilities with MOH data
+# data <- read.csv("/Users/58771/Desktop/DAA/daa-analytics/OUTPUT_FOLDER/raw_country_data/20240423_Zimbabwe_raw_data.csv")
+# filtered_data <- data %>% filter(Facility_UID %in% c("XCuGjkFY1oy", "JBrHjCgtk1U", "oCiaPRzzlpQ", "ExkPrlU2JL0", "usnQnNvOVYO",
+#                                                      "fhbHedZcFX3", "KIGDYbxhWWf", "SxuooDiEkIq", "Sss3M30PqRD") & !is.na(moh))
+#
+# print(filtered_data)
+# write.csv(filtered_data, "zimbabwe_filtered_data.csv", row.names = FALSE)
 
 
 

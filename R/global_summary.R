@@ -26,7 +26,9 @@ global_summary <- function(combined_data) {
       SumOfPEPFARResults_ReportedByBoth_WithEMR = sum(pepfar[reported_by == "Both" & emr_present == TRUE & !is.na(emr_present)], na.rm = TRUE),
       Concordance = sum(OU_Concordance[reported_by == "Both"], na.rm = TRUE),
       ConcordanceOfFacilitiesWithEMR = sum(EMR_Concordance[reported_by == "Both" & emr_present == TRUE & !is.na(emr_present)], na.rm = TRUE),
-      ConcordanceOfFacilitiesWithOutEMR = sum(EMR_Concordance[reported_by == "Both" & emr_present == FALSE & !is.na(emr_present)], na.rm = TRUE)
+      ConcordanceOfFacilitiesWithOutEMR = sum(EMR_Concordance[reported_by == "Both" & emr_present == FALSE & !is.na(emr_present)], na.rm = TRUE),
+      Absolute_Difference = sum(absolute_difference[reported_by == "Both"], na.rm = TRUE),
+      Average_Absolute_Difference = round(Absolute_Difference / CountOfFacilities_ReportedByBoth),
     ) |>
     dplyr::mutate(
       dplyr::across(
@@ -35,7 +37,9 @@ global_summary <- function(combined_data) {
           Pct_PEPFAR_Facilities_ReportedByBoth_WithEMR,
           Concordance,
           ConcordanceOfFacilitiesWithEMR,
-          ConcordanceOfFacilitiesWithOutEMR),
+          ConcordanceOfFacilitiesWithOutEMR,
+          Absolute_Difference,
+          Average_Absolute_Difference),
         ~ ifelse(CountOfFacilities_ReportedByBoth == 0, NA, .x))) |>
     dplyr::mutate(
       dplyr::across(

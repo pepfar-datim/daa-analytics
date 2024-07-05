@@ -62,6 +62,9 @@ combine_data <- function(daa_indicator_data = NULL,
     # Filter out 'NA' values in the 'OU' column
     dplyr::filter(!is.na(OU)) |>
 
+    #add absolute difference
+    dplyr::mutate(absolute_difference = abs(pepfar - moh)) |>
+
     ## Selects rows for export ####
     dplyr::select(Facility_UID,
                   Facility,
@@ -76,7 +79,8 @@ combine_data <- function(daa_indicator_data = NULL,
                   emr_present,
                   moh_id,
                   longitude,
-                  latitude)
+                  latitude,
+                  absolute_difference)
 
   return(df)
 }

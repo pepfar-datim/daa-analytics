@@ -40,7 +40,10 @@ process_data <- function(combined_data, import_history, output_folder) {
                                          ifelse((is.na(MOH_Results_Total) | MOH_Results_Total == "None") & CourseOrFine == "Fine" & period < 2022, "Mapping Fine",
                                                 ifelse((is.na(CourseOrFine) | CourseOrFine == "None" | CourseOrFine == "NA") & period < 2022, "No Mapping",
                                                        ifelse(!is.na(MOH_Results_Total) & !is.na(PEPFAR_Results_Total) & CourseOrFine == "Fine" & period < 2022, "Data Fine",
-                                                              ifelse(!is.na(MOH_Results_Total) & !is.na(PEPFAR_Results_Total) & CourseOrFine == "Coarse" & period < 2022, "Data Coarse", DataOrMapping))))))
+                                                              ifelse(!is.na(MOH_Results_Total) & CourseOrFine == "Fine" & period < 2022, "Data Fine",
+                                                                     ifelse(!is.na(MOH_Results_Total) & CourseOrFine == "Coarse" & period < 2022, "Data Coarse",
+                                                              ifelse(!is.na(MOH_Results_Total) & !is.na(PEPFAR_Results_Total) & CourseOrFine == "Coarse" & period < 2022, "Data Coarse", DataOrMapping))))))))
+  summary_data <- dplyr::select(summary_data, -CourseOrFine)
 
   write.csv(summary_data, paste0(output_folder, "global_summary.csv"))
 }
