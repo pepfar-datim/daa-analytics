@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.2.1",
+    "Version": "4.3.2",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -215,21 +215,21 @@
       "Package": "curl",
       "Version": "5.1.0",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "RSPM",
       "Hash": "9123f3ef96a2c1a93927d828b2fe7d4c",
       "Requirements": []
     },
     "datimutils": {
       "Package": "datimutils",
-      "Version": "0.6.0",
+      "Version": "0.7.0",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "pepfar-datim",
       "RemoteRepo": "datimutils",
       "RemoteRef": "master",
-      "RemoteSha": "31c0be49b3e7d224394c54f1578a0d901b93d8e0",
-      "Hash": "ec413295a2039c7e6e6b7b34d88ec021",
+      "RemoteSha": "338c374674876850707f642d1998f8aff4a41096",
+      "Hash": "c7316c3d97e7e893e2125b2b5bec4ffa",
       "Requirements": [
         "R6",
         "httr",
@@ -518,7 +518,7 @@
       "Package": "httr",
       "Version": "1.4.7",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "RSPM",
       "Hash": "ac107251d9d9fd72f0ca8049988f1d7f",
       "Requirements": [
         "R6",
