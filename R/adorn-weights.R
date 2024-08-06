@@ -12,7 +12,6 @@
 #'
 
 weighted_concordance <- function(df, weighting_name, grouping_columns) {
-  # Basic concordance calculation
   df <- df %>%
     dplyr::group_by(indicator, period, !!!rlang::syms(grouping_columns)) %>%
     dplyr::mutate("{weighting_name}" :=
