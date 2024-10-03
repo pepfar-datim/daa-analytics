@@ -121,6 +121,26 @@ get_last_modified <- function(bucket_name, prefix) {
 # print(filtered_data)
 # write.csv(filtered_data, "zimbabwe_filtered_data.csv", row.names = FALSE)
 
+#country_summary <- function(combined_data, import_history) {
+  df <- combined_data %>%
+    dplyr::group_by(OU, indicator, period) %>%
+    dplyr::select(-Facility, -Facility_UID, -reported_by, -OU_UID, -OU_Concordance, -OU_weighting, -SNU1, -SNU1_UID, -SNU2,
+                  -SNU2_UID, -SNU3, - SNU3_UID, -SNU1_Concordance, -SNU2_Concordance, -EMR_Concordance, -emr_present, -moh_id,
+                  -longitude, -latitude, -absolute_difference) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(., import_history,
+                     by = c("OU", "period", "indicator")) %>%
+    dplyr::mutate(indicator_disaggregation = dplyr::case_when(
+      !is.na(has_disag_mapping) & has_disag_mapping != "None" ~ has_disag_mapping,
+      is.na(has_disag_mapping) | has_disag_mapping == "None" ~ has_mapping_result_data,
+      TRUE ~ NA_character_  # Catch-all for any other cases
+    )) %>%
+    dplyr::select(-has_disag_mapping, -has_mapping_result_data, -has_results_data)
+
+  return(df)
+#}
+
+
 
 
 
