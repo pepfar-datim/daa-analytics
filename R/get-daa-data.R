@@ -23,9 +23,10 @@ dataset_uids <- data.frame(
 #'
 #' @return Dataframe of unadorned PEPFAR and the MOH DAA indicator data.
 #'
+#ou_uid = 'HfVjCurKxh2'
 get_daa_data <- function(ou_uid,
                          fiscal_years,
-                         d2_session = dynGet("d2_default_session", inherits = TRUE)) {
+                         d2_session = dynGet("d2_default_session", retry = 3, inherits = TRUE)) {
 
   # Filter dataset_uids if fiscal years provided
   dataset_uids_filtered <- dataset_uids[dataset_uids$fiscal_year %in% fiscal_years, ]
@@ -52,7 +53,8 @@ get_daa_data <- function(ou_uid,
   datimutils::getDataValueSets(
     variable_keys = key_value_pairs$keys,
     variable_values = key_value_pairs$values,
-    d2_session = d2_session
+    d2_session = d2_session,
+    timeout = 300
   ) |>
     dplyr::select(data_element = dataElement,
                   period,

@@ -124,6 +124,69 @@ get_last_modified <- function(bucket_name, prefix) {
 
 
 
+df <- combined_data %>%
+    dplyr::group_by(OU, indicator, period) %>%
+    dplyr::mutate(
+      count_moh = length(unique(Facility_UID[reported_by %in% c("Both", "MOH")])),
+      count_both = length(unique(Facility_UID[reported_by == "Both"])),
+      count_pepfar = length(unique(Facility_UID[reported_by %in% c("Both", "PEPFAR")])),
+      MOH_Facilities_SupportedBy_PEPFAR = round((length(Facility_UID[reported_by == "Both"]) /
+                                                  length(Facility_UID[reported_by %in% c("Both", "MOH")])) * 100, 2),
+      PEPFAR_Reported_Facilities_ReportedByMOH = round((length(Facility_UID[reported_by == "Both"]) /
+                                                              length(Facility_UID[reported_by %in% c("Both", "PEPFAR")])) * 100, 2),
+      MOH_Supported_By_pepfar = dplyr::case_when(
+        sum(pepfar[reported_by %in% c("Both", "PEPFAR")], na.rm = TRUE) > 0 &
+          sum(moh[reported_by %in% c("Both", "MOH")], na.rm = TRUE) > 0 ~
+          round((sum(pepfar[reported_by %in% c("Both", "PEPFAR")], na.rm = TRUE) /
+                   sum(moh[reported_by %in% c("Both", "MOH")], na.rm = TRUE)) * 100, 0),
+        TRUE ~ NA_real_
+      ),
+      weighted_concordance = dplyr::case_when(
+        sum(OU_Concordance[reported_by == "Both"], na.rm = TRUE) > 0 ~
+          round((sum(OU_Concordance[reported_by == "Both"], na.rm = TRUE)) * 100, 2)
+      ),
+      absolute_difference = ifelse(
+        sum(absolute_difference[reported_by == "Both"], na.rm = TRUE) > 0,
+        sum(absolute_difference[reported_by == "Both"], na.rm = TRUE),
+        NA_real_
+      ),
+      absolute_diff_mean = round(abs(absolute_difference / count_both), 0),
+    ) %>%
+    dplyr::mutate(
+      dplyr::across(
+        c(PEPFAR_Reported_Facilities_ReportedByMOH, MOH_Facilities_SupportedBy_PEPFAR),
+        ~ ifelse(count_pepfar == 0 | count_moh == 0, NA, .x)
+      ),
+      PEPFAR_facilities_not_reported_by_MOH = round(abs((PEPFAR_Reported_Facilities_ReportedByMOH / 100) - 1) * 100, 2)
+    )  %>%
+    dplyr::ungroup() %>%
+    dplyr::distinct(OU, indicator, period, .keep_all = TRUE) %>%
+    dplyr::select(-Facility, -Facility_UID, -reported_by, -OU_UID, -OU_Concordance, -OU_weighting, -SNU1, -SNU1_UID, -SNU2,
+                  -SNU2_UID, -SNU3, -SNU3_UID, -SNU1_Concordance, -SNU2_Concordance, -EMR_Concordance, -emr_present, -moh_id,
+                  -longitude, -latitude, -moh, -pepfar) %>%
+    dplyr::left_join(., import_history,
+                     by = c("OU", "period", "indicator")) %>%
+    dplyr::mutate(indicator_disaggregation = dplyr::case_when(
+      !is.na(has_disag_mapping) & has_disag_mapping != "None" ~ has_disag_mapping,
+      is.na(has_disag_mapping) | has_disag_mapping == "None" ~ has_mapping_result_data,
+      TRUE ~ NA_character_  # Catch-all for any other cases
+    )) %>%
+    dplyr::select(-has_disag_mapping, -has_mapping_result_data, -has_results_data)
+
+  return(df)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

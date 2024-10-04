@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.3.2",
+    "Version": "4.3.1",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -499,6 +499,20 @@
         "htmltools",
         "jsonlite",
         "yaml"
+      ]
+    },
+    "httptest": {
+      "Package": "httptest",
+      "Version": "4.2.2",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "d90434cbc2f44ed3ee6ebe4c352406cd",
+      "Requirements": [
+        "curl",
+        "digest",
+        "httr",
+        "jsonlite",
+        "testthat"
       ]
     },
     "httpuv": {
