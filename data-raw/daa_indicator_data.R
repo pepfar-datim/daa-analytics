@@ -6,6 +6,7 @@
 # datimutils::loginToDATIM(secrets)
 # d2_session <- d2_default_session
 # nolint end
+library(dplyr)
 
 if(!exists("ou_hierarchy")){
   ou_hierarchy <- readRDS("support_files/ou_hierarchy.rds")
@@ -48,5 +49,3 @@ daa_indicator_data <-
   daa.analytics::adorn_weights(ou_hierarchy = ou_hierarchy, weights_list = c("OU", "SNU1", "SNU2", "EMR"), pvls_emr = pvls_emr)
 
 saveRDS(daa_indicator_data, file = "support_files/daa_indicator_data.rds")
-
-

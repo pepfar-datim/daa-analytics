@@ -22,13 +22,14 @@ dataset_uids <- data.frame(
 #' #' @inheritParams daa_analytics_params
 #' #'
 #' #' @return Dataframe of unadorned PEPFAR and the MOH DAA indicator data.
-#' #'
+#'
 
 get_daa_data <- function(ou_uid,
                          fiscal_years,
                          d2_session = dynGet("d2_default_session", inherits = TRUE),
                          chunk_size = 2,
-                         cache_folder = "support_files") {
+                         cache_folder = "support_files",
+                         max_cache_age_days = 30) {
 
   # Identify the recent period to fetch
   recent_fiscal_year <- max(fiscal_years)
@@ -40,8 +41,17 @@ get_daa_data <- function(ou_uid,
 
   # Check if cached data exists
   if (file.exists(cache_file)) {
-    # Load cached data
-    historical_data <- readRDS(cache_file)
+    file_info <- file.info(cache_file)
+    file_age_days <- as.numeric(difftime(Sys.time(), file_info$mtime, units = "days"))
+    #if file older than cache age or does not exist then fetch new
+    if(file_age_days > max_cache_age_days || length(historical_fiscal_years) == 0) {
+      historical_data <- get_data_for_period(ou_uid, historical_fiscal_years, d2_session, chunk_size)
+      saveRDS(historical_data, cache_file)
+    } else{
+      # Load cached data
+      historical_data <- readRDS(cache_file)
+    }
+
   } else if (length(historical_fiscal_years) > 0) {
     # Fetch historical data if not cached
     historical_data <- get_data_for_period(ou_uid, historical_fiscal_years, d2_session, chunk_size)
