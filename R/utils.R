@@ -3,6 +3,7 @@
 #'
 #' @return Current FY as numeric.
 #'
+library(dplyr)
 current_fiscal_year <- function() {
   current_year <- Sys.Date() |>
     format("%Y") |>
