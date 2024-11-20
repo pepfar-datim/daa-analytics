@@ -19,7 +19,7 @@ daa_countries <- daa.analytics::daa_countries
 my_function <- function(x) {
   print(datimutils::getOrgUnits(x))
   daa.analytics::get_daa_data(ou_uid = x,
-              fiscal_year = c(2018, 2019, 2020, 2021, 2022, 2023),
+              fiscal_year = c(2018, 2019, 2020, 2021, 2022, 2023, 2024),
               d2_session = d2_session)
 }
 

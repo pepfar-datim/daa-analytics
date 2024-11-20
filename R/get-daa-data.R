@@ -8,8 +8,8 @@
 #'
 # Precompute dataset UIDs once
 dataset_uids <- data.frame(
-  fiscal_year = c("2017", "2018", "2019", "2020", "2021", "2022", "2023"),
-  dataSet = c("FJrq7T5emEh", "sfk9cyQSUyi", "OBhi1PUW3OL", "QSodwF4YG9a", "U7qYX49krHK", "RGDmmG5taRt", "nPEPnHrNsnP")
+  fiscal_year = c("2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"),
+  dataSet = c("FJrq7T5emEh", "sfk9cyQSUyi", "OBhi1PUW3OL", "QSodwF4YG9a", "U7qYX49krHK", "RGDmmG5taRt", "nPEPnHrNsnP", "RuTQpfHgO9e")
 )
 #'
 #' #' @export
@@ -99,15 +99,20 @@ get_data_for_period <- function(ou_uid, fiscal_years, d2_session, chunk_size) {
       variable_values = key_value_pairs$values,
       d2_session = d2_session,
       timeout = 300
-    ) |>
-      dplyr::select(data_element = dataElement,
-                    period,
-                    org_unit = orgUnit,
-                    category_option_combo = categoryOptionCombo,
-                    attribute_option_combo = attributeOptionCombo,
-                    value)
+    )
+    if(!is.null(result) && NROW(result) > 0) {
+      result <- result |>
+        dplyr::select(data_element = dataElement,
+                      period,
+                      org_unit = orgUnit,
+                      category_option_combo = categoryOptionCombo,
+                      attribute_option_combo = attributeOptionCombo,
+                      value)
+      results <- append(results, list(result))
+    } else {
+      warning("No data available for year: ", paste(chunk, collapse = ", "))
+    }
 
-    results <- append(results, list(result))
   }
 
   combined_data <- dplyr::bind_rows(results)
